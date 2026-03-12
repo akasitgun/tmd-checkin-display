@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <title>TMD Check-in Display</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- แบบอักษรระบบเพื่อความคมชัดและเร็ว -->
+  <style>
+    :root{
+      --bg:#0b59a1;           /* TMD Blue */
+      --accent:#22c55e;       /* Green line */
+      --ink:#ffffff;          /* White text */
+      --sub:#d3e6ff;          /* Subtext */
+      --card:#0e67b9;         /* Slightly lighter blue */
+    }
+    /* รีเซ็ตพื้นฐาน */
+    *{ box-sizing: border-box; }
+    html, body{ height:100%; margin:0; }
+    body{
+      font-family: "Segoe UI", system-ui, -apple-system, Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* โครงหน้าจอ */
+    .wrap{
+      width: 100%;
+      max-width: 1600px;
+      padding: 48px 64px;
+    }
+    .header{
+      display:flex; align-items:center; gap:18px; margin-bottom:28px;
+    }
+    .tick{
+      width:28px;height:28px;border-radius:6px;background:var(--accent);
+      display:inline-flex;align-items:center;justify-content:center;color:#073b1a;font-weight:900;
+    }
+    .title{
+      font-size:32px;font-weight:800;letter-spacing:.3px;
+    }
+    .sub{
+      font-size:14px;color:var(--sub);margin-top:6px
+    }
+
+    /* การ์ดแสดงผลชื่อ */
+    .card{
+      background: linear-gradient(0deg, rgba(0,0,0,.05), rgba(0,0,0,.05)), var(--card);
+      border:1px solid rgba(255,255,255,.15);
+      border-radius:16px;
+      padding:48px;
+      box-shadow: 0 30px 90px rgba(0,0,0,.25);
+      min-height: 420px;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      text-align:center;
+    }
+
+    .name{
+      font-size: 88px;
+      line-height: 1.05;
+      font-weight: 900;
+      text-wrap: balance;
+      word-break: break-word;
+      letter-spacing: .5px;
+      margin: 0;
+      animation: pop 0.55s ease-in-out;
+      text-shadow: 0 3px 0 rgba(0,0,0,.15);
+    }
+
+    .order{
+      margin-top: 16px;
+      font-size: 28px;
+      color: var(--sub);
+      letter-spacing: .3px;
+    }
+
+    .time{
+      margin-top: 8px;
+      font-size: 16px;
+      color: rgba(255,255,255,.75);
+    }
+
+    /* เส้นเน้นด้านบน */
+    .bar{
+      height: 6px;
+      background: linear-gradient(90deg, var(--accent), #89f0b0 40%, var(--accent));
+      border-radius: 999px;
+      margin-bottom: 18px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.4);
+    }
+
+    /* เอฟเฟกต์ */
+    @keyframes pop {
+      0%   { opacity:0; transform: scale(.9); }
+      100% { opacity:1; transform: scale(1); }
+    }
+
+    /* แถบควบคุมเล็ก ๆ */
+    .controls{
+      margin-top:22px;
+      display:flex;gap:14px;align-items:center;justify-content:center;color:var(--sub);
+      font-size:14px;
+    }
+    .btn{
+      background: rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.25);
+      color:#fff;
+      padding:10px 14px;border-radius:10px;cursor:pointer;
+      transition: .15s ease-in-out;
+      font-weight:600;
+    }
+    .btn:hover{ filter: brightness(1.1); }
+
+    /* รองรับจอเล็ก */
+    @media (max-width: 900px){
+      .wrap{ padding: 24px; }
+      .name{ font-size: 52px; }
+      .order{ font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="header">
+      <div class="tick">✓</div>
+      <div>
+        <div class="title">Registration Confirmation • Live</div>
+        <div class="sub">แสดงชื่อผู้เช็คอินล่าสุดแบบ Realtime • เปิดเต็มจอให้ทุกคนเห็นได้</div>
+      </div>
+    </div>
+
+    <div class="bar"></div>
+
+    <div class="card" id="card">
+      <h1 class="name" id="name">Waiting…</h1>
+      <div class="order" id="order"></div>
+      <div class="time" id="time"></div>
+    </div>
+
+    <div class="controls">
+      <button class="btn" id="fullscreenBtn">Fullscreen</button>
+      <button class="btn" id="soundBtn">🔔 Sound: Off</button>
+      <span id="status">Polling every 1.5s</span>
+    </div>
+  </div>
+
+  <!-- เสียงสั้นๆ เวลาเจอชื่อใหม่ (base64 inlined, ไม่ต้องโหลดไฟล์นอก) -->
+  <audio id="ding" preload="auto">
+    data:audio/mp3;base64,//uQZAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAACcQAA...
+  </audio>
+
+  <script>
+    // --- ตั้งค่า ---
+    const DATA_URL = 'data.json';   // ต้องอยู่โฟลเดอร์เดียวกับ index.html
+    const POLL_MS  = 1500;          // ระยะรีเฟรช
+
+    // --- อ้างอิง DOM ---
+    const elName  = document.getElementById('name');
+    const elOrder = document.getElementById('order');
+    const elTime  = document.getElementById('time');
+    const elCard  = document.getElementById('card');
+    const elStatus= document.getElementById('status');
+    const ding    = document.getElementById('ding');
+
+    let lastStamp = null;
+    let playSound = false;
+
+    // ปุ่ม Fullscreen
+    document.getElementById('fullscreenBtn').onclick = () => {
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+      else document.exitFullscreen();
+    };
+
+    // ปุ่มเปิด/ปิดเสียง
+    const soundBtn = document.getElementById('soundBtn');
+    soundBtn.onclick = () => {
+      playSound = !playSound;
+      soundBtn.textContent = playSound ? '🔔 Sound: On' : '🔕 Sound: Off';
+    };
+
+    // ฟังก์ชันโหลด JSON พร้อมกัน cache
+    async function loadData() {
+      try {
+        const url = DATA_URL + '?t=' + Date.now(); // กัน cache
+        const r = await fetch(url, { cache: 'no-store' });
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        const d = await r.json();
+
+        // ปกป้องฟิลด์ว่าง
+        const name = (d.name || 'Guest').toString();
+        const order= (d.order || '').toString();
+        const ts   = (d.timestamp || '').toString();
+
+        // อัปเดตเฉพาะเมื่อข้อมูล "ใหม่กว่า" (ลดการกระพริบ)
+        if (ts && ts !== lastStamp) {
+          lastStamp = ts;
+          // อัปเดต UI
+          elName.textContent  = name;
+          elOrder.textContent = order ? ('Order: ' + order) : '';
+          elTime.textContent  = ts ? new Date(ts).toLocaleString() : '';
+
+          // เล่นแอนิเมชันสั้น ๆ
+          elCard.style.animation = 'none';
+          void elCard.offsetWidth; // force reflow
+          elCard.style.animation = null;
+
+          // เล่นเสียง (ถ้าเปิด)
+          if (playSound) {
+            try { ding.currentTime = 0; ding.play(); } catch(e){}
+          }
+        }
+
+        elStatus.textContent = 'Polling every ' + (POLL_MS/1000) + 's • Last update OK';
+        elStatus.style.color = 'rgba(255,255,255,.85)';
+      } catch (e) {
+        elStatus.textContent = 'Fetch error: ' + (e.message || e);
+        elStatus.style.color = '#ffd9d9';
+      }
+    }
+
+    // เริ่ม Poll
+    loadData();
+    setInterval(loadData, POLL_MS);
+  </script>
+</body>
+</html>

@@ -2,119 +2,192 @@
 <html lang="th">
 <head>
 <meta charset="utf-8" />
-<title>TMD Check-in Live Ticker (Multi)</title>
+<title>TMD Check-in Display (Lines)</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
 <style>
   :root{
-    --dur: 16s;        /* จะถูก JS ปรับตามความยาวข้อความรวม */
     --bg: #0b59a1;
+    --ink: #ffffff;
+    --sub: #d3e6ff;
+    --card: rgba(255,255,255,.10);
   }
-  body{ margin:0; background:var(--bg);
-        font-family:"Segoe UI", system-ui, -apple-system, Arial, Helvetica, sans-serif;
-        overflow:hidden; }
-  .header{ text-align:center; padding:24px; color:#fff; font-size:40px; font-weight:800; letter-spacing:.5px; }
-  .ticker-container{ width:100%; white-space:nowrap; overflow:hidden; box-sizing:border-box;
-                     padding:20px 0; background:rgba(255,255,255,.10);
-                     border-top:3px solid rgba(255,255,255,.2);
-                     border-bottom:3px solid rgba(255,255,255,.2); }
-  .ticker-text{ display:inline-block; padding-left:45%; font-size:80px; font-weight:900; color:#fff;
-                animation: ticker var(--dur) linear infinite; will-change: transform; }
-  @keyframes ticker{ 0% { transform: translateX(0%);} 100% { transform: translateX(-100%);} }
-  .flash{ animation: ticker var(--dur) linear infinite, flashAnim .4s ease-in-out; }
-  @keyframes flashAnim{ 0%{ color:#22c55e;} 100%{ color:#ffffff;} }
-  .meta{ color:#d3e6ff; text-align:center; margin-top:12px; font-size:18px; opacity:.95; }
-  .status{ color:rgba(255,255,255,.85); text-align:center; font-size:14px; margin-top:4px; opacity:.85; }
+
+  html,body{ height:100%; }
+  body{
+    margin:0;
+    background: var(--bg);
+    font-family: "Segoe UI", system-ui, -apple-system, Arial, Helvetica, sans-serif;
+    color: var(--ink);
+    display:flex; flex-direction:column;
+  }
+
+  /* Header */
+  .header{
+    text-align:center;
+    padding:22px 16px;
+    font-size:36px;
+    font-weight:800;
+    letter-spacing:.4px;
+  }
+
+  /* กล่องรายการ */
+  .list-wrap{
+    flex:1;
+    max-width: 1600px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 12px 24px 18px 24px;
+    box-sizing: border-box;
+  }
+  .list{
+    background: var(--card);
+    border-top: 3px solid rgba(255,255,255,.2);
+    border-bottom: 3px solid rgba(255,255,255,.2);
+    border-radius: 8px;
+    padding: 18px;
+    list-style: none;
+    margin: 0;
+  }
+
+  /* รายการคนละบรรทัด */
+  .item{
+    padding: 12px 8px;
+    border-bottom: 1px solid rgba(255,255,255,.15);
+    display:flex; flex-direction:column;
+    gap: 6px;
+    animation: fade .35s ease-in-out;
+  }
+  .item:last-child{ border-bottom: 0; }
+
+  .name{
+    font-size: 40px;
+    font-weight: 900;
+    letter-spacing:.3px;
+  }
+  .meta{
+    font-size: 18px;
+    color: var(--sub);
+  }
+
+  @keyframes fade{ from{opacity:0; transform:translateY(4px)} to{opacity:1; transform:translateY(0)} }
+
+  /* แถบสถานะด้านล่าง */
+  .status{
+    text-align:center;
+    color: var(--sub);
+    font-size:14px;
+    opacity:.9;
+    padding: 8px 0 14px 0;
+  }
 </style>
 </head>
 
 <body>
   <div class="header">✔ TMD 60th Anniversary • Live Check-in</div>
-  <div class="ticker-container"><div id="ticker" class="ticker-text">Loading…</div></div>
-  <div class="meta"><span id="ts"></span></div>
+
+  <div class="list-wrap">
+    <ul id="list" class="list">
+      <!-- จะถูกเติมรายการแบบคนละบรรทัด -->
+      <li class="item">
+        <div class="name">Waiting for check-ins...</div>
+        <div class="meta"></div>
+      </li>
+    </ul>
+  </div>
+
   <div id="status" class="status"></div>
 
 <script>
   // ===== Settings =====
+  // ใช้ RAW เพื่อให้เห็นผลไว
   const DATA_URL     = "https://raw.githubusercontent.com/akasitgun/tmd-checkin-display/main/data.json";
-  const POLL_MS      = 700;    // เร็วขึ้นเพื่อความไว
-  const LABEL_MODE   = 'th';   // 'th' = ลำดับ, 'en' = Registration No.
+  const POLL_MS      = 700;
+
+  // ป้ายลำดับ: 'th' = ลำดับ, 'en' = Registration No.
+  const LABEL_MODE   = 'th';
   const ORDER_LABEL  = LABEL_MODE === 'th' ? 'ลำดับ' : 'Registration No.';
+
+  // จำนวนแถวล่าสุดที่แสดง
   const RECENT_LIMIT = 10;
-  const MIN_DUR = 12, MAX_DUR = 40, CHAR_PER = 34;
 
-  let lastUpdated = null;  // จะบังคับ render รอบแรก (lastUpdated เริ่มเป็น null)
+  let lastUpdated = null;
 
-  const ticker  = document.getElementById("ticker");
-  const tsBox   = document.getElementById("ts");
-  const statusB = document.getElementById("status");
+  const $list   = document.getElementById('list');
+  const $status = document.getElementById('status');
 
-  function setStatus(msg, ok=true){ statusB.textContent = msg; statusB.style.color = ok ? "rgba(255,255,255,.85)" : "#ffd9d9"; }
-  function formatLocal(ts){ try{ return new Date(ts).toLocaleString('th-TH', { hour12:false }); } catch{ return ts || ""; } }
-  function tuneTickerSpeed(totalText){
-    const len = (totalText || '').length || 1;
-    let sec = Math.round(len / CHAR_PER);
-    sec = Math.min(MAX_DUR, Math.max(MIN_DUR, sec));
-    ticker.style.setProperty('--dur', sec + 's');
+  function setStatus(msg, ok=true){
+    $status.textContent = msg;
+    $status.style.color = ok ? "rgba(211,230,255,.95)" : "#ffd9d9";
   }
-  function renderText(items){
-    const SEP = "     •     ";
-    const parts = items.map(item => {
-      const name = (item.name ?? "").toString().trim() || "ผู้เข้าร่วม";
-      const order= (item.order ?? "").toString().trim();
-      const dept = (item.department ?? "").toString().trim();
-      const orderPart = order ? `(${ORDER_LABEL}: ${order})` : "";
-      const deptPart  = dept ? `• ${dept}` : "";
-      return `🎉 ยินดีต้อนรับคุณ ${name} ${orderPart} ${deptPart} 🎉`;
+  function fmt(ts){
+    try{ return new Date(ts).toLocaleString('th-TH',{hour12:false}); }
+    catch{ return ts || ""; }
+  }
+
+  // ทำให้ข้อมูลมารูปเดียวกันเสมอ
+  function normalize(d){
+    if (!d) return { items:[], updated:"" };
+    if (Array.isArray(d.items)) return { items:d.items.slice(), updated: d.updated || (d.items[0]?.timestamp || "") };
+    if (typeof d === 'object')  return { items:[d], updated: d.timestamp || "" };
+    try{ return normalize(JSON.parse(d)); } catch{ return { items:[], updated:"" }; }
+  }
+
+  // วาดรายการเป็นคนละบรรทัด
+  function render(lines){
+    // ล้างของเดิม
+    $list.innerHTML = "";
+    lines.forEach(it => {
+      const li = document.createElement('li');
+      li.className = 'item';
+
+      const nm = document.createElement('div');
+      nm.className = 'name';
+      nm.textContent = (it.name ?? "ผู้เข้าร่วม");
+
+      const meta = document.createElement('div');
+      meta.className = 'meta';
+      const order = (it.order ?? "").toString().trim();
+      const dept  = (it.department ?? "").toString().trim();
+      const parts = [];
+      if (order) parts.push(`${ORDER_LABEL}: ${order}`);
+      if (dept)  parts.push(dept);
+      parts.push(fmt(it.timestamp || ""));
+      meta.textContent = parts.join(" • ");
+
+      li.appendChild(nm);
+      li.appendChild(meta);
+      $list.appendChild(li);
     });
-    return parts.join(SEP);
-  }
-  function normalizeData(d){
-    if (!d) return { items: [], updated: "" };
-    if (Array.isArray(d.items)) return { items: d.items.slice(), updated: d.updated || (d.items[0]?.timestamp || "") };
-    if (typeof d === "object")   return { items: [d], updated: d.timestamp || "" };
-    try { return normalizeData(JSON.parse(d)); } catch { return { items: [], updated: "" }; }
   }
 
   async function load(){
     try{
       const r = await fetch(DATA_URL + "?t=" + Date.now(), { cache: "no-store" });
-      if(!r.ok) throw new Error("HTTP " + r.status);
-
+      if (!r.ok) throw new Error("HTTP " + r.status);
       let raw = await r.json();
-      if (typeof raw === "string") { try { raw = JSON.parse(raw); } catch {} }
+      if (typeof raw === "string") { try{ raw = JSON.parse(raw); }catch{} }
 
-      const data  = normalizeData(raw);
+      const data = normalize(raw);
       const items = (data.items || [])
         .slice()
-        .sort((a,b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0))
+        .sort((a,b) => new Date(b.timestamp||0) - new Date(a.timestamp||0))
         .slice(0, RECENT_LIMIT);
 
       const updatedMark = data.updated || (items[0]?.timestamp || "");
-
-      // เงื่อนไขใหม่: render ถ้า (รอบแรก) หรือ (updated เปลี่ยน)
       const shouldRender = (lastUpdated === null) || (updatedMark && updatedMark !== lastUpdated);
 
       if (shouldRender) {
-        // บันทึก lastUpdated (ถ้า updatedMark ว่าง ให้ใช้เวลาปัจจุบันเพื่อกัน render ซ้ำถี่)
         lastUpdated = updatedMark || String(Date.now());
 
         if (items.length === 0) {
-          ticker.textContent = "Waiting for check-ins...";
-          tsBox.textContent  = "";
-          setStatus("ยังไม่มีรายการใน data.json • ตรวจว่า Flow PUT เป็นลิสต์ {items:[], updated:\"\"} แล้วหรือยัง", false);
-          return; // ยังไม่ต้องเล่น effect
+          render([{name:"Waiting for check-ins...", order:"", department:"", timestamp:""}]);
+          setStatus("ยังไม่มีรายการใน data.json", false);
+          return;
         }
 
-        const text = renderText(items);
-        ticker.textContent = text;
-        tuneTickerSpeed(text);
-
-        ticker.classList.remove("flash");
-        requestAnimationFrame(() => ticker.classList.add("flash"));
-
-        tsBox.textContent = "Updated: " + formatLocal(updatedMark);
-        setStatus(`Polling every ${(POLL_MS/1000).toFixed(1)}s • Last update OK`, true);
+        render(items);
+        setStatus(`แสดง ${items.length} รายการ • Updated: ${fmt(updatedMark)} • Poll ${(POLL_MS/1000).toFixed(1)}s`, true);
       }
     }catch(e){
       setStatus("Fetch error: " + (e.message || e), false);

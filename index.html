@@ -116,19 +116,17 @@
 
       const name = (d.name ?? "").toString().trim();          // ชื่อจริงจาก SharePoint
       const order = (d.order ?? "").toString().trim();
-      const dept  = (d.department ?? "").toString().trim();   // มี/ไม่มีก็ได้
+      const dept  = (d.department ?? "").toString().trim();   // แผนกจาก SharePoint (ถ้ามี)
       const timestamp = (d.timestamp ?? "").toString();
 
       if(timestamp && timestamp !== lastStamp){
         lastStamp = timestamp;
 
-        // ป้ายลำดับ: มีค่า ค่อยแสดงวงเล็บ
+        // ส่วนต่อท้าย: มีลำดับ/แผนก ค่อยแสดง
         const orderPart = order ? ` (${ORDER_LABEL}: ${order})` : "";
-        // ถ้าต้องการแสดงแผนก เปิดสองบรรทัดด้านล่าง
-        const deptPart  = dept ? ` • ${dept}` : "";
-        const text = `🎉 ยินดีต้อนรับคุณ ${name || "ผู้เข้าร่วม"}${orderPart}${deptPart} 🎉`;
+        const deptPart  = dept  ? ` • ${dept}` : "";
 
-        // const text = `🎉 ยินดีต้อนรับคุณ ${name || "ผู้เข้าร่วม"}${orderPart} 🎉`;
+        const text = `🎉 ยินดีต้อนรับคุณ ${name || "ผู้เข้าร่วม"}${orderPart}${deptPart} 🎉`;
 
         ticker.textContent = text;
         tuneTickerSpeed(text);
@@ -150,5 +148,3 @@
 </script>
 </body>
 </html>
-
-

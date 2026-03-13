@@ -7,7 +7,7 @@
 
 <style>
   :root{
-    --dur: 12s;        /* ความยาวรอบเริ่มต้นของการวิ่ง */
+    --dur: 14s;        /* ความยาวรอบเริ่มต้นของการวิ่ง (จะถูก JS ปรับตามข้อความรวม) */
     --bg: #0b59a1;
   }
 
@@ -32,9 +32,8 @@
     border-bottom:3px solid rgba(255,255,255,.2);
   }
   .ticker-text{
-    display:inline-block; padding-left:60%; /* เห็นตัวอักษรตั้งแต่ต้น */
+    display:inline-block; padding-left:50%; /* ให้เห็นข้อความตั้งแต่ต้น */
     font-size:80px; font-weight:900; color:#fff;
-    /* ให้ ticker วิ่งตลอดเวลา */
     animation: ticker var(--dur) linear infinite;
     will-change: transform;
   }
@@ -43,7 +42,7 @@
     100% { transform: translateX(-100%); }
   }
 
-  /* Flash ซ้อนทับ โดยไม่ทับ ticker */
+  /* Flash overlay ไม่ทับ ticker */
   .flash{
     animation: ticker var(--dur) linear infinite, flashAnim .4s ease-in-out;
   }
@@ -70,23 +69,40 @@
 
 <script>
   // ===== Settings =====
-  const DATA_URL = "data.json";
-  const POLL_MS  = 1500;
+  const DATA_URL       = "data.json";
+  const POLL_MS        = 1500;
 
-  // ป้าย “ลำดับ”:
-  // 'th' = ลำดับ, 'en' = Registration No.
-  const LABEL_MODE = 'th';
-  const ORDER_LABEL = LABEL_MODE === 'th' ? 'ลำดับ' : 'Registration No.';
+  // ป้ายลำดับ: 'th' = ลำดับ, 'en' = Registration No.
+  const LABEL_MODE     = 'th';
+  const ORDER_LABEL    = LABEL_MODE === 'th' ? 'ลำดับ' : 'Registration No.';
 
-  const MIN_DUR  = 10;   // sec
-  const MAX_DUR  = 20;   // sec
-  const CHAR_PER = 25;   // chars per sec (มาก = วิ่งเร็ว)
+  // จำนวน "คนล่าสุด" ที่ต้องการแสดง (รวมเป็นข้อความวิ่ง)
+  const RECENT_LIMIT   = 5;
+
+  // ปรับความเร็วตามความยาวตัวอักษรรวม
+  const MIN_DUR  = 12;   // วินาทีต่ำสุด
+  const MAX_DUR  = 30;   // วินาทีสูงสุด
+  const CHAR_PER = 32;   // ตัวอักษรต่อวินาที (มาก = วิ่งเร็ว)
+
+  // เก็บหลายชื่อบนฝั่งหน้าเว็บ
+  // ถ้าอยากให้จำไว้หลังรีเฟรช ให้ตั้ง USE_STORAGE = true (ใช้ localStorage)
+  const USE_STORAGE    = false;
+  const STORAGE_KEY    = "tmd-recent";
 
   let lastStamp = null;
+  let recent = []; // [{name, order, department, timestamp}]
 
   const ticker  = document.getElementById("ticker");
   const tsBox   = document.getElementById("ts");
   const statusB = document.getElementById("status");
+
+  // โหลด recent จาก localStorage ถ้าเปิดใช้
+  if (USE_STORAGE) {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) recent = JSON.parse(raw) || [];
+    } catch {}
+  }
 
   function setStatus(msg, ok=true){
     statusB.textContent = msg;
@@ -98,45 +114,73 @@
     catch{ return ts || ""; }
   }
 
-  // ปรับความเร็วตามความยาวข้อความ (ผ่าน CSS var --dur)
-  function tuneTickerSpeed(text){
-    const len = (text || '').length || 1;
+  function tuneTickerSpeed(totalText){
+    const len = (totalText || '').length || 1;
     let sec = Math.round(len / CHAR_PER);
     sec = Math.min(MAX_DUR, Math.max(MIN_DUR, sec));
     ticker.style.setProperty('--dur', sec + 's');
+  }
+
+  // รวมหลายชื่อเป็นข้อความเดียว (ชื่อ • แผนก • ลำดับ)
+  function renderText(items){
+    // ตัวคั่นระหว่างคน
+    const SEP = "   •   ";
+    const parts = items.map(item => {
+      const name = (item.name ?? "").toString().trim() || "ผู้เข้าร่วม";
+      const order= (item.order ?? "").toString().trim();
+      const dept = (item.department ?? "").toString().trim();
+      const orderPart = order ? `(${ORDER_LABEL}: ${order})` : "";
+      const deptPart  = dept ? `• ${dept}` : "";
+      return `🎉 ยินดีต้อนรับคุณ ${name} ${orderPart} ${deptPart} 🎉`;
+    });
+    return parts.join(SEP);
+  }
+
+  function pushRecent(entry){
+    // ถ้า timestamp ซ้ำ ให้ไม่เพิ่ม (กันกรณีรอบ polling ชิดกันมาก)
+    if (recent.length && recent[0].timestamp === entry.timestamp) return;
+    recent.unshift(entry);              // เพิ่มไว้หัวแถว
+    if (recent.length > RECENT_LIMIT) { // จำกัดความยาว
+      recent = recent.slice(0, RECENT_LIMIT);
+    }
+    if (USE_STORAGE) {
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(recent)); } catch {}
+    }
   }
 
   async function load(){
     try{
       const r = await fetch(DATA_URL + "?t=" + Date.now(), { cache: "no-store" });
       if(!r.ok) throw new Error("HTTP " + r.status);
+
       let d = await r.json();
-      // Fallback: ถ้าไฟล์เป็นสตริง JSON
       if(typeof d === "string"){ try{ d = JSON.parse(d); } catch(e){} }
 
-      const name = (d.name ?? "").toString().trim();          // ชื่อจริงจาก SharePoint
-      const order = (d.order ?? "").toString().trim();
-      const dept  = (d.department ?? "").toString().trim();   // แผนกจาก SharePoint (ถ้ามี)
+      const name = (d.name ?? "").toString().trim();
+      const order= (d.order ?? "").toString().trim();
+      const dept = (d.department ?? "").toString().trim();
       const timestamp = (d.timestamp ?? "").toString();
 
       if(timestamp && timestamp !== lastStamp){
         lastStamp = timestamp;
 
-        // ส่วนต่อท้าย: มีลำดับ/แผนก ค่อยแสดง
-        const orderPart = order ? ` (${ORDER_LABEL}: ${order})` : "";
-        const deptPart  = dept  ? ` • ${dept}` : "";
+        // เก็บรายการล่าสุดไว้ใน recent
+        pushRecent({ name, order, department: dept, timestamp });
 
-        const text = `🎉 ยินดีต้อนรับคุณ ${name || "ผู้เข้าร่วม"}${orderPart}${deptPart} 🎉`;
-
+        // ประกอบเป็นข้อความยาวสำหรับ ticker
+        const text = renderText(recent);
         ticker.textContent = text;
+
+        // ปรับความเร็วตามความยาวรวม
         tuneTickerSpeed(text);
 
         // Flash overlay โดยไม่ทำให้ ticker หยุด
         ticker.classList.remove("flash");
         requestAnimationFrame(() => ticker.classList.add("flash"));
 
+        // เวลา/สถานะ
         tsBox.textContent = "Updated: " + formatLocal(timestamp);
-        setStatus("Polling every " + (POLL_MS/1000) + "s • Last update OK", true);
+        setStatus(`Polling every ${ (POLL_MS/1000).toFixed(1) }s • Last update OK`, true);
       }
     }catch(e){
       setStatus("Fetch error: " + (e.message || e), false);

@@ -1,102 +1,80 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="utf-8">
+<meta charset="utf-8" />
 <title>TMD Check-in Live Ticker</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 
 <style>
-  body {
-    margin: 0;
-    background: #0b59a1;
-    font-family: "Segoe UI", system-ui, -apple-system, Arial, Helvetica, sans-serif;
-    overflow: hidden;
+  :root{
+    --dur: 12s;        /* ความยาวรอบเริ่มต้นของการวิ่ง */
+    --bg: #0b59a1;
+  }
+
+  body{
+    margin:0; background:var(--bg);
+    font-family:"Segoe UI", system-ui, -apple-system, Arial, Helvetica, sans-serif;
+    overflow:hidden;
   }
 
   /* Header */
-  .header {
-    text-align: center;
-    padding: 24px;
-    color: #ffffff;
-    font-size: 40px;
-    font-weight: 800;
-    letter-spacing: 0.5px;
+  .header{
+    text-align:center; padding:24px;
+    color:#fff; font-size:40px; font-weight:800; letter-spacing:.5px;
   }
 
   /* Ticker area */
-  .ticker-container {
-    width: 100%;
-    white-space: nowrap;
-    overflow: hidden;
-    box-sizing: border-box;
-    padding: 20px 0;
-    background: rgba(255,255,255,0.10);
-    border-top: 3px solid rgba(255,255,255,0.2);
-    border-bottom: 3px solid rgba(255,255,255,0.2);
+  .ticker-container{
+    width:100%; white-space:nowrap; overflow:hidden; box-sizing:border-box;
+    padding:20px 0;
+    background:rgba(255,255,255,.10);
+    border-top:3px solid rgba(255,255,255,.2);
+    border-bottom:3px solid rgba(255,255,255,.2);
   }
-  .ticker-text {
-    display: inline-block;
-    padding-left: 100%;
-    font-size: 80px;
-    font-weight: 900;
-    color: #ffffff;
-    animation: ticker 12s linear infinite; /* จะปรับระยะเวลา runtime ตามความยาวข้อความ */
+  .ticker-text{
+    display:inline-block; padding-left:60%; /* เห็นตัวอักษรตั้งแต่ต้น */
+    font-size:80px; font-weight:900; color:#fff;
+    /* ให้ ticker วิ่งตลอดเวลา */
+    animation: ticker var(--dur) linear infinite;
     will-change: transform;
   }
-  @keyframes ticker {
+  @keyframes ticker{
     0%   { transform: translateX(0%); }
     100% { transform: translateX(-100%); }
   }
 
-  /* Flash เมื่อมีข้อมูลใหม่ */
-  .flash { animation: flashAnim 0.4s ease-in-out; }
-  @keyframes flashAnim {
-    0% { color: #22c55e; }
-    100% { color: #ffffff; }
+  /* Flash ซ้อนทับ โดยไม่ทับ ticker */
+  .flash{
+    animation: ticker var(--dur) linear infinite, flashAnim .4s ease-in-out;
+  }
+  @keyframes flashAnim{
+    0% { color:#22c55e; }
+    100% { color:#ffffff; }
   }
 
-  /* เวลา / สถานะ */
-  .meta {
-    color: #d3e6ff;
-    text-align: center;
-    margin-top: 12px;
-    font-size: 18px;
-    opacity: .95;
-  }
-  .status {
-    color: rgba(255,255,255,.8);
-    font-size: 14px;
-    text-align: center;
-    margin-top: 4px;
-    opacity: .8;
-  }
+  /* Meta */
+  .meta{ color:#d3e6ff; text-align:center; margin-top:12px; font-size:18px; opacity:.95; }
+  .status{ color:rgba(255,255,255,.8); text-align:center; font-size:14px; margin-top:4px; opacity:.85; }
 </style>
 </head>
 
 <body>
-
-  <div class="header">
-    ✔ TMD 60th Anniversary • Live Check-in Hello World
-  </div>
+  <div class="header">✔ TMD 60th Anniversary • Live Check-in</div>
 
   <div class="ticker-container">
-    <div id="ticker" class="ticker-text">
-      Waiting for check-ins...
-    </div>
+    <div id="ticker" class="ticker-text">Waiting for check-ins...</div>
   </div>
 
-  <div class="meta">
-    <span id="ts"></span>
-  </div>
+  <div class="meta"><span id="ts"></span></div>
   <div id="status" class="status"></div>
 
 <script>
-  // === Settings ===
+  // ===== Settings =====
   const DATA_URL = "data.json";
-  const POLL_MS  = 1500;          // ความถี่การโหลดข้อมูล
-  const MIN_DUR  = 10;            // ระยะเวลาวิ่งขั้นต่ำ (วินาที)
-  const MAX_DUR  = 20;            // ระยะเวลาวิ่งสูงสุด (วินาที)
-  const CHAR_PER = 25;            // ตัวอักษรต่อวินาที (ยิ่งมาก ยิ่งเร็ว)
+  const POLL_MS  = 1500;   // ความถี่การโหลด
+  const MIN_DUR  = 10;     // ระยะเวลาวิ่งขั้นต่ำ (วินาที)
+  const MAX_DUR  = 20;     // ระยะเวลาวิ่งสูงสุด (วินาที)
+  const CHAR_PER = 25;     // ตัวอักษรต่อวินาที (ยิ่งมาก วิ่งเร็วขึ้น)
 
   let lastStamp = null;
 
@@ -106,77 +84,63 @@
 
   function setStatus(msg, ok=true){
     statusB.textContent = msg;
-    statusB.style.color = ok ? "rgba(255,255,255,.8)" : "#ffd9d9";
+    statusB.style.color = ok ? "rgba(255,255,255,.85)" : "#ffd9d9";
   }
 
   function formatLocal(ts){
-    try { return new Date(ts).toLocaleString('th-TH', { hour12:false }); }
-    catch { return ts || ""; }
+    try{
+      return new Date(ts).toLocaleString('th-TH', { hour12:false });
+    }catch{ return ts || ""; }
   }
 
-  // ปรับความเร็ว ticker ตามความยาวข้อความ
+  // ปรับความเร็วตามความยาวข้อความ (ผ่าน CSS variable --dur)
   function tuneTickerSpeed(text){
     const len = (text || '').length || 1;
-    // ค่าประมาณ: ความยาว / CHAR_PER = ระยะเวลาวิ่ง (วินาที)
     let sec = Math.round(len / CHAR_PER);
     sec = Math.min(MAX_DUR, Math.max(MIN_DUR, sec));
-    ticker.style.animationDuration = sec + "s";
+    ticker.style.setProperty('--dur', sec + 's');
   }
 
-  async function load() {
-    try {
+  async function load(){
+    try{
       const r = await fetch(DATA_URL + "?t=" + Date.now(), { cache: "no-store" });
-      // กรณี network ขัดข้อง
-      if (!r.ok) throw new Error("HTTP " + r.status);
+      if(!r.ok) throw new Error("HTTP " + r.status);
 
       let d = await r.json();
-      // Fallback: ถ้าเผลอได้ "สตริง JSON" ให้ parse อีกรอบ
-      if (typeof d === "string") {
-        try { d = JSON.parse(d); } catch(e){}
+      // Fallback: ถ้าไฟล์เป็น "สตริง JSON" ให้ parse ซ้ำ
+      if(typeof d === "string"){
+        try{ d = JSON.parse(d); }catch(e){}
       }
 
       const name = (d.name ?? "Guest").toString();
       const order = (d.order ?? "").toString();
       const timestamp = (d.timestamp ?? "").toString();
 
-      if (timestamp && timestamp !== lastStamp) {
+      if(timestamp && timestamp !== lastStamp){
         lastStamp = timestamp;
 
-        // สร้างข้อความ
         const text = `🎉 ยินดีต้อนรับคุณ ${name}  (Order: ${order}) 🎉`;
         ticker.textContent = text;
 
-        // ปรับความเร็วตามความยาวข้อความ
+        // ความเร็ววิ่งตามความยาวข้อความ
         tuneTickerSpeed(text);
 
-        // Flash effect
+        // Flash effect ซ้อน โดยไม่ทำลาย ticker
         ticker.classList.remove("flash");
-        void ticker.offsetWidth; // reflow
-        ticker.classList.add("flash");
+        requestAnimationFrame(() => ticker.classList.add("flash"));
 
-        // รีสตาร์ทแอนิเมชัน (เริ่มวิ่งจากต้น)
-        const prev = getComputedStyle(ticker).animation;
-        ticker.style.animation = "none";
-        // ใช้ rAF เพื่อให้ browser commit style ก่อนใส่กลับ
-        requestAnimationFrame(() => {
-          ticker.style.animation = prev || "";
-        });
-
-        // เวลาอัปเดต
+        // เวลา/สถานะ
         tsBox.textContent = "Updated: " + formatLocal(timestamp);
         setStatus("Polling every " + (POLL_MS/1000) + "s • Last update OK", true);
       }
-    } catch (e) {
+    }catch(e){
       setStatus("Fetch error: " + (e.message || e), false);
-      // ไม่ throw ต่อ เพื่อให้ interval ทำงานต่อได้
     }
   }
 
-  // เริ่มต้น
+  // เริ่มทำงาน
   load();
   setInterval(load, POLL_MS);
 </script>
-
 </body>
 </html>
-

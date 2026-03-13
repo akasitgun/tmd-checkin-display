@@ -90,7 +90,7 @@
     <ul id="list" class="list">
       <!-- จะถูกเติมรายการแบบคนละบรรทัด -->
       <li class="item">
-        <div class="name">Waiting for check-ins...</div>
+        <div class="name">Loading…</div>
         <div class="meta"></div>
       </li>
     </ul>
@@ -100,9 +100,9 @@
 
 <script>
   // ===== Settings =====
-  // ใช้ RAW เพื่อให้เห็นผลไว
+  // ใช้ RAW เพื่อให้เห็นผลไวหลัง PUT
   const DATA_URL     = "https://raw.githubusercontent.com/akasitgun/tmd-checkin-display/main/data.json";
-  const POLL_MS      = 700;
+  const POLL_MS      = 700;                          // เร็วขึ้น = ไวขึ้น (ระวังโควต้า client)
 
   // ป้ายลำดับ: 'th' = ลำดับ, 'en' = Registration No.
   const LABEL_MODE   = 'th';
@@ -111,7 +111,10 @@
   // จำนวนแถวล่าสุดที่แสดง
   const RECENT_LIMIT = 10;
 
-  let lastUpdated = null;
+  // ตัวแปรใช้ตรวจว่าควร re-render ไหม
+  let lastUpdated = null;   // เทียบ data.updated (หรือ timestamp ตัวแรก)
+  let lastText    = "";     // เทียบ “เนื้อหาที่จะแสดง” ทั้งหมด
+  let lastCount   = -1;     // เทียบจำนวนรายการ
 
   const $list   = document.getElementById('list');
   const $status = document.getElementById('status');
@@ -120,10 +123,7 @@
     $status.textContent = msg;
     $status.style.color = ok ? "rgba(211,230,255,.95)" : "#ffd9d9";
   }
-  function fmt(ts){
-    try{ return new Date(ts).toLocaleString('th-TH',{hour12:false}); }
-    catch{ return ts || ""; }
-  }
+  function fmt(ts){ try{ return new Date(ts).toLocaleString('th-TH',{hour12:false}); }catch{ return ts||""; } }
 
   // ทำให้ข้อมูลมารูปเดียวกันเสมอ
   function normalize(d){
@@ -134,10 +134,9 @@
   }
 
   // วาดรายการเป็นคนละบรรทัด
-  function render(lines){
-    // ล้างของเดิม
+  function renderLines(items){
     $list.innerHTML = "";
-    lines.forEach(it => {
+    items.forEach(it => {
       const li = document.createElement('li');
       li.className = 'item';
 
@@ -165,6 +164,7 @@
     try{
       const r = await fetch(DATA_URL + "?t=" + Date.now(), { cache: "no-store" });
       if (!r.ok) throw new Error("HTTP " + r.status);
+
       let raw = await r.json();
       if (typeof raw === "string") { try{ raw = JSON.parse(raw); }catch{} }
 
@@ -175,18 +175,30 @@
         .slice(0, RECENT_LIMIT);
 
       const updatedMark = data.updated || (items[0]?.timestamp || "");
-      const shouldRender = (lastUpdated === null) || (updatedMark && updatedMark !== lastUpdated);
+      const countNow    = items.length;
+
+      // สร้าง “key” ของเนื้อหา เพื่อเช็คว่าควร re-render ไหม
+      const contentKey  = items.map(it => `${it.name}|${it.order}|${it.department}|${it.timestamp}`).join('||');
+
+      // เงื่อนไข render: (ครั้งแรก) หรือ (updated เปลี่ยน) หรือ (จำนวน/เนื้อหาเปลี่ยน)
+      const shouldRender =
+        (lastUpdated === null) ||
+        (updatedMark && updatedMark !== lastUpdated) ||
+        (countNow !== lastCount) ||
+        (contentKey !== lastText);
 
       if (shouldRender) {
         lastUpdated = updatedMark || String(Date.now());
+        lastCount   = countNow;
+        lastText    = contentKey;
 
         if (items.length === 0) {
-          render([{name:"Waiting for check-ins...", order:"", department:"", timestamp:""}]);
+          renderLines([{name:"Waiting for check-ins...", order:"", department:"", timestamp:""}]);
           setStatus("ยังไม่มีรายการใน data.json", false);
           return;
         }
 
-        render(items);
+        renderLines(items);
         setStatus(`แสดง ${items.length} รายการ • Updated: ${fmt(updatedMark)} • Poll ${(POLL_MS/1000).toFixed(1)}s`, true);
       }
     }catch(e){
@@ -199,4 +211,4 @@
 </script>
 </body>
 </html>
-
+``

@@ -69,7 +69,9 @@
 
 <script>
   // ===== Settings =====
+  // ใช้ RAW เพื่ออัปเดตไวหลัง commit
   const DATA_URL     = "https://raw.githubusercontent.com/akasitgun/tmd-checkin-display/main/data.json";
+  // ลดรอบ polling ให้ไวขึ้น
   const POLL_MS      = 700;
 
   // ป้ายลำดับ: 'th' = ลำดับ, 'en' = Registration No.
@@ -126,24 +128,16 @@
     if (!d) return { items: [], updated: "" };
     if (Array.isArray(d.items)) {
       return {
-        items: d.items.slice(),              // โครงหลายคนแบบใหม่
+        items: d.items.slice(),
         updated: d.updated || (d.items[0]?.timestamp || "")
       };
     }
-    // fallback: โครงเดิม (เดี่ยว)
     if (typeof d === "object") {
-      return {
-        items: [d],
-        updated: d.timestamp || ""
-      };
+      return { items: [d], updated: d.timestamp || "" };
     }
-    // fallback: ถ้าเป็น string JSON เผลอมา
     try {
-      const j = JSON.parse(d);
-      return normalizeData(j);
-    } catch {
-      return { items: [], updated: "" };
-    }
+      const j = JSON.parse(d); return normalizeData(j);
+    } catch { return { items: [], updated: "" }; }
   }
 
   async function load(){
@@ -188,8 +182,7 @@
 
   // เริ่มทำงาน
   load();                        // โหลดครั้งแรก (ดึงหลายชื่อทันที)
-  setInterval(load, POLL_MS);    // แล้วค่อยอัปเดตตามรอบ
+  setInterval(load, POLL_MS);    // แล้วอัปเดตตามรอบ
 </script>
 </body>
 </html>
-

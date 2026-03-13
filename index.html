@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8" />
-<title>TMD Check-in – Wow Display + Spotlight</title>
+<title>TMD Check-in – Wow Display + Spotlight(5)</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <style>
   :root{
@@ -57,6 +57,7 @@
     border: 1px solid rgba(255,255,255,.18);
     box-shadow: 0 30px 120px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.25);
     animation: popIn .55s ease-out;
+    max-width: 1200px;
   }
   @keyframes popIn{
     from{ opacity:0; transform: scale(.94); }
@@ -130,7 +131,7 @@
   </div>
 
   <div class="wrap">
-    <!-- MODE: SPOTLIGHT (latest) -->
+    <!-- MODE: SPOTLIGHT (latest N persons) -->
     <div id="mode-spotlight" class="mode active">
       <div class="spot-wrap">
         <div class="spot-glow"></div>
@@ -180,7 +181,12 @@
   const POLL_MS    = 1200;          // รอบดึงข้อมูล
   const PAGE_SIZE  = 60;            // GRID: ต่อหน้า
   const ROTATE_MS  = 8000;          // เวลาเปลี่ยนโหมดทั่วไป (Hero/Grid/Ticker)
-  const SPOT_MS    = 3000;          // เวลาแสดง Spotlight (ฟูลสกรีน)
+
+  // Spotlight: โชว์ N คนล่าสุด ไล่ทีละคน
+  const SPOT_COUNT   = 5;           // <<< จำนวนคนที่จะโชว์
+  const SPOT_ITEM_MS = 2000;        // <<< เวลา/คน (ms)
+
+  // ลำดับโหมด
   const MODES      = ["spotlight","hero","grid","ticker"];
 
   const LABEL_MODE = 'th';
@@ -191,6 +197,11 @@
   let items   = [];     // ข้อมูลทั้งหมดหลัง normalize/sort
   let cursor  = 0;      // GRID page cursor
   let modeIdx = 0;      // mode cursor
+
+  // timers
+  let pollTimer   = null;
+  let modeTimer   = null;
+  let spotTimer   = null;
 
   const $ = s => document.querySelector(s);
   const $$= s => document.querySelectorAll(s);
@@ -216,18 +227,12 @@
     return updated + "::" + sig;
   }
 
-  /* ---------- Spotlight ---------- */
-  function renderSpotlight(){
-    if (!items.length){
-      $("#spot-name").textContent = "Waiting…";
-      $("#spot-meta").textContent = "";
-      return;
-    }
-    const x = items[0];
-    $("#spot-name").textContent = x.name || "ผู้เข้าร่วม";
-    $("#spot-meta").textContent = `${ORDER_LABEL}: ${x.order||"-"} • ${(x.department||"")} • ${fmt(x.timestamp)}`;
+  /* ---------- Spotlight (sequence N persons) ---------- */
+  function renderSpotItem(x){
+    $("#spot-name").textContent = x?.name || "ผู้เข้าร่วม";
+    $("#spot-meta").textContent = `${ORDER_LABEL}: ${x?.order||"-"} • ${(x?.department||"")} • ${fmt(x?.timestamp)}`;
 
-    // mini-confetti
+    // confetti
     const cont = $("#confetti");
     cont.innerHTML = "";
     const N = 50;
@@ -236,12 +241,29 @@
       const h  = Math.floor(Math.random()*360);
       el.style.left = Math.random()*100 + "%";
       el.style.background = `hsl(${h} 90% 60%)`;
-      el.style.animationDuration = (2.5 + Math.random()*1.5) + "s";
+      el.style.animationDuration = (2.0 + Math.random()*1.5) + "s";
       el.style.transform = `translateX(${(Math.random()*40-20)}px)`;
       cont.appendChild(el);
     }
-    // ลบ confetti หลังจบเพื่อไม่สะสม DOM
-    setTimeout(()=>{ cont.innerHTML=""; }, SPOT_MS);
+    setTimeout(()=>{ cont.innerHTML=""; }, SPOT_ITEM_MS);
+  }
+
+  function runSpotlightSequence(onDone){
+    clearTimeout(spotTimer);
+    const list = items.slice(0, SPOT_COUNT);   // ล่าสุด N คน
+    if (list.length === 0){ onDone && onDone(); return; }
+
+    let i = 0;
+    const showNext = () => {
+      renderSpotItem(list[i]);
+      i++;
+      if (i < list.length) {
+        spotTimer = setTimeout(showNext, SPOT_ITEM_MS);
+      } else {
+        spotTimer = setTimeout(()=> onDone && onDone(), SPOT_ITEM_MS);
+      }
+    };
+    showNext();
   }
 
   /* ---------- HERO ---------- */
@@ -297,6 +319,40 @@
     $(`#mode-${name}`).classList.add("active");
   }
 
+  /* ---------- Mode scheduler ---------- */
+  function showMode(name){
+    clearTimeout(modeTimer);
+    clearTimeout(spotTimer);
+
+    activateMode(name);
+
+    if (name === "spotlight"){
+      runSpotlightSequence(()=> {
+        // ต่อไป Hero หลังโชว์ครบ N คน
+        modeIdx = (MODES.indexOf("hero"));
+        showMode(MODES[modeIdx]);
+        // หลังเข้า Hero ตั้งรอบหมุนต่อไปตาม ROTATE_MS
+        modeTimer = setTimeout(nextMode, ROTATE_MS);
+      });
+    } else if (name === "hero"){
+      renderHero();
+      modeTimer = setTimeout(nextMode, ROTATE_MS);
+    } else if (name === "grid"){
+      renderGrid();
+      modeTimer = setTimeout(nextMode, ROTATE_MS);
+    } else if (name === "ticker"){
+      renderTicker();
+      modeTimer = setTimeout(nextMode, ROTATE_MS);
+    }
+  }
+
+  function nextMode(){
+    // หมุน: spotlight → hero → grid → ticker → spotlight …
+    const i = MODES.indexOf(document.querySelector(".mode.active").id.replace("mode-",""));
+    modeIdx = (i + 1) % MODES.length;
+    showMode(MODES[modeIdx]);
+  }
+
   /* ---------- Data loop ---------- */
   async function load(){
     try{
@@ -311,52 +367,33 @@
       items = list;
       $("#meta").textContent = `Updated: ${fmt(data.updated || list[0]?.timestamp || "")} • Total ${items.length}`;
 
+      // ถ้าข้อมูลเปลี่ยน ให้รีเซ็ต page และ re-render พร้อมรีสตาร์ท spotlight หากอยู่ในโหมดนั้น
       if (key !== lastKey){
         lastKey = key;
-        cursor  = 0;  // reset grid paging เมื่อข้อมูลเปลี่ยน
-        renderSpotlight();
-        renderHero();
-        renderGrid();
-        renderTicker();
-        $("#status").textContent = `Showing ${items.length} items • rotate ${ROTATE_MS/1000}s • spotlight ${SPOT_MS/1000}s • poll ${POLL_MS}ms`;
+        cursor  = 0;
+        const current = document.querySelector(".mode.active")?.id?.replace("mode-","");
+        if (current === "spotlight"){
+          // รีสตาร์ทลำดับ 5 คนล่าสุดทันที
+          runSpotlightSequence(()=> {
+            // ไม่เปลี่ยนโหมดที่นี่ ปล่อยให้ scheduler จัดการต่อ
+          });
+        } else {
+          // อัปเดตเนื้อหาของโหมดปัจจุบัน
+          if (current === "hero")   renderHero();
+          if (current === "grid")   renderGrid();
+          if (current === "ticker") renderTicker();
+        }
+        $("#status").textContent = `Showing ${items.length} items • rotate ${ROTATE_MS/1000}s • spotlight ${(SPOT_ITEM_MS*SPOT_COUNT/1000).toFixed(1)}s • poll ${POLL_MS}ms`;
       }
     }catch(e){
       $("#status").textContent = "Fetch error: " + (e.message||e);
     }
   }
 
-  // หมุนโหมด: Spotlight (สั้น) → Hero → Grid → Ticker
-  let rotateTimer = null;
-  function scheduleRotate(){
-    clearInterval(rotateTimer);
-    // รอบแรก: ให้ Spotlight แสดงสั้น ๆ ก่อนค่อยเข้าสู่รอบ ROTATE_MS
-    rotateTimer = setInterval(()=>{
-      modeIdx = (modeIdx + 1) % MODES.length;
-      const name = MODES[modeIdx];
-      activateMode(name);
-      if (name==="spotlight"){
-        renderSpotlight();
-        // แสดงสั้น ๆ แล้วสลับเร็วขึ้นครั้งเดียว
-        setTimeout(()=>{
-          modeIdx = (modeIdx + 1) % MODES.length;
-          const n2 = MODES[modeIdx];
-          activateMode(n2);
-          if (n2==="grid") renderGrid();
-        }, SPOT_MS);
-      }else if (name==="grid"){
-        renderGrid();
-      }else if (name==="ticker"){
-        renderTicker();
-      }
-    }, ROTATE_MS);
-  }
-
   // init
-  activateMode(MODES[modeIdx]); // start spotlight
-  renderSpotlight();
+  showMode("spotlight");                 // เริ่มที่ Spotlight
   load();
-  setInterval(load, POLL_MS);
-  scheduleRotate();
+  pollTimer = setInterval(load, POLL_MS);
 </script>
 </body>
 </html>

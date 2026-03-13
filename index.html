@@ -9,11 +9,11 @@
   body {
     margin: 0;
     background: #0b59a1;
-    font-family: "Segoe UI", sans-serif;
+    font-family: "Segoe UI", system-ui, -apple-system, Arial, Helvetica, sans-serif;
     overflow: hidden;
   }
 
-  /* Header ต้อนรับ */
+  /* Header */
   .header {
     text-align: center;
     padding: 24px;
@@ -23,7 +23,7 @@
     letter-spacing: 0.5px;
   }
 
-  /* บริเวณ ticker */
+  /* Ticker area */
   .ticker-container {
     width: 100%;
     white-space: nowrap;
@@ -34,36 +34,41 @@
     border-top: 3px solid rgba(255,255,255,0.2);
     border-bottom: 3px solid rgba(255,255,255,0.2);
   }
-
   .ticker-text {
     display: inline-block;
     padding-left: 100%;
     font-size: 80px;
     font-weight: 900;
     color: #ffffff;
-    animation: ticker 12s linear infinite;
+    animation: ticker 12s linear infinite; /* จะปรับระยะเวลา runtime ตามความยาวข้อความ */
+    will-change: transform;
   }
-
   @keyframes ticker {
     0%   { transform: translateX(0%); }
     100% { transform: translateX(-100%); }
   }
 
-  /* เมื่อโหลดชื่อใหม่ให้มี effect */
-  .flash {
-    animation: flashAnim 0.4s ease-in-out;
-  }
+  /* Flash เมื่อมีข้อมูลใหม่ */
+  .flash { animation: flashAnim 0.4s ease-in-out; }
   @keyframes flashAnim {
     0% { color: #22c55e; }
     100% { color: #ffffff; }
   }
 
-  /* เวลา update ล่าสุด */
-  .timestamp {
+  /* เวลา / สถานะ */
+  .meta {
     color: #d3e6ff;
     text-align: center;
-    margin-top: 16px;
-    font-size: 20px;
+    margin-top: 12px;
+    font-size: 18px;
+    opacity: .95;
+  }
+  .status {
+    color: rgba(255,255,255,.8);
+    font-size: 14px;
+    text-align: center;
+    margin-top: 4px;
+    opacity: .8;
   }
 </style>
 </head>
@@ -80,50 +85,94 @@
     </div>
   </div>
 
-  <div id="ts" class="timestamp"></div>
+  <div class="meta">
+    <span id="ts"></span>
+  </div>
+  <div id="status" class="status"></div>
 
 <script>
+  // === Settings ===
   const DATA_URL = "data.json";
-  const POLL_MS = 1500;
+  const POLL_MS  = 1500;          // ความถี่การโหลดข้อมูล
+  const MIN_DUR  = 10;            // ระยะเวลาวิ่งขั้นต่ำ (วินาที)
+  const MAX_DUR  = 20;            // ระยะเวลาวิ่งสูงสุด (วินาที)
+  const CHAR_PER = 25;            // ตัวอักษรต่อวินาที (ยิ่งมาก ยิ่งเร็ว)
 
   let lastStamp = null;
-  const ticker = document.getElementById("ticker");
-  const tsBox = document.getElementById("ts");
+
+  const ticker  = document.getElementById("ticker");
+  const tsBox   = document.getElementById("ts");
+  const statusB = document.getElementById("status");
+
+  function setStatus(msg, ok=true){
+    statusB.textContent = msg;
+    statusB.style.color = ok ? "rgba(255,255,255,.8)" : "#ffd9d9";
+  }
+
+  function formatLocal(ts){
+    try { return new Date(ts).toLocaleString('th-TH', { hour12:false }); }
+    catch { return ts || ""; }
+  }
+
+  // ปรับความเร็ว ticker ตามความยาวข้อความ
+  function tuneTickerSpeed(text){
+    const len = (text || '').length || 1;
+    // ค่าประมาณ: ความยาว / CHAR_PER = ระยะเวลาวิ่ง (วินาที)
+    let sec = Math.round(len / CHAR_PER);
+    sec = Math.min(MAX_DUR, Math.max(MIN_DUR, sec));
+    ticker.style.animationDuration = sec + "s";
+  }
 
   async function load() {
     try {
-      const r = await fetch(DATA_URL + "?t=" + Date.now());
-      const d = await r.json();
+      const r = await fetch(DATA_URL + "?t=" + Date.now(), { cache: "no-store" });
+      // กรณี network ขัดข้อง
+      if (!r.ok) throw new Error("HTTP " + r.status);
 
-      const name = d.name || "Guest";
-      const order = d.order || "";
-      const timestamp = d.timestamp || "";
+      let d = await r.json();
+      // Fallback: ถ้าเผลอได้ "สตริง JSON" ให้ parse อีกรอบ
+      if (typeof d === "string") {
+        try { d = JSON.parse(d); } catch(e){}
+      }
 
-      if (timestamp !== lastStamp && timestamp !== "") {
+      const name = (d.name ?? "Guest").toString();
+      const order = (d.order ?? "").toString();
+      const timestamp = (d.timestamp ?? "").toString();
+
+      if (timestamp && timestamp !== lastStamp) {
         lastStamp = timestamp;
 
-        // ข้อความที่วิ่งใน ticker
-        ticker.textContent = `🎉 ยินดีต้อนรับคุณ ${name}  (Order: ${order}) 🎉`;
+        // สร้างข้อความ
+        const text = `🎉 ยินดีต้อนรับคุณ ${name}  (Order: ${order}) 🎉`;
+        ticker.textContent = text;
 
-        // Flash effect เมื่อมีข้อมูลใหม่
+        // ปรับความเร็วตามความยาวข้อความ
+        tuneTickerSpeed(text);
+
+        // Flash effect
         ticker.classList.remove("flash");
-        void ticker.offsetWidth; /* trigger reflow */
+        void ticker.offsetWidth; // reflow
         ticker.classList.add("flash");
 
-        // Reset animation เพื่อเริ่มวิ่งใหม่
+        // รีสตาร์ทแอนิเมชัน (เริ่มวิ่งจากต้น)
+        const prev = getComputedStyle(ticker).animation;
         ticker.style.animation = "none";
-        setTimeout(() => {
-          ticker.style.animation = "";
-        }, 50);
+        // ใช้ rAF เพื่อให้ browser commit style ก่อนใส่กลับ
+        requestAnimationFrame(() => {
+          ticker.style.animation = prev || "";
+        });
 
-        // แสดงเวลาล่าสุด
-        tsBox.textContent = "Updated: " + new Date(timestamp).toLocaleString();
+        // เวลาอัปเดต
+        tsBox.textContent = "Updated: " + formatLocal(timestamp);
+        setStatus("Polling every " + (POLL_MS/1000) + "s • Last update OK", true);
       }
     } catch (e) {
-      console.error("Error fetching data", e);
+      setStatus("Fetch error: " + (e.message || e), false);
+      // ไม่ throw ต่อ เพื่อให้ interval ทำงานต่อได้
     }
   }
 
+  // เริ่มต้น
   load();
   setInterval(load, POLL_MS);
 </script>

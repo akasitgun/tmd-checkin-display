@@ -7,51 +7,22 @@
 
 <style>
   :root{
-    --dur: 16s;        /* ระยะเวลาวิ่งเริ่มต้น (จะถูก JS ปรับตามความยาวข้อความรวม) */
+    --dur: 16s;        /* จะถูก JS ปรับตามความยาวข้อความรวม */
     --bg: #0b59a1;
   }
-
-  body{
-    margin:0; background:var(--bg);
-    font-family:"Segoe UI", system-ui, -apple-system, Arial, Helvetica, sans-serif;
-    overflow:hidden;
-  }
-
-  /* Header */
-  .header{
-    text-align:center; padding:24px;
-    color:#fff; font-size:40px; font-weight:800; letter-spacing:.5px;
-  }
-
-  /* Ticker area */
-  .ticker-container{
-    width:100%; white-space:nowrap; overflow:hidden; box-sizing:border-box;
-    padding:20px 0;
-    background:rgba(255,255,255,.10);
-    border-top:3px solid rgba(255,255,255,.2);
-    border-bottom:3px solid rgba(255,255,255,.2);
-  }
-  .ticker-text{
-    display:inline-block; padding-left:45%;  /* ให้เห็นข้อความตั้งแต่ต้น */
-    font-size:60px; font-weight:900; color:#fff;
-    animation: ticker var(--dur) linear infinite;
-    will-change: transform;
-  }
-  @keyframes ticker{
-    0%   { transform: translateX(0%); }
-    100% { transform: translateX(-100%); }
-  }
-
-  /* Flash overlay (ซ้อน ไม่ทับ ticker) */
-  .flash{
-    animation: ticker var(--dur) linear infinite, flashAnim .4s ease-in-out;
-  }
-  @keyframes flashAnim{
-    0% { color:#22c55e; }
-    100% { color:#ffffff; }
-  }
-
-  /* Meta */
+  body{ margin:0; background:var(--bg);
+        font-family:"Segoe UI", system-ui, -apple-system, Arial, Helvetica, sans-serif;
+        overflow:hidden; }
+  .header{ text-align:center; padding:24px; color:#fff; font-size:40px; font-weight:800; letter-spacing:.5px; }
+  .ticker-container{ width:100%; white-space:nowrap; overflow:hidden; box-sizing:border-box;
+                     padding:20px 0; background:rgba(255,255,255,.10);
+                     border-top:3px solid rgba(255,255,255,.2);
+                     border-bottom:3px solid rgba(255,255,255,.2); }
+  .ticker-text{ display:inline-block; padding-left:45%; font-size:80px; font-weight:900; color:#fff;
+                animation: ticker var(--dur) linear infinite; will-change: transform; }
+  @keyframes ticker{ 0% { transform: translateX(0%);} 100% { transform: translateX(-100%);} }
+  .flash{ animation: ticker var(--dur) linear infinite, flashAnim .4s ease-in-out; }
+  @keyframes flashAnim{ 0%{ color:#22c55e;} 100%{ color:#ffffff;} }
   .meta{ color:#d3e6ff; text-align:center; margin-top:12px; font-size:18px; opacity:.95; }
   .status{ color:rgba(255,255,255,.85); text-align:center; font-size:14px; margin-top:4px; opacity:.85; }
 </style>
@@ -59,59 +30,35 @@
 
 <body>
   <div class="header">✔ TMD 60th Anniversary • Live Check-in</div>
-
-  <div class="ticker-container">
-    <div id="ticker" class="ticker-text">Loading…</div>
-  </div>
-
+  <div class="ticker-container"><div id="ticker" class="ticker-text">Loading…</div></div>
   <div class="meta"><span id="ts"></span></div>
   <div id="status" class="status"></div>
 
 <script>
   // ===== Settings =====
-  // ใช้ RAW เพื่ออัปเดตไวหลัง commit
-  const DATA_URL = "https://raw.githubusercontent.com/akasitgun/tmd-checkin-display/main/data.json";
-  // ลดรอบ polling ให้ไวขึ้น
-  const POLL_MS      = 700;
-
-  // ป้ายลำดับ: 'th' = ลำดับ, 'en' = Registration No.
-  const LABEL_MODE   = 'th';
+  const DATA_URL     = "https://raw.githubusercontent.com/akasitgun/tmd-checkin-display/main/data.json";
+  const POLL_MS      = 700;    // เร็วขึ้นเพื่อความไว
+  const LABEL_MODE   = 'th';   // 'th' = ลำดับ, 'en' = Registration No.
   const ORDER_LABEL  = LABEL_MODE === 'th' ? 'ลำดับ' : 'Registration No.';
-
-  // จำกัดจำนวน "คนล่าสุด" ที่จะแสดงใน ticker
   const RECENT_LIMIT = 10;
+  const MIN_DUR = 12, MAX_DUR = 40, CHAR_PER = 34;
 
-  // ปรับความเร็วตามความยาวตัวอักษรรวม
-  const MIN_DUR  = 12;   // วิ ต่ำสุด
-  const MAX_DUR  = 40;   // วิ สูงสุด
-  const CHAR_PER = 34;   // ตัวอักษรต่อวินาที (มาก = วิ่งเร็วขึ้น)
-
-  let lastUpdated = null;  // ใช้เทียบกับ data.updated (หรือ item[0].timestamp)
+  let lastUpdated = null;  // จะบังคับ render รอบแรก (lastUpdated เริ่มเป็น null)
 
   const ticker  = document.getElementById("ticker");
   const tsBox   = document.getElementById("ts");
   const statusB = document.getElementById("status");
 
-  function setStatus(msg, ok=true){
-    statusB.textContent = msg;
-    statusB.style.color = ok ? "rgba(255,255,255,.85)" : "#ffd9d9";
-  }
-
-  function formatLocal(ts){
-    try{ return new Date(ts).toLocaleString('th-TH', { hour12:false }); }
-    catch{ return ts || ""; }
-  }
-
+  function setStatus(msg, ok=true){ statusB.textContent = msg; statusB.style.color = ok ? "rgba(255,255,255,.85)" : "#ffd9d9"; }
+  function formatLocal(ts){ try{ return new Date(ts).toLocaleString('th-TH', { hour12:false }); } catch{ return ts || ""; } }
   function tuneTickerSpeed(totalText){
     const len = (totalText || '').length || 1;
     let sec = Math.round(len / CHAR_PER);
     sec = Math.min(MAX_DUR, Math.max(MIN_DUR, sec));
     ticker.style.setProperty('--dur', sec + 's');
   }
-
-  // รวมหลายชื่อเป็นข้อความเดียว (ชื่อ • แผนก • ลำดับ)
   function renderText(items){
-    const SEP = "     •     "; // ตัวคั่นระหว่างคน
+    const SEP = "     •     ";
     const parts = items.map(item => {
       const name = (item.name ?? "").toString().trim() || "ผู้เข้าร่วม";
       const order= (item.order ?? "").toString().trim();
@@ -122,22 +69,11 @@
     });
     return parts.join(SEP);
   }
-
   function normalizeData(d){
-    // รองรับทั้งรูปแบบ "array หลายรายการ" และ "อ็อบเจ็กต์เดี่ยว"
     if (!d) return { items: [], updated: "" };
-    if (Array.isArray(d.items)) {
-      return {
-        items: d.items.slice(),
-        updated: d.updated || (d.items[0]?.timestamp || "")
-      };
-    }
-    if (typeof d === "object") {
-      return { items: [d], updated: d.timestamp || "" };
-    }
-    try {
-      const j = JSON.parse(d); return normalizeData(j);
-    } catch { return { items: [], updated: "" }; }
+    if (Array.isArray(d.items)) return { items: d.items.slice(), updated: d.updated || (d.items[0]?.timestamp || "") };
+    if (typeof d === "object")   return { items: [d], updated: d.timestamp || "" };
+    try { return normalizeData(JSON.parse(d)); } catch { return { items: [], updated: "" }; }
   }
 
   async function load(){
@@ -148,9 +84,7 @@
       let raw = await r.json();
       if (typeof raw === "string") { try { raw = JSON.parse(raw); } catch {} }
 
-      const data = normalizeData(raw);
-
-      // เรียงจากใหม่ไปเก่า และตัดจำนวน
+      const data  = normalizeData(raw);
       const items = (data.items || [])
         .slice()
         .sort((a,b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0))
@@ -158,17 +92,24 @@
 
       const updatedMark = data.updated || (items[0]?.timestamp || "");
 
-      // แสดงเมื่อมีการเปลี่ยนแปลง (ลดกระพริบ)
-      if (updatedMark && updatedMark !== lastUpdated) {
-        lastUpdated = updatedMark;
+      // เงื่อนไขใหม่: render ถ้า (รอบแรก) หรือ (updated เปลี่ยน)
+      const shouldRender = (lastUpdated === null) || (updatedMark && updatedMark !== lastUpdated);
+
+      if (shouldRender) {
+        // บันทึก lastUpdated (ถ้า updatedMark ว่าง ให้ใช้เวลาปัจจุบันเพื่อกัน render ซ้ำถี่)
+        lastUpdated = updatedMark || String(Date.now());
+
+        if (items.length === 0) {
+          ticker.textContent = "Waiting for check-ins...";
+          tsBox.textContent  = "";
+          setStatus("ยังไม่มีรายการใน data.json • ตรวจว่า Flow PUT เป็นลิสต์ {items:[], updated:\"\"} แล้วหรือยัง", false);
+          return; // ยังไม่ต้องเล่น effect
+        }
 
         const text = renderText(items);
         ticker.textContent = text;
-
-        // ความเร็วตามความยาวรวม
         tuneTickerSpeed(text);
 
-        // Flash overlay (ไม่หยุด ticker)
         ticker.classList.remove("flash");
         requestAnimationFrame(() => ticker.classList.add("flash"));
 
@@ -180,11 +121,8 @@
     }
   }
 
-  // เริ่มทำงาน
-  load();                        // โหลดครั้งแรก (ดึงหลายชื่อทันที)
-  setInterval(load, POLL_MS);    // แล้วอัปเดตตามรอบ
+  load();
+  setInterval(load, POLL_MS);
 </script>
 </body>
 </html>
-
-

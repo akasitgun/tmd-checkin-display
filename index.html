@@ -2,12 +2,12 @@
 <html lang="th">
 <head>
 <meta charset="utf-8" />
-<title>TMD Check-in Live Ticker</title>
+<title>TMD Check-in Live Ticker (Multi)</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
 <style>
   :root{
-    --dur: 14s;        /* ความยาวรอบเริ่มต้นของการวิ่ง (จะถูก JS ปรับตามข้อความรวม) */
+    --dur: 16s;        /* ระยะเวลาวิ่งเริ่มต้น (จะถูก JS ปรับตามความยาวข้อความรวม) */
     --bg: #0b59a1;
   }
 
@@ -32,7 +32,7 @@
     border-bottom:3px solid rgba(255,255,255,.2);
   }
   .ticker-text{
-    display:inline-block; padding-left:50%; /* ให้เห็นข้อความตั้งแต่ต้น */
+    display:inline-block; padding-left:45%;  /* ให้เห็นข้อความตั้งแต่ต้น */
     font-size:80px; font-weight:900; color:#fff;
     animation: ticker var(--dur) linear infinite;
     will-change: transform;
@@ -42,7 +42,7 @@
     100% { transform: translateX(-100%); }
   }
 
-  /* Flash overlay ไม่ทับ ticker */
+  /* Flash overlay (ซ้อน ไม่ทับ ticker) */
   .flash{
     animation: ticker var(--dur) linear infinite, flashAnim .4s ease-in-out;
   }
@@ -61,7 +61,7 @@
   <div class="header">✔ TMD 60th Anniversary • Live Check-in</div>
 
   <div class="ticker-container">
-    <div id="ticker" class="ticker-text">Waiting for check-ins...</div>
+    <div id="ticker" class="ticker-text">Loading…</div>
   </div>
 
   <div class="meta"><span id="ts"></span></div>
@@ -69,40 +69,26 @@
 
 <script>
   // ===== Settings =====
-  const DATA_URL       = "data.json";
-  const POLL_MS        = 1500;
+  const DATA_URL     = "data.json";
+  const POLL_MS      = 1500;
 
   // ป้ายลำดับ: 'th' = ลำดับ, 'en' = Registration No.
-  const LABEL_MODE     = 'th';
-  const ORDER_LABEL    = LABEL_MODE === 'th' ? 'ลำดับ' : 'Registration No.';
+  const LABEL_MODE   = 'th';
+  const ORDER_LABEL  = LABEL_MODE === 'th' ? 'ลำดับ' : 'Registration No.';
 
-  // จำนวน "คนล่าสุด" ที่ต้องการแสดง (รวมเป็นข้อความวิ่ง)
-  const RECENT_LIMIT   = 5;
+  // จำกัดจำนวน "คนล่าสุด" ที่จะแสดงใน ticker
+  const RECENT_LIMIT = 10;
 
   // ปรับความเร็วตามความยาวตัวอักษรรวม
-  const MIN_DUR  = 12;   // วินาทีต่ำสุด
-  const MAX_DUR  = 30;   // วินาทีสูงสุด
-  const CHAR_PER = 32;   // ตัวอักษรต่อวินาที (มาก = วิ่งเร็ว)
+  const MIN_DUR  = 12;   // วิ ต่ำสุด
+  const MAX_DUR  = 40;   // วิ สูงสุด
+  const CHAR_PER = 34;   // ตัวอักษรต่อวินาที (มาก = วิ่งเร็วขึ้น)
 
-  // เก็บหลายชื่อบนฝั่งหน้าเว็บ
-  // ถ้าอยากให้จำไว้หลังรีเฟรช ให้ตั้ง USE_STORAGE = true (ใช้ localStorage)
-  const USE_STORAGE    = false;
-  const STORAGE_KEY    = "tmd-recent";
-
-  let lastStamp = null;
-  let recent = []; // [{name, order, department, timestamp}]
+  let lastUpdated = null;  // ใช้เทียบกับ data.updated (หรือ item[0].timestamp)
 
   const ticker  = document.getElementById("ticker");
   const tsBox   = document.getElementById("ts");
   const statusB = document.getElementById("status");
-
-  // โหลด recent จาก localStorage ถ้าเปิดใช้
-  if (USE_STORAGE) {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) recent = JSON.parse(raw) || [];
-    } catch {}
-  }
 
   function setStatus(msg, ok=true){
     statusB.textContent = msg;
@@ -123,8 +109,7 @@
 
   // รวมหลายชื่อเป็นข้อความเดียว (ชื่อ • แผนก • ลำดับ)
   function renderText(items){
-    // ตัวคั่นระหว่างคน
-    const SEP = "   •   ";
+    const SEP = "     •     "; // ตัวคั่นระหว่างคน
     const parts = items.map(item => {
       const name = (item.name ?? "").toString().trim() || "ผู้เข้าร่วม";
       const order= (item.order ?? "").toString().trim();
@@ -136,15 +121,28 @@
     return parts.join(SEP);
   }
 
-  function pushRecent(entry){
-    // ถ้า timestamp ซ้ำ ให้ไม่เพิ่ม (กันกรณีรอบ polling ชิดกันมาก)
-    if (recent.length && recent[0].timestamp === entry.timestamp) return;
-    recent.unshift(entry);              // เพิ่มไว้หัวแถว
-    if (recent.length > RECENT_LIMIT) { // จำกัดความยาว
-      recent = recent.slice(0, RECENT_LIMIT);
+  function normalizeData(d){
+    // รองรับทั้งรูปแบบ "array หลายรายการ" และ "อ็อบเจ็กต์เดี่ยว"
+    if (!d) return { items: [], updated: "" };
+    if (Array.isArray(d.items)) {
+      return {
+        items: d.items.slice(),              // โครงหลายคนแบบใหม่
+        updated: d.updated || (d.items[0]?.timestamp || "")
+      };
     }
-    if (USE_STORAGE) {
-      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(recent)); } catch {}
+    // fallback: โครงเดิม (เดี่ยว)
+    if (typeof d === "object") {
+      return {
+        items: [d],
+        updated: d.timestamp || ""
+      };
+    }
+    // fallback: ถ้าเป็น string JSON เผลอมา
+    try {
+      const j = JSON.parse(d);
+      return normalizeData(j);
+    } catch {
+      return { items: [], updated: "" };
     }
   }
 
@@ -153,42 +151,44 @@
       const r = await fetch(DATA_URL + "?t=" + Date.now(), { cache: "no-store" });
       if(!r.ok) throw new Error("HTTP " + r.status);
 
-      let d = await r.json();
-      if(typeof d === "string"){ try{ d = JSON.parse(d); } catch(e){} }
+      let raw = await r.json();
+      if (typeof raw === "string") { try { raw = JSON.parse(raw); } catch {} }
 
-      const name = (d.name ?? "").toString().trim();
-      const order= (d.order ?? "").toString().trim();
-      const dept = (d.department ?? "").toString().trim();
-      const timestamp = (d.timestamp ?? "").toString();
+      const data = normalizeData(raw);
 
-      if(timestamp && timestamp !== lastStamp){
-        lastStamp = timestamp;
+      // เรียงจากใหม่ไปเก่า และตัดจำนวน
+      const items = (data.items || [])
+        .slice()
+        .sort((a,b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0))
+        .slice(0, RECENT_LIMIT);
 
-        // เก็บรายการล่าสุดไว้ใน recent
-        pushRecent({ name, order, department: dept, timestamp });
+      const updatedMark = data.updated || (items[0]?.timestamp || "");
 
-        // ประกอบเป็นข้อความยาวสำหรับ ticker
-        const text = renderText(recent);
+      // แสดงเมื่อมีการเปลี่ยนแปลง (ลดกระพริบ)
+      if (updatedMark && updatedMark !== lastUpdated) {
+        lastUpdated = updatedMark;
+
+        const text = renderText(items);
         ticker.textContent = text;
 
-        // ปรับความเร็วตามความยาวรวม
+        // ความเร็วตามความยาวรวม
         tuneTickerSpeed(text);
 
-        // Flash overlay โดยไม่ทำให้ ticker หยุด
+        // Flash overlay (ไม่หยุด ticker)
         ticker.classList.remove("flash");
         requestAnimationFrame(() => ticker.classList.add("flash"));
 
-        // เวลา/สถานะ
-        tsBox.textContent = "Updated: " + formatLocal(timestamp);
-        setStatus(`Polling every ${ (POLL_MS/1000).toFixed(1) }s • Last update OK`, true);
+        tsBox.textContent = "Updated: " + formatLocal(updatedMark);
+        setStatus(`Polling every ${(POLL_MS/1000).toFixed(1)}s • Last update OK`, true);
       }
     }catch(e){
       setStatus("Fetch error: " + (e.message || e), false);
     }
   }
 
-  load();
-  setInterval(load, POLL_MS);
+  // เริ่มทำงาน
+  load();                        // โหลดครั้งแรก (ดึงหลายชื่อทันที)
+  setInterval(load, POLL_MS);    // แล้วค่อยอัปเดตตามรอบ
 </script>
 </body>
 </html>

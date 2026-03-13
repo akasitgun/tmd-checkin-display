@@ -2,213 +2,278 @@
 <html lang="th">
 <head>
 <meta charset="utf-8" />
-<title>TMD Check-in Display (Lines)</title>
+<title>TMD Check-in – Wow Display</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-
 <style>
   :root{
-    --bg: #0b59a1;
-    --ink: #ffffff;
-    --sub: #d3e6ff;
-    --card: rgba(255,255,255,.10);
+    --bg:#0b59a1; --ink:#fff; --sub:#d3e6ff; --accent:#22c55e; --card: rgba(255,255,255,.10);
+    --brand2:#15a34a; --muted: rgba(255,255,255,.75);
   }
-
+  *{ box-sizing: border-box; }
   html,body{ height:100%; }
   body{
-    margin:0;
-    background: var(--bg);
-    font-family: "Segoe UI", system-ui, -apple-system, Arial, Helvetica, sans-serif;
-    color: var(--ink);
-    display:flex; flex-direction:column;
+    margin:0; background: var(--bg); color: var(--ink);
+    font-family:"Segoe UI", system-ui, -apple-system, Arial, Helvetica, sans-serif;
+    overflow:hidden; display:flex; flex-direction:column;
   }
-
-  /* Header */
   .header{
-    text-align:center;
-    padding:22px 16px;
-    font-size:36px;
-    font-weight:800;
-    letter-spacing:.4px;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 24px; background:linear-gradient(90deg, rgba(255,255,255,.06), rgba(255,255,255,0));
+    border-bottom: 2px solid rgba(255,255,255,.15);
   }
+  .brand{ font-size:28px; font-weight:900; letter-spacing:.3px; }
+  .meta{ font-size:14px; color:var(--sub); }
+  .wrap{ flex:1; width:100%; max-width:1920px; margin:0 auto; padding:16px 24px; }
 
-  /* กล่องรายการ */
-  .list-wrap{
-    flex:1;
-    max-width: 1600px;
-    margin: 0 auto;
-    width: 100%;
-    padding: 12px 24px 18px 24px;
-    box-sizing: border-box;
+  /* --- KPI HERO --- */
+  .hero{ display:grid; grid-template-columns: 1.2fr .8fr; gap:18px; }
+  .card{
+    background:var(--card); border-radius:12px; padding:18px; border:1px solid rgba(255,255,255,.15);
   }
-  .list{
-    background: var(--card);
-    border-top: 3px solid rgba(255,255,255,.2);
-    border-bottom: 3px solid rgba(255,255,255,.2);
-    border-radius: 8px;
-    padding: 18px;
-    list-style: none;
-    margin: 0;
+  .kpi{
+    display:grid; grid-template-columns: repeat(3, 1fr); gap:14px;
   }
+  .kpi .tile{
+    background: rgba(255,255,255,.08); padding:14px; border-radius:10px; text-align:center;
+    border:1px solid rgba(255,255,255,.12);
+  }
+  .kpi .num{ font-size:44px; font-weight:900; line-height:1; }
+  .kpi .lbl{ font-size:14px; color:var(--sub); margin-top:6px; }
+  .dept-list{ margin-top:14px; display:flex; flex-wrap:wrap; gap:10px; }
+  .badge{
+    background: rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.18);
+    padding:8px 12px; border-radius:999px; font-size:14px;
+  }
+  .recent .title{ font-weight:800; margin-bottom:8px; color:var(--sub); }
+  .recent ul{ list-style:none; padding:0; margin:0; }
+  .recent li{
+    display:flex; justify-content:space-between; padding:10px 8px; border-bottom:1px solid rgba(255,255,255,.12);
+  }
+  .recent li:last-child{ border-bottom:0; }
+  .r-name{ font-size:22px; font-weight:800; }
+  .r-meta{ font-size:14px; color:var(--sub); }
 
-  /* รายการคนละบรรทัด */
-  .item{
-    padding: 12px 8px;
-    border-bottom: 1px solid rgba(255,255,255,.15);
-    display:flex; flex-direction:column;
-    gap: 6px;
-    animation: fade .35s ease-in-out;
+  /* --- GRID --- */
+  .grid{ display:grid; grid-template-columns: repeat(10, 1fr); grid-auto-rows: 1fr; gap:10px; height: calc(100vh - 140px); }
+  .cell{
+    background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.14); border-radius:8px; padding:8px;
+    display:flex; flex-direction:column; justify-content:center; align-items:flex-start;
   }
-  .item:last-child{ border-bottom: 0; }
+  .cell .nm{ font-size:18px; font-weight:800; }
+  .cell .mt{ font-size:12px; color:var(--sub); margin-top:4px; }
 
-  .name{
-    font-size: 40px;
-    font-weight: 900;
-    letter-spacing:.3px;
+  /* --- TICKER Department strip --- */
+  .ticker{
+    background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.14); border-radius:10px; padding:12px 16px;
+    white-space:nowrap; overflow:hidden; position:relative;
   }
-  .meta{
-    font-size: 18px;
-    color: var(--sub);
-  }
+  .ticker .lane{ display:inline-block; padding-left:100%; animation: slide 28s linear infinite; font-size:28px; font-weight:800; }
+  @keyframes slide{ 0%{ transform:translateX(0);} 100%{ transform:translateX(-100%);} }
 
-  @keyframes fade{ from{opacity:0; transform:translateY(4px)} to{opacity:1; transform:translateY(0)} }
+  /* footer status */
+  .footer{ padding:10px 24px; text-align:center; color:var(--sub); font-size:14px; }
 
-  /* แถบสถานะด้านล่าง */
-  .status{
-    text-align:center;
-    color: var(--sub);
-    font-size:14px;
-    opacity:.9;
-    padding: 8px 0 14px 0;
+  /* modes */
+  .mode{ display:none; }
+  .mode.active{ display:block; }
+
+  /* responsive adjust */
+  @media (max-width: 1280px){
+    .grid{ grid-template-columns: repeat(6, 1fr); }
   }
 </style>
 </head>
-
 <body>
-  <div class="header">✔ TMD 60th Anniversary • Live Check-in</div>
-
-  <div class="list-wrap">
-    <ul id="list" class="list">
-      <!-- จะถูกเติมรายการแบบคนละบรรทัด -->
-      <li class="item">
-        <div class="name">Loading…</div>
-        <div class="meta"></div>
-      </li>
-    </ul>
+  <div class="header">
+    <div class="brand">✔ TMD 60th Anniversary • Check‑in Display</div>
+    <div class="meta" id="meta">Loading…</div>
   </div>
 
-  <div id="status" class="status"></div>
+  <div class="wrap">
+    <!-- MODE 1: KPI + Recent (Hero) -->
+    <div id="mode-hero" class="mode active">
+      <div class="hero">
+        <div class="card">
+          <div class="kpi">
+            <div class="tile">
+              <div class="num" id="kpi-total">0</div>
+              <div class="lbl">จำนวนผู้เช็คอิน</div>
+            </div>
+            <div class="tile">
+              <div class="num" id="kpi-dept">0</div>
+              <div class="lbl">จำนวนแผนก</div>
+            </div>
+            <div class="tile">
+              <div class="num" id="kpi-latest">–</div>
+              <div class="lbl">อัปเดตล่าสุด</div>
+            </div>
+          </div>
+          <div class="dept-list" id="dept-list"></div>
+        </div>
+
+        <div class="card recent">
+          <div class="title">ผู้เช็คอินล่าสุด</div>
+          <ul id="recent-list">
+            <li><span class="r-name">Waiting…</span><span class="r-meta"></span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODE 2: GRID (Paginated) -->
+    <div id="mode-grid" class="mode">
+      <div class="grid" id="grid"></div>
+    </div>
+
+    <!-- MODE 3: Department Ticker -->
+    <div id="mode-ticker" class="mode">
+      <div class="ticker"><div class="lane" id="dept-ticker">Loading…</div></div>
+    </div>
+  </div>
+
+  <div class="footer" id="status">Initializing…</div>
 
 <script>
-  // ===== Settings =====
-  // ใช้ RAW เพื่อให้เห็นผลไวหลัง PUT
-  const DATA_URL     = "https://raw.githubusercontent.com/akasitgun/tmd-checkin-display/main/data.json";
-  const POLL_MS      = 700;                          // เร็วขึ้น = ไวขึ้น (ระวังโควต้า client)
+  /* ===== Settings ===== */
+  const DATA_URL   = "https://raw.githubusercontent.com/akasitgun/tmd-checkin-display/main/data.json";
+  const POLL_MS    = 1200;          // รอบดึงข้อมูล
+  const PAGE_SIZE  = 60;            // GRID: ต่อหน้า
+  const ROTATE_MS  = 8000;          // เวลาเปลี่ยนหน้า/เปลี่ยนโหมด
+  const MODES      = ["hero","grid","ticker"];
 
-  // ป้ายลำดับ: 'th' = ลำดับ, 'en' = Registration No.
-  const LABEL_MODE   = 'th';
-  const ORDER_LABEL  = LABEL_MODE === 'th' ? 'ลำดับ' : 'Registration No.';
+  const LABEL_MODE = 'th';
+  const ORDER_LABEL= LABEL_MODE==='th' ? 'ลำดับ' : 'Registration No.';
 
-  // จำนวนแถวล่าสุดที่แสดง
-  const RECENT_LIMIT = 10;
+  /* ===== State ===== */
+  let lastKey = "";     // ใช้ตรวจว่าข้อมูลเปลี่ยนไหม
+  let items   = [];     // ข้อมูลทั้งหมดหลัง normalize/sort
+  let cursor  = 0;      // GRID page cursor
+  let modeIdx = 0;      // mode cursor
 
-  // ตัวแปรใช้ตรวจว่าควร re-render ไหม
-  let lastUpdated = null;   // เทียบ data.updated (หรือ timestamp ตัวแรก)
-  let lastText    = "";     // เทียบ “เนื้อหาที่จะแสดง” ทั้งหมด
-  let lastCount   = -1;     // เทียบจำนวนรายการ
+  /* ===== Helpers ===== */
+  const $ = s => document.querySelector(s);
+  const $$= s => document.querySelectorAll(s);
+  const fmt = ts => { try{ return new Date(ts).toLocaleString('th-TH',{hour12:false}); }catch{return ts||"";} };
 
-  const $list   = document.getElementById('list');
-  const $status = document.getElementById('status');
-
-  function setStatus(msg, ok=true){
-    $status.textContent = msg;
-    $status.style.color = ok ? "rgba(211,230,255,.95)" : "#ffd9d9";
-  }
-  function fmt(ts){ try{ return new Date(ts).toLocaleString('th-TH',{hour12:false}); }catch{ return ts||""; } }
-
-  // ทำให้ข้อมูลมารูปเดียวกันเสมอ
   function normalize(d){
     if (!d) return { items:[], updated:"" };
     if (Array.isArray(d.items)) return { items:d.items.slice(), updated: d.updated || (d.items[0]?.timestamp || "") };
     if (typeof d === 'object')  return { items:[d], updated: d.timestamp || "" };
-    try{ return normalize(JSON.parse(d)); } catch{ return { items:[], updated:"" }; }
+    try{ return normalize(JSON.parse(d)); }catch{ return { items:[], updated:"" }; }
   }
 
-  // วาดรายการเป็นคนละบรรทัด
-  function renderLines(items){
-    $list.innerHTML = "";
-    items.forEach(it => {
-      const li = document.createElement('li');
-      li.className = 'item';
+  function byNewest(a,b){ return new Date(b.timestamp||0) - new Date(a.timestamp||0); }
 
-      const nm = document.createElement('div');
-      nm.className = 'name';
-      nm.textContent = (it.name ?? "ผู้เข้าร่วม");
+  function aggregateDepartment(list){
+    const map = new Map();
+    list.forEach(x=>{
+      const d = (x.department||"Other").trim();
+      map.set(d, (map.get(d)||0)+1);
+    });
+    return [...map.entries()].sort((a,b)=>b[1]-a[1]);
+  }
 
-      const meta = document.createElement('div');
-      meta.className = 'meta';
-      const order = (it.order ?? "").toString().trim();
-      const dept  = (it.department ?? "").toString().trim();
-      const parts = [];
-      if (order) parts.push(`${ORDER_LABEL}: ${order}`);
-      if (dept)  parts.push(dept);
-      parts.push(fmt(it.timestamp || ""));
-      meta.textContent = parts.join(" • ");
+  function buildKey(list, updated){
+    const sig = list.slice(0, 400).map(x=>`${x.name}|${x.order}|${x.department}|${x.timestamp}`).join("||");
+    return updated + "::" + sig;
+  }
 
-      li.appendChild(nm);
-      li.appendChild(meta);
-      $list.appendChild(li);
+  /* ===== Render: HERO ===== */
+  function renderHero(){
+    const total = items.length;
+    const depts = aggregateDepartment(items);
+    const latest= items[0]?.timestamp || "";
+    $("#kpi-total").textContent  = total;
+    $("#kpi-dept").textContent   = depts.length;
+    $("#kpi-latest").textContent = latest ? fmt(latest) : "–";
+
+    // badges
+    const dl = $("#dept-list"); dl.innerHTML="";
+    depts.slice(0,12).forEach(([name,count])=>{
+      const b = document.createElement("div");
+      b.className = "badge";
+      b.textContent = `${name}: ${count}`;
+      dl.appendChild(b);
+    });
+
+    // recent 5
+    const recent = items.slice(0,5);
+    const ul = $("#recent-list"); ul.innerHTML="";
+    recent.forEach(x=>{
+      const li = document.createElement("li");
+      li.innerHTML = `<span class="r-name">${x.name||"ผู้เข้าร่วม"}</span>
+                      <span class="r-meta">${ORDER_LABEL}: ${x.order||"-"} • ${(x.department||"")} • ${fmt(x.timestamp)}</span>`;
+      ul.appendChild(li);
     });
   }
 
+  /* ===== Render: GRID paginated ===== */
+  function renderGrid(){
+    const grid = $("#grid"); grid.innerHTML="";
+    const page = items.slice(cursor, cursor + PAGE_SIZE);
+    page.forEach(x=>{
+      const d = document.createElement("div"); d.className="cell";
+      d.innerHTML = `<div class="nm">${x.name||"ผู้เข้าร่วม"}</div>
+                     <div class="mt">${ORDER_LABEL}: ${x.order||"-"} • ${(x.department||"")} • ${fmt(x.timestamp)}</div>`;
+      grid.appendChild(d);
+    });
+    cursor += PAGE_SIZE;
+    if (cursor >= items.length) cursor = 0;
+  }
+
+  /* ===== Render: DEPT ticker ===== */
+  function renderTicker(){
+    const a = aggregateDepartment(items);
+    const text = a.map(([n,c])=> `${n}: ${c}`).join("  •  ");
+    $("#dept-ticker").textContent = text || "Waiting…";
+  }
+
+  function activateMode(name){
+    $$(".mode").forEach(m=>m.classList.remove("active"));
+    $(`#mode-${name}`).classList.add("active");
+  }
+
+  /* ===== Data Load Loop ===== */
   async function load(){
     try{
-      const r = await fetch(DATA_URL + "?t=" + Date.now(), { cache: "no-store" });
+      const r = await fetch(DATA_URL + "?t=" + Date.now(), { cache:"no-store" });
       if (!r.ok) throw new Error("HTTP " + r.status);
+      let raw = await r.json(); if (typeof raw==="string"){ try{ raw=JSON.parse(raw);}catch{} }
 
-      let raw = await r.json();
-      if (typeof raw === "string") { try{ raw = JSON.parse(raw); }catch{} }
+      const data  = normalize(raw);
+      const list  = (data.items||[]).slice().sort(byNewest);
+      const key   = buildKey(list, data.updated || (list[0]?.timestamp || ""));
 
-      const data = normalize(raw);
-      const items = (data.items || [])
-        .slice()
-        .sort((a,b) => new Date(b.timestamp||0) - new Date(a.timestamp||0))
-        .slice(0, RECENT_LIMIT);
-
-      const updatedMark = data.updated || (items[0]?.timestamp || "");
-      const countNow    = items.length;
-
-      // สร้าง “key” ของเนื้อหา เพื่อเช็คว่าควร re-render ไหม
-      const contentKey  = items.map(it => `${it.name}|${it.order}|${it.department}|${it.timestamp}`).join('||');
-
-      // เงื่อนไข render: (ครั้งแรก) หรือ (updated เปลี่ยน) หรือ (จำนวน/เนื้อหาเปลี่ยน)
-      const shouldRender =
-        (lastUpdated === null) ||
-        (updatedMark && updatedMark !== lastUpdated) ||
-        (countNow !== lastCount) ||
-        (contentKey !== lastText);
-
-      if (shouldRender) {
-        lastUpdated = updatedMark || String(Date.now());
-        lastCount   = countNow;
-        lastText    = contentKey;
-
-        if (items.length === 0) {
-          renderLines([{name:"Waiting for check-ins...", order:"", department:"", timestamp:""}]);
-          setStatus("ยังไม่มีรายการใน data.json", false);
-          return;
-        }
-
-        renderLines(items);
-        setStatus(`แสดง ${items.length} รายการ • Updated: ${fmt(updatedMark)} • Poll ${(POLL_MS/1000).toFixed(1)}s`, true);
+      // update state
+      items = list;
+      $("#meta").textContent = `Updated: ${fmt(data.updated || list[0]?.timestamp || "")} • Total ${items.length}`;
+      // re-render only when changed
+      if (key !== lastKey){
+        lastKey = key;
+        renderHero();
+        renderGrid();   // prepare grid
+        renderTicker();
+        $("#status").textContent = `Showing ${items.length} items • rotating each ${ROTATE_MS/1000}s • polling ${POLL_MS}ms`;
       }
     }catch(e){
-      setStatus("Fetch error: " + (e.message || e), false);
+      $("#status").textContent = "Fetch error: " + (e.message||e);
     }
   }
 
+  // rotation loop
+  function rotate(){
+    modeIdx = (modeIdx + 1) % MODES.length;
+    const name = MODES[modeIdx];
+    activateMode(name);
+    if (name==="grid") renderGrid(); // refresh next page
+    if (name==="ticker") renderTicker();
+  }
+
+  // init
+  activateMode(MODES[modeIdx]); // start hero
   load();
   setInterval(load, POLL_MS);
+  setInterval(rotate, ROTATE_MS);
 </script>
 </body>
 </html>
-``

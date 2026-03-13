@@ -1,15 +1,86 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<title>TMD Check-in Live Ticker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<style>
+  :root{
+    --dur: 12s;        /* ความยาวรอบเริ่มต้นของการวิ่ง */
+    --bg: #0b59a1;
+  }
+
+  body{
+    margin:0; background:var(--bg);
+    font-family:"Segoe UI", system-ui, -apple-system, Arial, Helvetica, sans-serif;
+    overflow:hidden;
+  }
+
+  /* Header */
+  .header{
+    text-align:center; padding:24px;
+    color:#fff; font-size:40px; font-weight:800; letter-spacing:.5px;
+  }
+
+  /* Ticker area */
+  .ticker-container{
+    width:100%; white-space:nowrap; overflow:hidden; box-sizing:border-box;
+    padding:20px 0;
+    background:rgba(255,255,255,.10);
+    border-top:3px solid rgba(255,255,255,.2);
+    border-bottom:3px solid rgba(255,255,255,.2);
+  }
+  .ticker-text{
+    display:inline-block; padding-left:60%; /* เห็นตัวอักษรตั้งแต่ต้น */
+    font-size:80px; font-weight:900; color:#fff;
+    /* ให้ ticker วิ่งตลอดเวลา */
+    animation: ticker var(--dur) linear infinite;
+    will-change: transform;
+  }
+  @keyframes ticker{
+    0%   { transform: translateX(0%); }
+    100% { transform: translateX(-100%); }
+  }
+
+  /* Flash ซ้อนทับ โดยไม่ทับ ticker */
+  .flash{
+    animation: ticker var(--dur) linear infinite, flashAnim .4s ease-in-out;
+  }
+  @keyframes flashAnim{
+    0% { color:#22c55e; }
+    100% { color:#ffffff; }
+  }
+
+  /* Meta */
+  .meta{ color:#d3e6ff; text-align:center; margin-top:12px; font-size:18px; opacity:.95; }
+  .status{ color:rgba(255,255,255,.85); text-align:center; font-size:14px; margin-top:4px; opacity:.85; }
+</style>
+</head>
+
+<body>
+  <div class="header">✔ TMD 60th Anniversary • Live Check-in</div>
+
+  <div class="ticker-container">
+    <div id="ticker" class="ticker-text">Waiting for check-ins...</div>
+  </div>
+
+  <div class="meta"><span id="ts"></span></div>
+  <div id="status" class="status"></div>
+
 <script>
   // ===== Settings =====
   const DATA_URL = "data.json";
   const POLL_MS  = 1500;
 
-  // ป้ายลำดับ: 'th' = ลำดับ, 'en' = Registration No.
+  // ป้าย “ลำดับ”:
+  // 'th' = ลำดับ, 'en' = Registration No.
   const LABEL_MODE = 'th';
   const ORDER_LABEL = LABEL_MODE === 'th' ? 'ลำดับ' : 'Registration No.';
 
   const MIN_DUR  = 10;   // sec
   const MAX_DUR  = 20;   // sec
-  const CHAR_PER = 25;   // chars per sec (มากขึ้น = วิ่งเร็วขึ้น)
+  const CHAR_PER = 25;   // chars per sec (มาก = วิ่งเร็ว)
 
   let lastStamp = null;
 
@@ -27,6 +98,7 @@
     catch{ return ts || ""; }
   }
 
+  // ปรับความเร็วตามความยาวข้อความ (ผ่าน CSS var --dur)
   function tuneTickerSpeed(text){
     const len = (text || '').length || 1;
     let sec = Math.round(len / CHAR_PER);
@@ -39,28 +111,29 @@
       const r = await fetch(DATA_URL + "?t=" + Date.now(), { cache: "no-store" });
       if(!r.ok) throw new Error("HTTP " + r.status);
       let d = await r.json();
+      // Fallback: ถ้าไฟล์เป็นสตริง JSON
       if(typeof d === "string"){ try{ d = JSON.parse(d); } catch(e){} }
 
-      const name = (d.name ?? "").toString().trim();           // ชื่อจริงจาก SharePoint
+      const name = (d.name ?? "").toString().trim();          // ชื่อจริงจาก SharePoint
       const order = (d.order ?? "").toString().trim();
-      const dept  = (d.department ?? "").toString().trim();    // ตัวเลือก: แผนก
+      const dept  = (d.department ?? "").toString().trim();   // มี/ไม่มีก็ได้
       const timestamp = (d.timestamp ?? "").toString();
 
       if(timestamp && timestamp !== lastStamp){
         lastStamp = timestamp;
 
-        // ป้ายลำดับ: มีลำดับค่อยแสดงวงเล็บ
+        // ป้ายลำดับ: มีค่า ค่อยแสดงวงเล็บ
         const orderPart = order ? ` (${ORDER_LABEL}: ${order})` : "";
-        // ถ้าต้องการแสดงแผนก ให้เปิดใช้บรรทัดด้านล่าง
+        // ถ้าต้องการแสดงแผนก เปิดสองบรรทัดด้านล่าง
         // const deptPart  = dept ? ` • ${dept}` : "";
+        // const text = `🎉 ยินดีต้อนรับคุณ ${name || "ผู้เข้าร่วม"}${orderPart}${deptPart} 🎉`;
 
-        const displayName = name || "ผู้เข้าร่วม";   // ถ้าไม่พบชื่อจริง ค่อย fallback
-        const text = `🎉 ยินดีต้อนรับคุณ ${displayName}${orderPart} 🎉`;
-        // หากอยากโชว์แผนก: const text = `🎉 ยินดีต้อนรับคุณ ${displayName}${orderPart}${deptPart} 🎉`;
+        const text = `🎉 ยินดีต้อนรับคุณ ${name || "ผู้เข้าร่วม"}${orderPart} 🎉`;
 
         ticker.textContent = text;
         tuneTickerSpeed(text);
 
+        // Flash overlay โดยไม่ทำให้ ticker หยุด
         ticker.classList.remove("flash");
         requestAnimationFrame(() => ticker.classList.add("flash"));
 
@@ -75,3 +148,5 @@
   load();
   setInterval(load, POLL_MS);
 </script>
+</body>
+</html>

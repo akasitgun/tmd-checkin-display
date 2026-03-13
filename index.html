@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8" />
-<title>TMD Check-in – One-page Dashboard</title>
+<title>TMD Check-in – One-page Dashboard (LIVE + Recent50)</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <style>
   :root{
@@ -19,32 +19,51 @@
 
   /* Header */
   .header{
-    display:grid; grid-template-columns: 1.2fr 1fr 1fr; gap:18px;
+    display:grid; grid-template-columns: 1fr 1fr 1fr; gap:18px;
     align-items:center; padding:14px 22px;
     background:linear-gradient(90deg, rgba(255,255,255,.06), rgba(255,255,255,0));
     border-bottom:2px solid rgba(255,255,255,.15);
   }
-  .brand{ font-size:24px; font-weight:900; letter-spacing:.3px }
-  .kpi{
-    display:flex; gap:14px; justify-content:center;
+  .brand{
+    display:flex; align-items:center; gap:10px;
+    font-size:24px; font-weight:900; letter-spacing:.3px
   }
-  .tile{
-    background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.14);
-    padding:10px 14px; border-radius:10px; text-align:center; min-width:140px;
+  .live{
+    display:inline-flex; align-items:center; gap:6px;
+    background:#ef4444; color:#fff; font-weight:900; font-size:12px;
+    padding:4px 8px; border-radius:999px; letter-spacing:.6px;
+    animation: blink 1s steps(2,end) infinite;
   }
-  .num{ font-size:28px; font-weight:900; line-height:1 }
-  .lbl{ font-size:12px; color:var(--sub); margin-top:4px }
+  .dot{ width:8px; height:8px; background:#fff; border-radius:50% }
+  @keyframes blink{ 50% { opacity:.4 } }
+
+  .bigkpi{
+    display:flex; align-items:center; justify-content:center; gap:16px;
+  }
+  .kpi-total{
+    background:rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.18);
+    padding:12px 18px; border-radius:14px; text-align:center; min-width:280px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.25);
+  }
+  .kpi-total .num{
+    font-size:64px; font-weight:900; line-height:1; letter-spacing:1px;
+    text-shadow:0 4px 0 rgba(0,0,0,.15);
+  }
+  .kpi-total .lbl{ font-size:13px; color:var(--sub); margin-top:8px }
+  .kpi-dept{
+    background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15);
+    padding:10px 14px; border-radius:12px; min-width:160px; text-align:center;
+  }
+  .kpi-dept .num{ font-size:28px; font-weight:900 }
+  .kpi-dept .lbl{ font-size:12px; color:var(--sub) }
+
   .timebox{ text-align:right; line-height:1.25 }
   .now{ font-size:18px; font-weight:800 }
   .upd{ font-size:12px; color:var(--sub) }
 
   /* Layout body: 3 columns */
-  .wrap{
-    flex:1; padding:16px 22px 14px 22px; overflow:hidden;
-  }
-  .cols{
-    display:grid; grid-template-columns: 1.2fr 1fr 1fr; gap:18px; height:100%;
-  }
+  .wrap{ flex:1; padding:16px 22px 14px 22px; overflow:hidden; }
+  .cols{ display:grid; grid-template-columns: 1.1fr 1fr 1.1fr; gap:18px; height:100%; }
 
   .card{
     height:100%; background:var(--card); border:1px solid rgba(255,255,255,.15);
@@ -63,7 +82,7 @@
       transparent;
   }
   .spot-card{
-    width:100%; max-width:1100px; text-align:center;
+    width:100%; max-width:1000px; text-align:center;
     background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
     border:1px solid rgba(255,255,255,.18); border-radius:18px; padding:28px;
     box-shadow:0 30px 100px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.24);
@@ -92,52 +111,67 @@
   .dept-row{ display:flex; align-items:center; justify-content:space-between; gap:10px }
   .dept-name{ font-weight:800 }
   .dept-count{ color:var(--sub); font-size:12px; min-width:48px; text-align:right }
-  .bar{
-    position:relative; height:10px; background:rgba(255,255,255,.12);
-    border:1px solid rgba(255,255,255,.2); border-radius:999px; overflow:hidden; margin-top:6px;
-  }
-  .bar > span{
-    position:absolute; inset:0 auto 0 0; width:0%; background:linear-gradient(90deg,#22c55e,#86efac);
-    border-right:1px solid rgba(255,255,255,.4);
-  }
+  .bar{ position:relative; height:10px; background:rgba(255,255,255,.12);
+        border:1px solid rgba(255,255,255,.2); border-radius:999px; overflow:hidden; margin-top:6px; }
+  .bar > span{ position:absolute; inset:0 auto 0 0; width:0%;
+               background:linear-gradient(90deg,#22c55e,#86efac); border-right:1px solid rgba(255,255,255,.4); }
 
-  /* Recent 5 */
+  /* Recent 50 with auto scroll */
+  .scroll-wrap{ position:relative; height:100%; display:flex; flex-direction:column; }
+  .scroll-viewport{
+    flex:1; overflow:auto; scroll-behavior:smooth;
+    border:1px solid rgba(255,255,255,.12); border-radius:10px; padding:8px;
+    background:rgba(255,255,255,.05);
+  }
   .recent-list{ list-style:none; padding:0; margin:0; }
   .recent-list li{
     padding:10px 6px; border-bottom:1px solid rgba(255,255,255,.12);
-    display:flex; flex-direction:column; gap:4px; animation: fade .3s ease-in-out;
+    display:flex; flex-direction:column; gap:4px; animation: fade .25s ease-in-out;
   }
-  .r-name{ font-size:20px; font-weight:900 }
-  .r-meta{ font-size:13px; color:var(--sub) }
   .recent-list li:last-child{ border-bottom:0 }
-  @keyframes fade{ from{opacity:0; transform:translateY(4px)} to{opacity:1; transform:translateY(0)} }
+  .r-name{ font-size:18px; font-weight:900 }
+  .r-meta{ font-size:12px; color:var(--sub) }
+
+  .scroll-controls{
+    display:flex; gap:8px; justify-content:flex-end; margin-top:8px;
+  }
+  .btn{
+    background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.25);
+    color:#fff; padding:8px 10px; border-radius:8px; cursor:pointer; font-weight:700; font-size:12px;
+  }
+  .btn:hover{ filter:brightness(1.1) }
 
   /* Footer status */
   .footer{ padding:8px 22px 12px; font-size:13px; color:var(--sub); text-align:center }
 
   /* Responsive */
-  @media (max-width: 1280px){
+  @media (max-width:1280px){
     .header{ grid-template-columns: 1fr }
-    .timebox{ text-align:left }
     .cols{ grid-template-columns: 1fr; gap:14px }
     .spot-name{ font-size:44px }
+    .kpi-total .num{ font-size:48px }
   }
 </style>
 </head>
 <body>
   <!-- Header -->
   <div class="header">
-    <div class="brand">✔ TMD 60th Anniversary • Check‑in Dashboard</div>
-    <div class="kpi">
-      <div class="tile">
+    <div class="brand">
+      ✔ TMD 60th Anniversary • Check‑in Dashboard
+      <span class="live"><span class="dot"></span>LIVE</span>
+    </div>
+
+    <div class="bigkpi">
+      <div class="kpi-total">
         <div class="num" id="kpi-total">0</div>
         <div class="lbl">จำนวนผู้เช็คอินทั้งหมด</div>
       </div>
-      <div class="tile">
+      <div class="kpi-dept">
         <div class="num" id="kpi-dept">0</div>
         <div class="lbl">จำนวนแผนก</div>
       </div>
     </div>
+
     <div class="timebox">
       <div class="now" id="now">--:--:--</div>
       <div class="upd" id="updated">ข้อมูลอัปเดต: -</div>
@@ -164,17 +198,25 @@
       <!-- Department Summary -->
       <div class="card">
         <h3>สรุปจำนวนตามแผนก</h3>
-        <div id="dept-wrap">
-          <!-- will render dept rows -->
-        </div>
+        <div id="dept-wrap"></div>
       </div>
 
-      <!-- Recent 5 -->
+      <!-- Recent 50 (auto scroll) -->
       <div class="card">
-        <h3>เช็คอินล่าสุด 5 รายชื่อ</h3>
-        <ul id="recent-list" class="recent-list">
-          <li><div class="r-name">Waiting…</div><div class="r-meta"></div></li>
-        </ul>
+        <h3>เช็คอินล่าสุด 50 รายชื่อ</h3>
+        <div class="scroll-wrap">
+          <div id="viewport" class="scroll-viewport">
+            <ul id="recent-list" class="recent-list">
+              <li><div class="r-name">Waiting…</div><div class="r-meta"></div></li>
+            </ul>
+          </div>
+          <div class="scroll-controls">
+            <button id="btn-up" class="btn">▲ Up</button>
+            <button id="btn-down" class="btn">▼ Down</button>
+            <button id="btn-pause" class="btn">⏸ Pause</button>
+            <button id="btn-resume" class="btn">▶ Resume</button>
+          </div>
+        </div>
       </div>
 
     </div>
@@ -185,14 +227,15 @@
 <script>
   /* ===== Settings ===== */
   const DATA_URL   = "https://raw.githubusercontent.com/akasitgun/tmd-checkin-display/main/data.json";
-  const POLL_MS    = 1200;      // รอบดึงข้อมูล (ms)
+  const POLL_MS    = 1200;      // ดึงข้อมูล
   const TOP_DEPT   = 12;        // จำนวนแผนกที่โชว์
-  const RECENT_N   = 5;         // จำนวนล่าสุด
+  const RECENT_N   = 50;        // แสดงล่าสุด 50 รายชื่อ
   const ORDER_LABEL= 'ลำดับ';   // หรือ 'Registration No.'
 
   /* ===== State ===== */
-  let lastKey     = "";         // ใช้ตรวจว่าข้อมูลเปลี่ยนไหม
-  let lastSpotTs  = "";         // ใช้กระตุ้นเอฟเฟกต์เมื่อ latest เปลี่ยน
+  let lastKey     = "";
+  let lastTotal   = 0;
+  let lastSpotTs  = "";
   let items       = [];
 
   /* ===== Helpers ===== */
@@ -208,7 +251,7 @@
   }
   function byNewest(a,b){ return new Date(b.timestamp||0) - new Date(a.timestamp||0); }
   function buildKey(list, updated){
-    return (updated || (list[0]?.timestamp || "")) + "::" + list.slice(0,100).map(x=>`${x.name}|${x.order}|${x.department}|${x.timestamp}`).join("||");
+    return (updated || (list[0]?.timestamp || "")) + "::" + list.slice(0,120).map(x=>`${x.name}|${x.order}|${x.department}|${x.timestamp}`).join("||");
   }
   function groupDept(list){
     const m = new Map();
@@ -220,20 +263,39 @@
   }
 
   /* ===== Header ===== */
-  function renderHeader(updated){
-    $("#kpi-total").textContent = items.length;
-    $("#kpi-dept").textContent  = groupDept(items).length;
-    $("#updated").textContent   = `ข้อมูลอัปเดต: ${updated ? fmt(updated) : "-"}`;
-  }
-  // Clock
   function tickClock(){
     const now = new Date();
     $("#now").textContent = now.toLocaleString('th-TH',{hour12:false});
   }
   setInterval(tickClock, 500); tickClock();
 
+  // count-up animation for total
+  function animateTotal(from, to, ms=600){
+    const el = $("#kpi-total");
+    const start = performance.now();
+    function step(t){
+      const p = Math.min(1, (t-start)/ms);
+      const val = Math.round(from + (to-from)*p);
+      el.textContent = val.toLocaleString('th-TH');
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  function renderHeader(updated){
+    const total = items.length;
+    if (total !== lastTotal){
+      animateTotal(lastTotal, total);
+      lastTotal = total;
+    } else {
+      $("#kpi-total").textContent = total.toLocaleString('th-TH');
+    }
+    $("#kpi-dept").textContent  = groupDept(items).length;
+    $("#updated").textContent   = `ข้อมูลอัปเดต: ${updated ? fmt(updated) : "-"}`;
+  }
+
   /* ===== Spotlight ===== */
-  function confettiBurst(ms=1600, N=60){
+  function confettiBurst(ms=1500, N=60){
     const cont = $("#confetti");
     cont.innerHTML = "";
     for(let i=0;i<N;i++){
@@ -245,7 +307,7 @@
       el.style.transform = `translateX(${(Math.random()*40-20)}px)`;
       cont.appendChild(el);
     }
-    setTimeout(()=>{ cont.innerHTML=""; }, ms+400);
+    setTimeout(()=>{ cont.innerHTML=""; }, ms+300);
   }
   function renderSpotlight(){
     const x = items[0];
@@ -257,10 +319,8 @@
     $("#spot-name").textContent = x.name || "ผู้เข้าร่วม";
     $("#spot-meta").textContent = `${ORDER_LABEL}: ${x.order||"-"} • ${(x.department||"")} • ${fmt(x.timestamp)}`;
 
-    // ถ้า timestamp ใหม่ → เล่นเอฟเฟกต์
     if ((x.timestamp||"") !== lastSpotTs){
       lastSpotTs = x.timestamp||"";
-      // trigger animation
       const card = $("#spot-card");
       card.style.animation = "none"; void card.offsetWidth; card.style.animation = "";
       confettiBurst();
@@ -286,7 +346,30 @@
     });
   }
 
-  /* ===== Recent 5 ===== */
+  /* ===== Recent 50 (auto scroll + controls) ===== */
+  let autoDir = 1;       // 1 = down, -1 = up
+  let autoTimer = null;  // interval id
+  const STEP = 1;        // pixels per tick
+  const TICK = 16;       // ms per tick (~60fps)
+
+  function startAutoScroll(){
+    stopAutoScroll();
+    const vp = $("#viewport");
+    autoTimer = setInterval(()=>{
+      // ถ้ายังไม่ overflow ไม่ต้องเลื่อน
+      if (vp.scrollHeight <= vp.clientHeight) return;
+
+      vp.scrollTop += STEP * autoDir;
+      const endBottom = (vp.scrollTop + vp.clientHeight >= vp.scrollHeight - 1);
+      const endTop    = (vp.scrollTop <= 0);
+
+      if (endBottom) autoDir = -1;
+      if (endTop)    autoDir = 1;
+    }, TICK);
+  }
+  function stopAutoScroll(){
+    if (autoTimer){ clearInterval(autoTimer); autoTimer = null; }
+  }
   function renderRecent(){
     const ul = $("#recent-list"); ul.innerHTML="";
     items.slice(0, RECENT_N).forEach(x=>{
@@ -297,7 +380,19 @@
       `;
       ul.appendChild(li);
     });
+    // เริ่ม auto scroll ใหม่ทุกครั้งที่รายการเปลี่ยน
+    startAutoScroll();
   }
+
+  // controls
+  $("#btn-up").addEventListener("click", ()=>{ autoDir = -1; startAutoScroll(); });
+  $("#btn-down").addEventListener("click", ()=>{ autoDir = 1; startAutoScroll(); });
+  $("#btn-pause").addEventListener("click", ()=> stopAutoScroll());
+  $("#btn-resume").addEventListener("click", ()=> startAutoScroll());
+
+  // หยุดชั่วคราวเมื่อ mouse วางบน viewport
+  $("#viewport").addEventListener("mouseenter", stopAutoScroll);
+  $("#viewport").addEventListener("mouseleave", startAutoScroll);
 
   /* ===== Data Loop ===== */
   async function load(){
@@ -319,7 +414,7 @@
         renderDept();
         renderRecent();
 
-        $("#status").textContent = `Showing ${items.length} items • Poll ${POLL_MS}ms • Source: RAW`;
+        $("#status").textContent = `Showing ${items.length} items • Poll ${POLL_MS}ms • Source: RAW • Auto-scroll ${autoDir===1?'DOWN':'UP'}`;
       }
     }catch(e){
       $("#status").textContent = "Fetch error: " + (e.message || e);
@@ -331,4 +426,3 @@
 </script>
 </body>
 </html>
-``

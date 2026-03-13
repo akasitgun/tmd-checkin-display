@@ -126,9 +126,9 @@
         const orderPart = order ? ` (${ORDER_LABEL}: ${order})` : "";
         // ถ้าต้องการแสดงแผนก เปิดสองบรรทัดด้านล่าง
         const deptPart  = dept ? ` • ${dept}` : "";
-        // const text = `🎉 ยินดีต้อนรับคุณ ${name || "ผู้เข้าร่วม"}${orderPart}${deptPart} 🎉`;
+        const text = `🎉 ยินดีต้อนรับคุณ ${name || "ผู้เข้าร่วม"}${orderPart}${deptPart} 🎉`;
 
-        const text = `🎉 ยินดีต้อนรับคุณ ${name || "ผู้เข้าร่วม"}${orderPart} 🎉`;
+        // const text = `🎉 ยินดีต้อนรับคุณ ${name || "ผู้เข้าร่วม"}${orderPart} 🎉`;
 
         ticker.textContent = text;
         tuneTickerSpeed(text);
@@ -150,4 +150,5 @@
 </script>
 </body>
 </html>
+
 

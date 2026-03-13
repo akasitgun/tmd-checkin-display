@@ -3,13 +3,13 @@
   const DATA_URL = "data.json";
   const POLL_MS  = 1500;
 
-  // เปลี่ยนป้ายลำดับตรงนี้: 'th' = ลำดับ, 'en' = Registration No.
+  // ป้ายลำดับ: 'th' = ลำดับ, 'en' = Registration No.
   const LABEL_MODE = 'th';
   const ORDER_LABEL = LABEL_MODE === 'th' ? 'ลำดับ' : 'Registration No.';
 
-  const MIN_DUR  = 10;
-  const MAX_DUR  = 20;
-  const CHAR_PER = 25;
+  const MIN_DUR  = 10;   // sec
+  const MAX_DUR  = 20;   // sec
+  const CHAR_PER = 25;   // chars per sec (มากขึ้น = วิ่งเร็วขึ้น)
 
   let lastStamp = null;
 
@@ -23,7 +23,7 @@
   }
 
   function formatLocal(ts){
-    try{ return new Date(ts).toLocaleString('th-TH',{hour12:false}); }
+    try{ return new Date(ts).toLocaleString('th-TH', { hour12:false }); }
     catch{ return ts || ""; }
   }
 
@@ -39,21 +39,24 @@
       const r = await fetch(DATA_URL + "?t=" + Date.now(), { cache: "no-store" });
       if(!r.ok) throw new Error("HTTP " + r.status);
       let d = await r.json();
-      if(typeof d === "string"){ try{ d = JSON.parse(d); }catch(e){} }
+      if(typeof d === "string"){ try{ d = JSON.parse(d); } catch(e){} }
 
-      const name = (d.name ?? "").toString().trim();          // << เอาชื่อจริงจาก data.json
+      const name = (d.name ?? "").toString().trim();           // ชื่อจริงจาก SharePoint
       const order = (d.order ?? "").toString().trim();
-      const dept  = (d.department ?? "").toString().trim();   // << ถ้าอยากใช้แสดงแผนก
+      const dept  = (d.department ?? "").toString().trim();    // ตัวเลือก: แผนก
       const timestamp = (d.timestamp ?? "").toString();
 
       if(timestamp && timestamp !== lastStamp){
         lastStamp = timestamp;
 
-        // ประกอบข้อความ
+        // ป้ายลำดับ: มีลำดับค่อยแสดงวงเล็บ
         const orderPart = order ? ` (${ORDER_LABEL}: ${order})` : "";
-        // ถ้าอยากแสดงแผนก: const deptPart = dept ? ` • ${dept}` : "";
-        const displayName = name || "ผู้เข้าร่วม";
+        // ถ้าต้องการแสดงแผนก ให้เปิดใช้บรรทัดด้านล่าง
+        // const deptPart  = dept ? ` • ${dept}` : "";
+
+        const displayName = name || "ผู้เข้าร่วม";   // ถ้าไม่พบชื่อจริง ค่อย fallback
         const text = `🎉 ยินดีต้อนรับคุณ ${displayName}${orderPart} 🎉`;
+        // หากอยากโชว์แผนก: const text = `🎉 ยินดีต้อนรับคุณ ${displayName}${orderPart}${deptPart} 🎉`;
 
         ticker.textContent = text;
         tuneTickerSpeed(text);
@@ -72,3 +75,4 @@
   load();
   setInterval(load, POLL_MS);
 </script>
+``

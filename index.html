@@ -2,101 +2,163 @@
 <html lang="th">
 <head>
 <meta charset="utf-8" />
-<title>TMD Check-in – One-page Dashboard (LIVE + Recent50)</title>
+<title>TMD Check-in – One-page Dashboard (Responsive + LIVE)</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <style>
   :root{
-    --bg:#0b59a1; --ink:#fff; --sub:#d3e6ff; --accent:#22c55e; --card: rgba(255,255,255,.10);
+    /* === Theme (ปรับได้) === */
+    --brand-blue:#0b59a1;
+    --brand-green:#22c55e;
+    --bg: var(--brand-blue);
+    --ink:#ffffff;
+    --sub:#d3e6ff;
+    --card: rgba(255,255,255,.10);
+    --stroke: rgba(255,255,255,.15);
     --muted: rgba(255,255,255,.75);
   }
+
+  /* รีเซ็ตพื้นฐาน */
   *{ box-sizing:border-box }
   html,body{ height:100% }
   body{
-    margin:0; background:var(--bg); color:var(--ink);
+    margin:0; color:var(--ink);
     font-family:"Segoe UI", system-ui, -apple-system, Arial, Helvetica, sans-serif;
     display:flex; flex-direction:column; overflow:hidden;
+    /* พื้นหลัง gradient + glow ให้ดูว้าวขึ้น */
+    background:
+      radial-gradient(1200px 700px at 12% 10%, rgba(255,255,255,.10), transparent 60%),
+      radial-gradient(1200px 700px at 88% 90%, rgba(255,255,255,.06), transparent 60%),
+      linear-gradient(180deg, #0a4e8d 0%, #0b59a1 50%, #083d6b 100%);
   }
 
-  /* Header */
+  /* ========== HEADER ========== */
   .header{
-    display:grid; grid-template-columns: 1fr 1fr 1fr; gap:18px;
-    align-items:center; padding:14px 22px;
-    background:linear-gradient(90deg, rgba(255,255,255,.06), rgba(255,255,255,0));
-    border-bottom:2px solid rgba(255,255,255,.15);
+    display:grid; align-items:center; gap:1rem;
+    /* 3 คอลัมน์: Brand + KPI + Time */
+    grid-template-columns: 1fr 1.2fr 1fr;
+    padding: clamp(10px, 1.3vw, 18px) clamp(14px, 1.6vw, 22px);
+    background: linear-gradient(90deg, rgba(255,255,255,.08), rgba(255,255,255,0));
+    border-bottom: 2px solid var(--stroke);
   }
+  /* Brand + LIVE */
   .brand{
-    display:flex; align-items:center; gap:10px;
-    font-size:24px; font-weight:900; letter-spacing:.3px
+    display:flex; align-items:center; gap:.6rem;
+    font-weight:900;
+    font-size: clamp(18px, 2.1vw, 24px);
+    letter-spacing:.3px;
   }
   .live{
-    display:inline-flex; align-items:center; gap:6px;
-    background:#ef4444; color:#fff; font-weight:900; font-size:12px;
-    padding:4px 8px; border-radius:999px; letter-spacing:.6px;
+    display:inline-flex; align-items:center; gap:.45rem;
+    background:#ef4444; color:#fff; font-weight:900;
+    font-size: clamp(10px, 1.2vw, 12px);
+    padding:.35rem .6rem; border-radius:999px; letter-spacing:.6px;
+    box-shadow: 0 0 0 2px rgba(255,255,255,.15) inset, 0 6px 18px rgba(239,68,68,.35);
     animation: blink 1s steps(2,end) infinite;
   }
-  .dot{ width:8px; height:8px; background:#fff; border-radius:50% }
-  @keyframes blink{ 50% { opacity:.4 } }
+  .dot{ width:.55rem; height:.55rem; background:#fff; border-radius:50% }
+  @keyframes blink{ 50% { opacity:.45 } }
 
+  /* KPI – Total emphasized + Dept count */
   .bigkpi{
-    display:flex; align-items:center; justify-content:center; gap:16px;
+    display:flex; align-items:center; justify-content:center; gap: clamp(.6rem, 1.5vw, 1rem);
   }
   .kpi-total{
-    background:rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.18);
-    padding:12px 18px; border-radius:14px; text-align:center; min-width:280px;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.25);
+    background: rgba(255,255,255,.12);
+    border: 1px solid rgba(255,255,255,.25);
+    padding: clamp(.6rem, 1.4vw, .9rem) clamp(.9rem, 1.8vw, 1.2rem);
+    border-radius: 14px; text-align:center; min-width: clamp(220px, 26vw, 360px);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.25), 0 8px 30px rgba(0,0,0,.25);
   }
   .kpi-total .num{
-    font-size:64px; font-weight:900; line-height:1; letter-spacing:1px;
-    text-shadow:0 4px 0 rgba(0,0,0,.15);
+    font-weight:900;
+    /* ใหญ่ขึ้นมาก และ responsive */
+    font-size: clamp(40px, 7vw, 92px);
+    line-height:1; letter-spacing: .5px;
+    text-shadow: 0 6px 0 rgba(0,0,0,.15);
   }
-  .kpi-total .lbl{ font-size:13px; color:var(--sub); margin-top:8px }
+  .kpi-total .lbl{
+    font-size: clamp(11px, 1.2vw, 13px); color:var(--sub); margin-top:.4rem
+  }
   .kpi-dept{
-    background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15);
-    padding:10px 14px; border-radius:12px; min-width:160px; text-align:center;
+    background: rgba(255,255,255,.10);
+    border: 1px solid rgba(255,255,255,.20);
+    padding: .6rem .9rem; border-radius: 12px; min-width: clamp(120px, 16vw, 180px);
+    text-align:center;
   }
-  .kpi-dept .num{ font-size:28px; font-weight:900 }
-  .kpi-dept .lbl{ font-size:12px; color:var(--sub) }
+  .kpi-dept .num{ font-size: clamp(18px, 2.6vw, 28px); font-weight:900 }
+  .kpi-dept .lbl{ font-size: clamp(10px, 1.1vw, 12px); color:var(--sub) }
 
+  /* Current DateTime – ใหญ่ขึ้นมาก */
   .timebox{ text-align:right; line-height:1.25 }
-  .now{ font-size:18px; font-weight:800 }
-  .upd{ font-size:12px; color:var(--sub) }
+  .now{
+    font-size: clamp(22px, 3.8vw, 44px);
+    font-weight:900; letter-spacing:.5px;
+    text-shadow: 0 4px 0 rgba(0,0,0,.15);
+  }
+  .date{
+    font-size: clamp(14px, 2.2vw, 20px);
+    font-weight:700; color: var(--sub);
+  }
+  .upd{
+    font-size: clamp(11px, 1.4vw, 13px);
+    color: var(--sub); margin-top:.2rem
+  }
 
-  /* Layout body: 3 columns */
-  .wrap{ flex:1; padding:16px 22px 14px 22px; overflow:hidden; }
-  .cols{ display:grid; grid-template-columns: 1.1fr 1fr 1.1fr; gap:18px; height:100%; }
+  /* ========== BODY LAYOUT ========== */
+  .wrap{ flex:1; padding: clamp(12px, 1.6vw, 18px) clamp(14px, 1.6vw, 22px); overflow:hidden; }
+  .cols{
+    height:100%;
+    display:grid; gap: clamp(12px, 1.4vw, 18px);
+    /* 3 คอลัมน์ > 1440px, 2 คอลัมน์ > 992px, 1 คอลัมน์ บนมือถือ */
+    grid-template-columns: 1.15fr 1fr 1.15fr;
+  }
+  @media (max-width: 1440px){
+    .cols{ grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 992px){
+    .cols{ grid-template-columns: 1fr; }
+  }
 
   .card{
-    height:100%; background:var(--card); border:1px solid rgba(255,255,255,.15);
-    border-radius:14px; padding:18px; overflow:auto;
+    height:100%; background:var(--card); border:1px solid var(--stroke);
+    border-radius:14px; padding: clamp(12px, 1.4vw, 18px); overflow:auto;
+    backdrop-filter: blur(4px);
   }
-  .card h3{ margin:0 0 12px 0; font-size:16px; color:var(--sub); font-weight:800; letter-spacing:.2px }
+  .card h3{
+    margin:0 0 .7rem 0; font-size: clamp(14px, 1.6vw, 16px); color:var(--sub);
+    font-weight:800; letter-spacing:.2px
+  }
 
-  /* Spotlight block */
+  /* === Spotlight === */
   .spot{
     position:relative; height:100%;
     display:flex; align-items:center; justify-content:center;
-    border-radius:12px; padding:10px; overflow:hidden;
+    border-radius:12px; padding: clamp(8px, 1vw, 10px); overflow:hidden;
     background:
-      radial-gradient(1200px 600px at 10% 10%, rgba(255,255,255,.12), transparent 60%),
-      radial-gradient(1200px 600px at 90% 90%, rgba(255,255,255,.08), transparent 60%),
+      radial-gradient(1200px 600px at 10% 10%, rgba(255,255,255,.10), transparent 60%),
+      radial-gradient(1200px 600px at 90% 90%, rgba(255,255,255,.07), transparent 60%),
       transparent;
   }
   .spot-card{
-    width:100%; max-width:1000px; text-align:center;
+    width:100%; max-width:min(1100px, 92%); text-align:center;
     background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
-    border:1px solid rgba(255,255,255,.18); border-radius:18px; padding:28px;
+    border:1px solid rgba(255,255,255,.18); border-radius:18px; padding: clamp(16px, 2vw, 28px);
     box-shadow:0 30px 100px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.24);
-    animation: popIn .5s ease-out;
+    animation: popIn .45s ease-out;
   }
   .spot-accent{
     height:8px; border-radius:999px;
-    background:linear-gradient(90deg,#22c55e,#60a5fa,#22c55e); background-size:200% 100%;
-    animation: flow 6s linear infinite; margin-bottom:16px;
+    background: linear-gradient(90deg,var(--brand-green),#60a5fa,var(--brand-green));
+    background-size:200% 100%; animation: flow 6s linear infinite; margin-bottom: clamp(10px, 1.2vw, 16px);
   }
-  .spot-name{ font-size:56px; font-weight:900; letter-spacing:.5px; text-shadow:0 4px 0 rgba(0,0,0,.15); margin:6px 0 8px }
-  .spot-meta{ font-size:20px; color:var(--sub) }
+  .spot-name{
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight:900; letter-spacing:.5px; margin:.3rem 0 .4rem;
+    text-shadow:0 4px 0 rgba(0,0,0,.15);
+  }
+  .spot-meta{ font-size: clamp(14px, 2vw, 20px); color:var(--sub) }
 
-  @keyframes popIn{ from{opacity:0; transform:scale(.95)} to{opacity:1; transform:scale(1)} }
+  @keyframes popIn{ from{opacity:0; transform:scale(.96)} to{opacity:1; transform:scale(1)} }
   @keyframes flow{ from{background-position:0 0} to{background-position:200% 0} }
 
   .confetti{ position:absolute; inset:0; pointer-events:none; overflow:hidden; z-index:2 }
@@ -106,50 +168,49 @@
   }
   @keyframes fall{ to{ transform:translateY(120vh) rotate(360deg); opacity:.95 } }
 
-  /* Department summary */
-  .dept-item{ margin:10px 0 }
+  /* === Department Summary === */
+  .dept-item{ margin: clamp(6px, 1vw, 10px) 0 }
   .dept-row{ display:flex; align-items:center; justify-content:space-between; gap:10px }
-  .dept-name{ font-weight:800 }
-  .dept-count{ color:var(--sub); font-size:12px; min-width:48px; text-align:right }
-  .bar{ position:relative; height:10px; background:rgba(255,255,255,.12);
-        border:1px solid rgba(255,255,255,.2); border-radius:999px; overflow:hidden; margin-top:6px; }
-  .bar > span{ position:absolute; inset:0 auto 0 0; width:0%;
-               background:linear-gradient(90deg,#22c55e,#86efac); border-right:1px solid rgba(255,255,255,.4); }
+  .dept-name{ font-weight:800; font-size: clamp(14px, 1.8vw, 16px); }
+  .dept-count{ color:var(--sub); font-size: clamp(11px, 1.6vw, 12px); min-width:48px; text-align:right }
+  .bar{ position:relative; height:12px; background:rgba(255,255,255,.12);
+        border:1px solid rgba(255,255,255,.2); border-radius:999px; overflow:hidden; margin-top:.35rem; }
+  .bar > span{
+    position:absolute; inset:0 auto 0 0; width:0%;
+    background:linear-gradient(90deg,var(--brand-green),#86efac);
+    border-right:1px solid rgba(255,255,255,.4);
+  }
 
-  /* Recent 50 with auto scroll */
+  /* === Recent 50 + Auto scroll === */
   .scroll-wrap{ position:relative; height:100%; display:flex; flex-direction:column; }
   .scroll-viewport{
     flex:1; overflow:auto; scroll-behavior:smooth;
-    border:1px solid rgba(255,255,255,.12); border-radius:10px; padding:8px;
+    border:1px solid rgba(255,255,255,.12); border-radius:10px; padding: clamp(6px, 1vw, 8px);
     background:rgba(255,255,255,.05);
   }
   .recent-list{ list-style:none; padding:0; margin:0; }
   .recent-list li{
-    padding:10px 6px; border-bottom:1px solid rgba(255,255,255,.12);
-    display:flex; flex-direction:column; gap:4px; animation: fade .25s ease-in-out;
+    padding: clamp(8px, 1.2vw, 10px) clamp(6px, 1vw, 8px);
+    border-bottom:1px solid rgba(255,255,255,.12);
+    display:flex; flex-direction:column; gap:.25rem; animation: fade .25s ease-in-out;
   }
   .recent-list li:last-child{ border-bottom:0 }
-  .r-name{ font-size:18px; font-weight:900 }
-  .r-meta{ font-size:12px; color:var(--sub) }
+  .r-name{ font-size: clamp(14px, 1.9vw, 18px); font-weight:900 }
+  .r-meta{ font-size: clamp(11px, 1.6vw, 12px); color:var(--sub) }
 
-  .scroll-controls{
-    display:flex; gap:8px; justify-content:flex-end; margin-top:8px;
-  }
+  .scroll-controls{ display:flex; gap:.5rem; justify-content:flex-end; margin-top:.6rem }
   .btn{
     background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.25);
-    color:#fff; padding:8px 10px; border-radius:8px; cursor:pointer; font-weight:700; font-size:12px;
+    color:#fff; padding:.45rem .65rem; border-radius:8px; cursor:pointer; font-weight:800; font-size: clamp(11px, 1.5vw, 12px);
   }
   .btn:hover{ filter:brightness(1.1) }
 
   /* Footer status */
-  .footer{ padding:8px 22px 12px; font-size:13px; color:var(--sub); text-align:center }
+  .footer{ padding: .6rem clamp(12px, 1.6vw, 22px) .8rem; font-size: clamp(11px, 1.5vw, 13px); color:var(--sub); text-align:center }
 
-  /* Responsive */
-  @media (max-width:1280px){
-    .header{ grid-template-columns: 1fr }
-    .cols{ grid-template-columns: 1fr; gap:14px }
-    .spot-name{ font-size:44px }
-    .kpi-total .num{ font-size:48px }
+  /* ลด motion สำหรับผู้ใช้ที่ตั้งค่า */
+  @media (prefers-reduced-motion: reduce){
+    *{ animation: none !important; transition: none !important; }
   }
 </style>
 </head>
@@ -174,6 +235,7 @@
 
     <div class="timebox">
       <div class="now" id="now">--:--:--</div>
+      <div class="date" id="date">----</div>
       <div class="upd" id="updated">ข้อมูลอัปเดต: -</div>
     </div>
   </div>
@@ -233,15 +295,19 @@
   const ORDER_LABEL= 'ลำดับ';   // หรือ 'Registration No.'
 
   /* ===== State ===== */
-  let lastKey     = "";
-  let lastTotal   = 0;
-  let lastSpotTs  = "";
-  let items       = [];
+  let lastKey   = "";
+  let lastTotal = 0;
+  let lastSpotTs= "";
+  let items     = [];
 
   /* ===== Helpers ===== */
   const $  = s => document.querySelector(s);
   const $$ = s => document.querySelectorAll(s);
   const fmt = ts => { try{ return new Date(ts).toLocaleString('th-TH',{hour12:false}); }catch{return ts||"";} };
+  const fmtDate = d => {
+    try{ return new Date(d).toLocaleDateString('th-TH',{weekday:'long', year:'numeric', month:'long', day:'numeric'}); }
+    catch{ return d || ""; }
+  };
 
   function normalize(d){
     if (!d) return { items:[], updated:"" };
@@ -262,15 +328,15 @@
     return [...m.entries()].sort((a,b)=>b[1]-a[1]);
   }
 
-  /* ===== Header ===== */
+  /* ===== Header – Time & Count‑up ===== */
   function tickClock(){
     const now = new Date();
-    $("#now").textContent = now.toLocaleString('th-TH',{hour12:false});
+    $("#now").textContent = now.toLocaleTimeString('th-TH',{hour12:false});
+    $("#date").textContent = fmtDate(now);
   }
   setInterval(tickClock, 500); tickClock();
 
-  // count-up animation for total
-  function animateTotal(from, to, ms=600){
+  function animateTotal(from, to, ms=700){
     const el = $("#kpi-total");
     const start = performance.now();
     function step(t){
@@ -322,7 +388,7 @@
     if ((x.timestamp||"") !== lastSpotTs){
       lastSpotTs = x.timestamp||"";
       const card = $("#spot-card");
-      card.style.animation = "none"; void card.offsetWidth; card.style.animation = "";
+      card.style.animation = "none"; void card.offsetWidth; card.style.animation = ""; // retrigger
       confettiBurst();
     }
   }
@@ -333,36 +399,33 @@
     const pairs = groupDept(items).slice(0, TOP_DEPT);
     const max = Math.max(1, ...pairs.map(p=>p[1]));
     pairs.forEach(([name,count])=>{
-      const div = document.createElement("div");
-      div.className = "dept-item";
-      div.innerHTML = `
+      const row = document.createElement("div");
+      row.className = "dept-item";
+      row.innerHTML = `
         <div class="dept-row">
           <div class="dept-name">${name||"Other"}</div>
           <div class="dept-count">${count}</div>
         </div>
         <div class="bar"><span style="width:${Math.round(count/max*100)}%"></span></div>
       `;
-      wrap.appendChild(div);
+      wrap.appendChild(row);
     });
   }
 
-  /* ===== Recent 50 (auto scroll + controls) ===== */
+  /* ===== Recent 50 + Auto scroll ===== */
   let autoDir = 1;       // 1 = down, -1 = up
   let autoTimer = null;  // interval id
-  const STEP = 1;        // pixels per tick
-  const TICK = 16;       // ms per tick (~60fps)
+  const STEP = 1.2;      // px ต่อก้าว
+  const TICK = 16;       // ms ต่อก้าว (~60fps)
 
   function startAutoScroll(){
     stopAutoScroll();
     const vp = $("#viewport");
     autoTimer = setInterval(()=>{
-      // ถ้ายังไม่ overflow ไม่ต้องเลื่อน
-      if (vp.scrollHeight <= vp.clientHeight) return;
-
+      if (vp.scrollHeight <= vp.clientHeight) return; // ไม่ overflow ไม่ต้องเลื่อน
       vp.scrollTop += STEP * autoDir;
       const endBottom = (vp.scrollTop + vp.clientHeight >= vp.scrollHeight - 1);
       const endTop    = (vp.scrollTop <= 0);
-
       if (endBottom) autoDir = -1;
       if (endTop)    autoDir = 1;
     }, TICK);
@@ -380,8 +443,7 @@
       `;
       ul.appendChild(li);
     });
-    // เริ่ม auto scroll ใหม่ทุกครั้งที่รายการเปลี่ยน
-    startAutoScroll();
+    startAutoScroll(); // reset auto scroll ทุกครั้งที่รายการเปลี่ยน
   }
 
   // controls
@@ -389,8 +451,6 @@
   $("#btn-down").addEventListener("click", ()=>{ autoDir = 1; startAutoScroll(); });
   $("#btn-pause").addEventListener("click", ()=> stopAutoScroll());
   $("#btn-resume").addEventListener("click", ()=> startAutoScroll());
-
-  // หยุดชั่วคราวเมื่อ mouse วางบน viewport
   $("#viewport").addEventListener("mouseenter", stopAutoScroll);
   $("#viewport").addEventListener("mouseleave", startAutoScroll);
 

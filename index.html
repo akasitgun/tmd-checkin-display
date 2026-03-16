@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8" />
-<title>TMD Check-in – One-page Dashboard (A2: 2 Lines + Icons)</title>
+<title>TMD Check-in – One-page Dashboard (A2: 2 Lines + Icons + Logo)</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <style>
   :root{
@@ -29,7 +29,20 @@
     background: linear-gradient(90deg, rgba(255,255,255,.08), rgba(255,255,255,0));
     border-bottom: 2px solid var(--stroke);
   }
-  .brand{ display:flex; align-items:center; gap:.6rem; font-weight:900; font-size: clamp(18px, 2.1vw, 24px) }
+  .brand{
+    display:flex; align-items:center; gap:.6rem; font-weight:900; font-size: clamp(18px, 2.1vw, 24px)
+  }
+  /* โลโก้หน้า Title */
+  .brand .logo{
+    height: clamp(38px, 5vw, 70px);   /* 👈 ขยายโลโก้ */
+    width: auto;
+    aspect-ratio: auto;
+    object-fit: contain;
+    display:inline-block;
+    margin-right: .45rem;
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,.35));
+}
+
   .live{
     display:inline-flex; align-items:center; gap:.45rem; background:#ef4444; color:#fff; font-weight:900;
     font-size: clamp(10px, 1.2vw, 12px); padding:.35rem .6rem; border-radius:999px; letter-spacing:.6px;
@@ -86,7 +99,7 @@
   }
   .card h3{ margin:0 0 .7rem 0; font-size: clamp(14px, 1.6vw, 16px); color:var(--sub); font-weight:800; letter-spacing:.2px }
 
-  /* ===== Spotlight Top-5 (Vertical, A2 2-lines + icons) ===== */
+  /* ===== Spotlight Top-5 (Vertical, A2) ===== */
   .spot-vert-wrap{ position:relative; }
   .spot-vert{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap: clamp(8px, 1vw, 10px); }
   .spot-row{
@@ -174,6 +187,8 @@
   <!-- Header -->
   <div class="header">
     <div class="brand">
+      <!-- โลโก้หน้า Title: ค่า src ตั้งอัตโนมัติจาก JS ด้านล่าง -->
+      <img id="brand-logo" class="logo" alt="TMD logo" src="" />
       ✔ TMD 60th Anniversary • Check‑in Dashboard
       <span class="live"><span class="dot"></span>LIVE</span>
     </div>
@@ -251,6 +266,13 @@
   const RECENT_STEP = 1.2, RECENT_TICK = 16;
   const DEPT_STEP   = 1.0, DEPT_TICK   = 16;
 
+  /* ===== Logo URL =====
+     ✅ เปลี่ยนที่นี่เป็นโลโก้ของคุณ
+     - ใช้ลิงก์ออนไลน์: 'https://…/tmd-logo.png'
+     - หรือไฟล์ใน repo: './assets/tmd-logo.png'
+  */
+  const LOGO_URL = 'https://raw.githubusercontent.com/akasitgun/tmd-checkin-display/main/MEIDEN.png';
+
   /* ===== State ===== */
   let lastKey   = "";
   let lastTotal = 0;
@@ -317,7 +339,7 @@
     $("#updated").textContent = updLine;
   }
 
-  /* ===== Spotlight Top-5 (A2: 2 lines + icons) ===== */
+  /* ===== Spotlight Top-5 (A2) ===== */
   function confettiInto(container, ms=1500, N=60){
     container.innerHTML = "";
     for(let i=0;i<N;i++){
@@ -389,7 +411,7 @@
     requestAnimationFrame(()=> startAutoScroll($("#dept-viewport"), deptState, DEPT_STEP, DEPT_TICK));
   }
 
-  /* ===== Recent 50 (A2: 2 lines + icons) ===== */
+  /* ===== Recent 50 (A2) ===== */
   function renderRecent(){
     const ul = $("#recent-list"); ul.innerHTML="";
     items.slice(0, RECENT_N).forEach((x, i)=>{
@@ -446,6 +468,15 @@
       $("#status").textContent = "Fetch error: " + (e.message || e);
     }
   }
+
+  // ตั้งค่าโลโก้
+  (function initLogo(){
+    const img = document.getElementById('brand-logo');
+    if (img){
+      img.src = LOGO_URL;
+      img.addEventListener('error', ()=>{ img.style.display='none'; }); // ถ้าโหลดไม่ได้ ซ่อนไว้
+    }
+  })();
 
   document.getElementById('kpi-total').textContent = '0';
   load();

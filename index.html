@@ -2,13 +2,14 @@
 <html lang="th">
 <head>
 <meta charset="utf-8" />
-<title>TMD Check-in – One-page Dashboard (Spotlight Auto-scroll)</title>
+<title>TMD Check-in – One-page Dashboard (Full-screen Spotlight Step)</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <style>
   :root{
     --brand-blue:#0b59a1; --brand-green:#22c55e;
     --bg: var(--brand-blue); --ink:#ffffff; --sub:#d3e6ff;
     --card: rgba(255,255,255,.10); --stroke: rgba(255,255,255,.15);
+    --accent:#22c55e; --accent2:#60a5fa;
   }
   *{ box-sizing:border-box } html,body{ height:100% }
   body{
@@ -32,13 +33,10 @@
   .brand{
     display:flex; align-items:center; gap:.6rem; font-weight:900; font-size: clamp(18px, 2.1vw, 24px)
   }
-  /* โลโก้ (นิ่ง) */
   .brand .logo{
-    height: clamp(38px, 5vw, 70px);  /* ปรับใหญ่ขึ้น */
-    width: auto;
-    object-fit: contain;
-    display:inline-block;
-    margin-right: .45rem;
+    height: clamp(38px, 5vw, 70px);
+    width:auto; object-fit:contain; display:inline-block;
+    margin-right:.45rem;
     filter: drop-shadow(0 2px 4px rgba(0,0,0,.25));
   }
   .live{
@@ -50,36 +48,27 @@
   .dot{ width:.55rem; height:.55rem; background:#fff; border-radius:50% }
   @keyframes blink{ 50% { opacity:.45 } }
 
-  /* KPI: 2 ช่อง แถวเดียว */
   .bigkpi{
     display:flex; align-items:center; justify-content:center;
     gap: clamp(.8rem, 1.4vw, 1.2rem); flex-wrap: nowrap;
   }
   .kpi-total, .kpi-dept{
-    background: rgba(255,255,255,.10);
-    border: 1px solid rgba(255,255,255,.20);
-    padding: .7rem 1rem; border-radius: 12px;
-    min-width: clamp(220px, 24vw, 360px);
-    text-align:center; white-space: nowrap;
+    background: rgba(255,255,255,.10); border: 1px solid rgba(255,255,255,.20);
+    padding:.7rem 1rem; border-radius:12px; min-width: clamp(220px, 24vw, 360px);
+    text-align:center; white-space:nowrap;
   }
   .kpi-total{
-    background: rgba(255,255,255,.12);
-    border: 1px solid rgba(255,255,255,.25);
+    background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.25);
     box-shadow: inset 0 1px 0 rgba(255,255,255,.25), 0 8px 30px rgba(0,0,0,.25);
   }
-  .kpi-total .num{
-    font-weight:900; line-height:1; letter-spacing:.5px; text-shadow:0 6px 0 rgba(0,0,0,.15);
-    font-size: clamp(40px, 6.6vw, 92px);
-  }
-  .kpi-total .lbl, .kpi-dept .lbl{
-    color:var(--sub); margin-top:.35rem; font-size: clamp(11px, 1.1vw, 13px);
-  }
-  .kpi-dept .num{ font-weight:900; line-height:1.05; letter-spacing:.3px; font-size: clamp(18px, 2.6vw, 28px); }
+  .kpi-total .num{ font-weight:900; line-height:1; letter-spacing:.5px; text-shadow:0 6px 0 rgba(0,0,0,.15); font-size: clamp(40px, 6.6vw, 92px) }
+  .kpi-total .lbl, .kpi-dept .lbl{ color:var(--sub); margin-top:.35rem; font-size: clamp(11px, 1.1vw, 13px) }
+  .kpi-dept .num{ font-weight:900; line-height:1.05; letter-spacing:.3px; font-size: clamp(18px, 2.6vw, 28px) }
 
   .timebox{ text-align:right; line-height:1.25 }
-  .now{ font-size: clamp(22px, 3.8vw, 44px); font-weight:900; letter-spacing:.5px; text-shadow: 0 4px 0 rgba(0,0,0,.15) }
-  .date{ font-size: clamp(14px, 2.2vw, 20px); font-weight:700; color: var(--sub) }
-  .upd{ font-size: clamp(11px, 1.4vw, 13px); color: var(--sub); margin-top:.2rem }
+  .now{ font-size: clamp(22px, 3.8vw, 44px); font-weight:900; letter-spacing:.5px; text-shadow:0 4px 0 rgba(0,0,0,.15) }
+  .date{ font-size: clamp(14px, 2.2vw, 20px); font-weight:700; color:var(--sub) }
+  .upd{ font-size: clamp(11px, 1.4vw, 13px); color:var(--sub); margin-top:.2rem }
 
   /* ===== Body layout ===== */
   .wrap{ flex:1; padding: clamp(12px, 1.6vw, 18px) clamp(14px, 1.6vw, 22px); overflow:hidden; }
@@ -99,17 +88,17 @@
     margin:0 0 .7rem 0; font-size: clamp(14px, 1.6vw, 16px); color:var(--sub); font-weight:800; letter-spacing:.2px
   }
 
-  /* ===== Spotlight (Auto-scroll viewport) ===== */
+  /* ===== Spotlight (Auto-scroll in card) ===== */
   .spot-viewport{
     overflow:auto; scroll-behavior:smooth;
-    height: min(380px, 42vh);               /* กำหนดให้เกิด overflow เพื่อเลื่อน */
+    height: min(380px, 42vh);
     border:1px solid rgba(255,255,255,.12);
     border-radius:14px;
     padding: clamp(8px, 1vw, 12px);
     background:rgba(255,255,255,.05);
     mask-image: linear-gradient(to bottom, transparent 0, black 12px, black calc(100% - 12px), transparent 100%);
   }
-  .spot-vert{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap: clamp(8px, 1vw, 10px); }
+  .spot-vert{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap: clamp(8px, 1vw, 10px) }
   .spot-row{
     display:grid; grid-template-columns:auto 1fr; grid-template-rows:auto auto; gap: 6px 10px;
     grid-template-areas: "rank name" "rank meta";
@@ -142,11 +131,7 @@
   }
   .meta-icon{ opacity:.9; margin-right:.35rem }
 
-  .spot-confetti{ position:absolute; inset:0; pointer-events:none; overflow:hidden; z-index:2; }
-  .spot-confetti i{ position:absolute; top:-10px; width:8px; height:14px; border-radius:2px; opacity:.9; animation: fall linear forwards; }
-  @keyframes fall{ to{ transform:translateY(120vh) rotate(360deg); opacity:.95 } }
-
-  /* ===== Department Summary (auto scroll) ===== */
+  /* ===== Department Summary ===== */
   .scroll-viewport{
     overflow:auto; scroll-behavior:smooth;
     border:1px solid rgba(255,255,255,.12); border-radius:10px; padding: clamp(6px, 1vw, 8px);
@@ -162,7 +147,7 @@
   .bar{ position:relative; height:12px; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.2); border-radius:999px; overflow:hidden; margin-top:.35rem; }
   .bar > span{ position:absolute; inset:0 auto 0 0; width:0%; background:linear-gradient(90deg,var(--brand-green),#86efac); border-right:1px solid rgba(255,255,255,.4) }
 
-  /* ===== Recent 50 (auto scroll) ===== */
+  /* ===== Recent 50 ===== */
   .recent-viewport{
     overflow:auto; scroll-behavior:smooth;
     border:1px solid rgba(255,255,255,.12); border-radius:10px; padding: clamp(6px, 1vw, 8px);
@@ -182,9 +167,53 @@
   .scroll-controls{ display:flex; gap:.5rem; justify-content:flex-end; margin-top:.6rem }
   .btn{ background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.25); color:#fff; padding:.45rem .65rem; border-radius:8px; cursor:pointer; font-weight:800; font-size: clamp(11px, 1.5vw, 12px) }
   .btn:hover{ filter:brightness(1.1) }
-  @keyframes fade{ from{opacity:0; transform:translateY(4px)} to{opacity:1; transform:translateY(0)} }
 
   .footer{ padding: .6rem clamp(12px, 1.6vw, 22px) .8rem; font-size: clamp(11px, 1.5vw, 13px); color:var(--sub); text-align:center }
+
+  /* ===== Full-screen Spotlight Player ===== */
+  .fs{ position:fixed; inset:0; z-index:9999; background:
+        radial-gradient(1200px 700px at 10% 10%, rgba(255,255,255,.10), transparent 60%),
+        radial-gradient(1200px 700px at 90% 90%, rgba(255,255,255,.08), transparent 60%),
+        linear-gradient(180deg, #0a4e8d 0%, #0b59a1 50%, #083d6b 100%);
+       display:none; }
+  .fs.show{ display:flex; }
+  .fs-wrap{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:2vw }
+  .fs-title{ font-size: clamp(28px, 3.2vw, 54px); font-weight:900; letter-spacing:.6px; margin-bottom:1.2rem; }
+  .fs-card{
+    width:min(1200px, 92vw);
+    border:1px solid rgba(255,255,255,.22);
+    border-radius:22px;
+    padding: clamp(18px, 2.2vw, 32px);
+    background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+    box-shadow: 0 30px 120px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.25);
+    text-align:center;
+  }
+  .fs-name{ font-size: clamp(36px, 6vw, 92px); font-weight:900; letter-spacing:.8px; text-shadow:0 6px 0 rgba(0,0,0,.15); margin:.2rem 0 1rem }
+  .fs-meta{ font-size: clamp(18px, 2.2vw, 30px); color:var(--sub) }
+  .fs-rank{
+    display:inline-block; font-weight:900; font-size: clamp(14px, 1.8vw, 22px);
+    padding:.5rem 1rem; border-radius:999px; margin-bottom:1rem;
+    background: linear-gradient(90deg, #ffd64d, #ffb300);
+    color:#3a2a00; border:1px solid rgba(0,0,0,.12);
+    box-shadow: 0 10px 24px rgba(0,0,0,.2), inset 0 1px 0 rgba(255,255,255,.75);
+  }
+  .fs-progress{
+    width:min(1200px, 92vw); height:10px; border-radius:999px; overflow:hidden;
+    border:1px solid rgba(255,255,255,.22); background:rgba(255,255,255,.10);
+    margin:1.2rem auto 0;
+  }
+  .fs-progress > span{
+    display:block; height:100%; width:0%;
+    background:linear-gradient(90deg, var(--accent), var(--accent2));
+  }
+  .fs-ctrl{
+    position:absolute; top:18px; right:18px; display:flex; gap:.5rem; flex-wrap:wrap;
+  }
+  .fs-ctrl .btn{
+    background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.25);
+    padding:.5rem .75rem; border-radius:10px; font-weight:800; color:#fff; cursor:pointer;
+  }
+  .fs-hint{ margin-top:1rem; color:var(--sub); font-size: clamp(12px, 1.4vw, 14px) }
 
   @media (prefers-reduced-motion: reduce){
     *{ animation: none !important; transition: none !important; }
@@ -225,11 +254,13 @@
 
       <!-- Spotlight Top-5 (Auto-scroll) -->
       <div class="card">
-        <div class="h3">Spotlight – ผู้เช็คอินล่าสุด 5 ลำดับแรก</div>
+        <div class="h3" style="display:flex; align-items:center; justify-content:space-between; gap:.6rem;">
+          <span>Spotlight – ผู้เช็คอินล่าสุด 5 ลำดับแรก</span>
+          <button id="btn-fs" class="btn">Full Screen Spotlight</button>
+        </div>
         <div class="spot-viewport" id="spot-viewport">
           <ul id="spot-list" class="spot-vert"></ul>
         </div>
-        <!-- confetti สำหรับ #1 -->
         <div id="spot-confetti" class="spot-confetti"></div>
       </div>
 
@@ -260,23 +291,48 @@
     </div>
   </div>
 
+  <!-- Full-screen Spotlight Player -->
+  <div id="fs-spotlight" class="fs" aria-hidden="true">
+    <div class="fs-ctrl">
+      <button id="fs-prev" class="btn">⟵ Prev</button>
+      <button id="fs-play" class="btn">▶ Play</button>
+      <button id="fs-pause" class="btn">⏸ Pause</button>
+      <button id="fs-next" class="btn">Next ⟶</button>
+      <button id="fs-close" class="btn">✕ Close</button>
+    </div>
+    <div class="fs-wrap">
+      <div class="fs-title">Full‑Screen Spotlight</div>
+      <div class="fs-card">
+        <div id="fs-rank" class="fs-rank">#1</div>
+        <div id="fs-name" class="fs-name">Waiting…</div>
+        <div id="fs-meta" class="fs-meta">—</div>
+      </div>
+      <div class="fs-progress"><span id="fs-progress-bar"></span></div>
+      <div class="fs-hint">Space = Play/Pause • ←/→ = Prev/Next • Esc = Close</div>
+    </div>
+  </div>
+
   <div id="status" class="footer">Initializing…</div>
 
 <script>
   /* ===== Settings ===== */
-  const DATA_URL   = "https://raw.githubusercontent.com/akasitgun/tmd-checkin-display/main/data.json";
-  const POLL_MS    = 1200;
-  const TOP_DEPT   = 50;
-  const RECENT_N   = 50;
-  const SPOT_N     = 5;         // จำนวน Spotlight
-  const ORDER_LABEL= 'ลำดับ';   // หรือ 'Registration No.'
+  const DATA_URL    = "https://raw.githubusercontent.com/akasitgun/tmd-checkin-display/main/data.json";
+  const POLL_MS     = 1200;
+  const TOP_DEPT    = 50;
+  const RECENT_N    = 50;
+  const SPOT_N      = 5;          // แสดง 5 คนบนการ์ด (โซน Spotlight ปกติ)
+  const ORDER_LABEL = 'ลำดับ';
 
+  // Auto-scroll speeds
   const RECENT_STEP = 1.2, RECENT_TICK = 16;  // recent list
   const DEPT_STEP   = 1.0, DEPT_TICK   = 16;  // department summary
-  const SPOT_STEP   = 1.0, SPOT_TICK   = 20;  // spotlight auto-scroll
+  const SPOT_STEP   = 1.0, SPOT_TICK   = 20;  // spotlight (ในการ์ด)
 
-  /* ===== Logo URL (จริง) ===== */
-  const LOGO_URL = 'https://raw.githubusercontent.com/akasitgun/tmd-checkin-display/main/MEIDEN.png';
+  // Full-screen Spotlight Player
+  const LOGO_URL   = 'https://raw.githubusercontent.com/akasitgun/tmd-checkin-display/main/MEIDEN.png';
+  const FS_SOURCE  = 'recent';    // 'recent' ใช้ 50 ล่าสุด, 'topN' ใช้ 5 คนล่าสุด (ตาม SPOT_N)
+  const FS_COUNT   = 50;          // จำนวนรายการในโหมดเต็มจอ (เมื่อใช้ 'recent')
+  const FS_ITEM_MS = 2500;        // ระยะเวลาต่อคน (มิลลิวินาที)
 
   /* ===== State ===== */
   let lastKey   = "";
@@ -287,6 +343,12 @@
   const recentState = { dir:1, timer:null };
   const deptState   = { dir:1, timer:null };
   const spotState   = { dir:1, timer:null };
+
+  // FS state
+  let fsActive  = false;
+  let fsTimer   = null;
+  let fsIdx     = 0;
+  let fsList    = [];
 
   /* ===== Helpers ===== */
   const $  = s => document.querySelector(s);
@@ -363,7 +425,7 @@
   }
   function stopAutoScroll(state){ if (state.timer){ clearInterval(state.timer); state.timer = null; } }
 
-  /* ===== Spotlight (A2) – Auto-scroll ===== */
+  /* ===== Spotlight (in card) – Auto-scroll list of 5 ===== */
   function confettiInto(container, ms=1500, N=60){
     container.innerHTML = "";
     for(let i=0;i<N;i++){
@@ -399,11 +461,10 @@
       ul.appendChild(li);
     });
 
-    // Confetti เมื่ออันดับ 1 เปลี่ยน
+    // confetti เมื่อ #1 เปลี่ยน
     const ts1 = top[0]?.timestamp || "";
     if (ts1 && ts1 !== lastTop1Ts){ lastTop1Ts = ts1; confettiInto($("#spot-confetti")); }
 
-    // เริ่มเลื่อนอัตโนมัติ (Spotlight)
     requestAnimationFrame(()=> startAutoScroll(vp, spotState, SPOT_STEP, SPOT_TICK));
   }
 
@@ -449,7 +510,77 @@
   $("#btn-pause").addEventListener("click", ()=> stopAutoScroll(recentState));
   $("#btn-resume").addEventListener("click", ()=> startAutoScroll($("#recent-viewport"), recentState, RECENT_STEP, RECENT_TICK));
 
-  // Hover pause (Recent / Dept / Spotlight)
+  /* ===== Full-screen Spotlight Player ===== */
+  function buildFsList(){
+    if (FS_SOURCE === 'topN') return items.slice(0, SPOT_N);
+    return items.slice(0, FS_COUNT); // recent N
+  }
+  function fsOpen(){
+    fsList = buildFsList();
+    fsIdx  = 0;
+    fsActive = true;
+    $("#fs-spotlight").classList.add('show');
+    document.body.style.overflow = 'hidden';
+    fsRender();
+    fsPlay();
+  }
+  function fsClose(){
+    fsActive = false;
+    $("#fs-spotlight").classList.remove('show');
+    document.body.style.overflow = '';
+    fsPause();
+  }
+  function fsRender(){
+    const x = fsList[fsIdx];
+    const name = x?.name || "ผู้เข้าร่วม";
+    const order= x?.order ?? (fsIdx+1);
+    const dept = (x?.department || "").toString().trim();
+    $("#fs-rank").textContent = `#${order}`;
+    $("#fs-name").textContent = name;
+    $("#fs-meta").innerHTML = `${dept ? `🏢 แผนก ${dept} • ` : ""}⏰ เวลา ${fmt(x?.timestamp)}`;
+    // progress reset
+    const bar = $("#fs-progress-bar");
+    bar.style.transition = 'none';
+    bar.style.width = '0%';
+    requestAnimationFrame(()=>{
+      bar.style.transition = `width ${FS_ITEM_MS}ms linear`;
+      bar.style.width = '100%';
+    });
+  }
+  function fsNext(){
+    if (!fsList.length) return;
+    fsIdx = (fsIdx + 1) % fsList.length;
+    fsRender();
+  }
+  function fsPrev(){
+    if (!fsList.length) return;
+    fsIdx = (fsIdx - 1 + fsList.length) % fsList.length;
+    fsRender();
+  }
+  function fsPlay(){
+    fsPause();
+    fsTimer = setInterval(fsNext, FS_ITEM_MS);
+  }
+  function fsPause(){
+    if (fsTimer){ clearInterval(fsTimer); fsTimer = null; }
+  }
+
+  // Buttons & keys
+  $("#btn-fs").addEventListener("click", fsOpen);
+  $("#fs-close").addEventListener("click", fsClose);
+  $("#fs-play").addEventListener("click", fsPlay);
+  $("#fs-pause").addEventListener("click", fsPause);
+  $("#fs-next").addEventListener("click", ()=>{ fsPause(); fsNext(); });
+  $("#fs-prev").addEventListener("click", ()=>{ fsPause(); fsPrev(); });
+  window.addEventListener("keydown",(e)=>{
+    if (!fsActive) return;
+    if (e.key === 'Escape') fsClose();
+    if (e.key === ' ') { e.preventDefault(); if (fsTimer) fsPause(); else fsPlay(); }
+    if (e.key === 'ArrowRight') { fsPause(); fsNext(); }
+    if (e.key === 'ArrowLeft')  { fsPause(); fsPrev(); }
+  });
+
+  /* ===== Hover pause (card lists) ===== */
   $("#recent-viewport").addEventListener("mouseenter", ()=> stopAutoScroll(recentState));
   $("#recent-viewport").addEventListener("mouseleave", ()=> startAutoScroll($("#recent-viewport"), recentState, RECENT_STEP, RECENT_TICK));
   $("#dept-viewport").addEventListener("mouseenter", ()=> stopAutoScroll(deptState));
@@ -472,18 +603,28 @@
         lastKey = key; items = list;
 
         renderHeader(data.updated, data);
-        renderSpotlightVertical(SPOT_N);   // <<< Spotlight Auto-scroll
+        renderSpotlightVertical(SPOT_N);
         renderDept();
         renderRecent();
 
-        $("#status").textContent = `Showing ${items.length} items • Poll ${POLL_MS}ms • Source: RAW • Spotlight auto-scroll`;
+        // ถ้าอยู่ในโหมดเต็มจอ อัปเดตลิสต์ทันที
+        if (fsActive){
+          const current = fsList[fsIdx]?.timestamp;
+          fsList = buildFsList();
+          // ถ้ารายการเดิมยังอยู่ ให้คง index โดยหา timestamp เดิม
+          const j = fsList.findIndex(v=>v.timestamp===current);
+          fsIdx = j >= 0 ? j : 0;
+          fsRender();
+        }
+
+        $("#status").textContent = `Showing ${items.length} items • Poll ${POLL_MS}ms • Source: RAW • FS items: ${FS_SOURCE==='recent'?FS_COUNT:SPOT_N}`;
       }
     }catch(e){
       $("#status").textContent = "Fetch error: " + (e.message || e);
     }
   }
 
-  // ตั้งค่าโลโก้จริง
+  // โลโก้จริง
   (function initLogo(){
     const img = document.getElementById('brand-logo');
     if (img){
@@ -492,7 +633,7 @@
     }
   })();
 
-  // กันหน้าว่าง
+  // ค่าเริ่มต้นกันหน้าว่าง
   document.getElementById('kpi-total').textContent = '0';
 
   load();

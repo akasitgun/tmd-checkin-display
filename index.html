@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8" />
-<title>TMD Check-in – One-page Dashboard (A2: 2 Lines + Icons + Logo)</title>
+<title>TMD Check-in – One-page Dashboard (Spotlight Auto-scroll)</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <style>
   :root{
@@ -32,17 +32,15 @@
   .brand{
     display:flex; align-items:center; gap:.6rem; font-weight:900; font-size: clamp(18px, 2.1vw, 24px)
   }
-  /* โลโก้หน้า Title */
+  /* โลโก้ (นิ่ง) */
   .brand .logo{
-    height: clamp(38px, 5vw, 70px);   /* 👈 ขยายโลโก้ */
+    height: clamp(38px, 5vw, 70px);  /* ปรับใหญ่ขึ้น */
     width: auto;
-    aspect-ratio: auto;
     object-fit: contain;
     display:inline-block;
     margin-right: .45rem;
-    filter: drop-shadow(0 2px 6px rgba(0,0,0,.35));
-}
-
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,.25));
+  }
   .live{
     display:inline-flex; align-items:center; gap:.45rem; background:#ef4444; color:#fff; font-weight:900;
     font-size: clamp(10px, 1.2vw, 12px); padding:.35rem .6rem; border-radius:999px; letter-spacing:.6px;
@@ -97,10 +95,20 @@
     border-radius:14px; padding: clamp(12px, 1.4vw, 18px); overflow:auto;
     backdrop-filter: blur(4px);
   }
-  .card h3{ margin:0 0 .7rem 0; font-size: clamp(14px, 1.6vw, 16px); color:var(--sub); font-weight:800; letter-spacing:.2px }
+  .card .h3{
+    margin:0 0 .7rem 0; font-size: clamp(14px, 1.6vw, 16px); color:var(--sub); font-weight:800; letter-spacing:.2px
+  }
 
-  /* ===== Spotlight Top-5 (Vertical, A2) ===== */
-  .spot-vert-wrap{ position:relative; }
+  /* ===== Spotlight (Auto-scroll viewport) ===== */
+  .spot-viewport{
+    overflow:auto; scroll-behavior:smooth;
+    height: min(380px, 42vh);               /* กำหนดให้เกิด overflow เพื่อเลื่อน */
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:14px;
+    padding: clamp(8px, 1vw, 12px);
+    background:rgba(255,255,255,.05);
+    mask-image: linear-gradient(to bottom, transparent 0, black 12px, black calc(100% - 12px), transparent 100%);
+  }
   .spot-vert{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap: clamp(8px, 1vw, 10px); }
   .spot-row{
     display:grid; grid-template-columns:auto 1fr; grid-template-rows:auto auto; gap: 6px 10px;
@@ -187,7 +195,6 @@
   <!-- Header -->
   <div class="header">
     <div class="brand">
-      <!-- โลโก้หน้า Title: ค่า src ตั้งอัตโนมัติจาก JS ด้านล่าง -->
       <img id="brand-logo" class="logo" alt="TMD logo" src="" />
       ✔ TMD 60th Anniversary • Check‑in Dashboard
       <span class="live"><span class="dot"></span>LIVE</span>
@@ -197,7 +204,7 @@
     <div class="bigkpi">
       <div class="kpi-total">
         <div class="num" id="kpi-total">0</div>
-        <div class="lbl">จำนวนผู้เข้างานทั้งหมด</div>
+        <div class="lbl">จำนวนผู้เช็คอินทั้งหมด</div>
       </div>
       <div class="kpi-dept">
         <div class="num" id="kpi-dept">0</div>
@@ -216,18 +223,19 @@
   <div class="wrap">
     <div class="cols">
 
-      <!-- Spotlight Top-5 (Vertical) -->
+      <!-- Spotlight Top-5 (Auto-scroll) -->
       <div class="card">
-        <h3>Spotlight – ผู้เช็คอินล่าสุด 5 ลำดับแรก</h3>
-        <div class="spot-vert-wrap">
-          <div id="spot-confetti" class="spot-confetti"></div>
+        <div class="h3">Spotlight – ผู้เช็คอินล่าสุด 5 ลำดับแรก</div>
+        <div class="spot-viewport" id="spot-viewport">
           <ul id="spot-list" class="spot-vert"></ul>
         </div>
+        <!-- confetti สำหรับ #1 -->
+        <div id="spot-confetti" class="spot-confetti"></div>
       </div>
 
       <!-- Department Summary (auto scroll) -->
       <div class="card">
-        <h3>สรุปจำนวนตามแผนก</h3>
+        <div class="h3">สรุปจำนวนตามแผนก</div>
         <div id="dept-viewport" class="scroll-viewport">
           <div id="dept-wrap"></div>
         </div>
@@ -235,7 +243,7 @@
 
       <!-- Recent 50 (auto scroll) -->
       <div class="card">
-        <h3>เช็คอินล่าสุด 50 รายชื่อ</h3>
+        <div class="h3">เช็คอินล่าสุด 50 รายชื่อ</div>
         <div class="scroll-wrap">
           <div id="recent-viewport" class="recent-viewport">
             <ul id="recent-list" class="recent-list"></ul>
@@ -260,17 +268,14 @@
   const POLL_MS    = 1200;
   const TOP_DEPT   = 50;
   const RECENT_N   = 50;
-  const SPOT_N     = 5;
+  const SPOT_N     = 5;         // จำนวน Spotlight
   const ORDER_LABEL= 'ลำดับ';   // หรือ 'Registration No.'
 
-  const RECENT_STEP = 1.2, RECENT_TICK = 16;
-  const DEPT_STEP   = 1.0, DEPT_TICK   = 16;
+  const RECENT_STEP = 1.2, RECENT_TICK = 16;  // recent list
+  const DEPT_STEP   = 1.0, DEPT_TICK   = 16;  // department summary
+  const SPOT_STEP   = 1.0, SPOT_TICK   = 20;  // spotlight auto-scroll
 
-  /* ===== Logo URL =====
-     ✅ เปลี่ยนที่นี่เป็นโลโก้ของคุณ
-     - ใช้ลิงก์ออนไลน์: 'https://…/tmd-logo.png'
-     - หรือไฟล์ใน repo: './assets/tmd-logo.png'
-  */
+  /* ===== Logo URL (จริง) ===== */
   const LOGO_URL = 'https://raw.githubusercontent.com/akasitgun/tmd-checkin-display/main/MEIDEN.png';
 
   /* ===== State ===== */
@@ -278,6 +283,10 @@
   let lastTotal = 0;
   let lastTop1Ts= "";
   let items     = [];
+
+  const recentState = { dir:1, timer:null };
+  const deptState   = { dir:1, timer:null };
+  const spotState   = { dir:1, timer:null };
 
   /* ===== Helpers ===== */
   const $  = s => document.querySelector(s);
@@ -339,41 +348,6 @@
     $("#updated").textContent = updLine;
   }
 
-  /* ===== Spotlight Top-5 (A2) ===== */
-  function confettiInto(container, ms=1500, N=60){
-    container.innerHTML = "";
-    for(let i=0;i<N;i++){
-      const el = document.createElement("i");
-      const h  = Math.floor(Math.random()*360);
-      el.style.left = Math.random()*100 + "%";
-      el.style.background = `hsl(${h} 90% 60%)`;
-      el.style.animationDuration = (1.6 + Math.random()*0.9) + "s";
-      el.style.transform = `translateX(${(Math.random()*40-20)}px)`;
-      container.appendChild(el);
-    }
-    setTimeout(()=>{ container.innerHTML=""; }, ms+300);
-  }
-  function renderSpotlightVertical(n=SPOT_N){
-    const top = items.slice(0, n);
-    const ul  = $("#spot-list");
-    ul.innerHTML = "";
-    top.forEach((x, idx)=>{
-      const li   = document.createElement("li"); li.className = "spot-row";
-      const rank = document.createElement("div"); rank.className = `rank-pill rank-${idx+1}`; rank.textContent = `#${x.order ?? idx+1}`;
-      const name = document.createElement("div"); name.className = "s-name"; name.textContent = x.name || "ผู้เข้าร่วม";
-
-      const meta = document.createElement("div"); meta.className = "s-meta";
-      const dept = (x.department || "").toString().trim();
-      const dIcon = `<span class="meta-icon">🏢</span>`;
-      const tIcon = `<span class="meta-icon">⏰</span>`;
-      meta.innerHTML = `${dept ? `${dIcon}แผนก ${dept}` : ""}${dept ? " • " : ""}${tIcon}เวลา ${fmt(x.timestamp)}`;
-
-      li.appendChild(rank); li.appendChild(name); li.appendChild(meta); ul.appendChild(li);
-    });
-    const ts1 = top[0]?.timestamp || "";
-    if (ts1 && ts1 !== lastTop1Ts){ lastTop1Ts = ts1; confettiInto($("#spot-confetti")); }
-  }
-
   /* ===== Auto scroll (generic) ===== */
   function startAutoScroll(vp, state, step, tick){
     stopAutoScroll(state);
@@ -388,8 +362,50 @@
     }, tick);
   }
   function stopAutoScroll(state){ if (state.timer){ clearInterval(state.timer); state.timer = null; } }
-  const recentState = { dir:1, timer:null };
-  const deptState   = { dir:1, timer:null };
+
+  /* ===== Spotlight (A2) – Auto-scroll ===== */
+  function confettiInto(container, ms=1500, N=60){
+    container.innerHTML = "";
+    for(let i=0;i<N;i++){
+      const el = document.createElement("i");
+      const h  = Math.floor(Math.random()*360);
+      el.style.left = Math.random()*100 + "%";
+      el.style.background = `hsl(${h} 90% 60%)`;
+      el.style.animationDuration = (1.6 + Math.random()*0.9) + "s";
+      el.style.transform = `translateX(${(Math.random()*40-20)}px)`;
+      container.appendChild(el);
+    }
+    setTimeout(()=>{ container.innerHTML=""; }, ms+300);
+  }
+
+  function renderSpotlightVertical(n=SPOT_N){
+    const ul = $("#spot-list");
+    const vp = $("#spot-viewport");
+    ul.innerHTML = "";
+
+    const top = items.slice(0, n);
+    top.forEach((x, idx)=>{
+      const li   = document.createElement("li");
+      li.className = "spot-row";
+      const order = (x.order ?? (idx+1));
+      li.innerHTML = `
+        <div class="rank-pill rank-${idx+1}">#${order}</div>
+        <div class="s-name">${x.name || "ผู้เข้าร่วม"}</div>
+        <div class="s-meta">
+          ${ (x.department||"").toString().trim() ? `<span class="meta-icon">🏢</span>แผนก ${(x.department||"").toString().trim()} • ` : "" }
+          <span class="meta-icon">⏰</span>เวลา ${fmt(x.timestamp)}
+        </div>
+      `;
+      ul.appendChild(li);
+    });
+
+    // Confetti เมื่ออันดับ 1 เปลี่ยน
+    const ts1 = top[0]?.timestamp || "";
+    if (ts1 && ts1 !== lastTop1Ts){ lastTop1Ts = ts1; confettiInto($("#spot-confetti")); }
+
+    // เริ่มเลื่อนอัตโนมัติ (Spotlight)
+    requestAnimationFrame(()=> startAutoScroll(vp, spotState, SPOT_STEP, SPOT_TICK));
+  }
 
   /* ===== Department Summary ===== */
   function renderDept(){
@@ -411,37 +427,35 @@
     requestAnimationFrame(()=> startAutoScroll($("#dept-viewport"), deptState, DEPT_STEP, DEPT_TICK));
   }
 
-  /* ===== Recent 50 (A2) ===== */
+  /* ===== Recent 50 ===== */
   function renderRecent(){
     const ul = $("#recent-list"); ul.innerHTML="";
     items.slice(0, RECENT_N).forEach((x, i)=>{
-      const li = document.createElement("li");
       const order = (x.order ?? (i+1));
       const name  = (x.name || "ผู้เข้าร่วม");
       const dept  = (x.department || "").toString().trim();
       const line1 = `<div class="r-name">#${order}  ${name}</div>`;
-      const dIcon = `<span class="meta-icon">🏢</span>`;
-      const tIcon = `<span class="meta-icon">⏰</span>`;
-      const line2 = `<div class="r-meta">${dept ? `${dIcon}แผนก ${dept}` : ""}${dept ? " • " : ""}${tIcon}เวลา ${fmt(x.timestamp)}</div>`;
+      const line2 = `<div class="r-meta">${dept ? `<span class="meta-icon">🏢</span>แผนก ${dept} • ` : ""}<span class="meta-icon">⏰</span>เวลา ${fmt(x.timestamp)}</div>`;
+      const li = document.createElement("li");
       li.innerHTML = line1 + line2;
       ul.appendChild(li);
     });
     requestAnimationFrame(()=> startAutoScroll($("#recent-viewport"), recentState, RECENT_STEP, RECENT_TICK));
   }
 
-  // Controls for Recent
+  // Controls for Recent scroll
   $("#btn-up").addEventListener("click", ()=>{ recentState.dir = -1; startAutoScroll($("#recent-viewport"), recentState, RECENT_STEP, RECENT_TICK); });
   $("#btn-down").addEventListener("click", ()=>{ recentState.dir =  1; startAutoScroll($("#recent-viewport"), recentState, RECENT_STEP, RECENT_TICK); });
   $("#btn-pause").addEventListener("click", ()=> stopAutoScroll(recentState));
   $("#btn-resume").addEventListener("click", ()=> startAutoScroll($("#recent-viewport"), recentState, RECENT_STEP, RECENT_TICK));
+
+  // Hover pause (Recent / Dept / Spotlight)
   $("#recent-viewport").addEventListener("mouseenter", ()=> stopAutoScroll(recentState));
   $("#recent-viewport").addEventListener("mouseleave", ()=> startAutoScroll($("#recent-viewport"), recentState, RECENT_STEP, RECENT_TICK));
   $("#dept-viewport").addEventListener("mouseenter", ()=> stopAutoScroll(deptState));
   $("#dept-viewport").addEventListener("mouseleave", ()=> startAutoScroll($("#dept-viewport"), deptState, DEPT_STEP, DEPT_TICK));
-  window.addEventListener("resize", ()=>{
-    startAutoScroll($("#recent-viewport"), recentState, RECENT_STEP, RECENT_TICK);
-    startAutoScroll($("#dept-viewport"),   deptState,   DEPT_STEP,   DEPT_TICK);
-  });
+  $("#spot-viewport").addEventListener("mouseenter", ()=> stopAutoScroll(spotState));
+  $("#spot-viewport").addEventListener("mouseleave", ()=> startAutoScroll($("#spot-viewport"), spotState, SPOT_STEP, SPOT_TICK));
 
   /* ===== Data loop ===== */
   async function load(){
@@ -458,27 +472,29 @@
         lastKey = key; items = list;
 
         renderHeader(data.updated, data);
-        renderSpotlightVertical(SPOT_N);
+        renderSpotlightVertical(SPOT_N);   // <<< Spotlight Auto-scroll
         renderDept();
         renderRecent();
 
-        $("#status").textContent = `Showing ${items.length} items • Poll ${POLL_MS}ms • Source: RAW • A2 (2 lines + icons)`;
+        $("#status").textContent = `Showing ${items.length} items • Poll ${POLL_MS}ms • Source: RAW • Spotlight auto-scroll`;
       }
     }catch(e){
       $("#status").textContent = "Fetch error: " + (e.message || e);
     }
   }
 
-  // ตั้งค่าโลโก้
+  // ตั้งค่าโลโก้จริง
   (function initLogo(){
     const img = document.getElementById('brand-logo');
     if (img){
       img.src = LOGO_URL;
-      img.addEventListener('error', ()=>{ img.style.display='none'; }); // ถ้าโหลดไม่ได้ ซ่อนไว้
+      img.addEventListener('error', ()=>{ img.style.display='none'; });
     }
   })();
 
+  // กันหน้าว่าง
   document.getElementById('kpi-total').textContent = '0';
+
   load();
   setInterval(load, POLL_MS);
 </script>

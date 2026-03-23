@@ -90,14 +90,11 @@
 
   /* ===== Spotlight (Auto-scroll in card) ===== */
   .spot-viewport{
-    overflow:auto; scroll-behavior:smooth;
-    height: min(380px, 42vh);
-    border:1px solid rgba(255,255,255,.12);
-    border-radius:14px;
-    padding: clamp(8px, 1vw, 12px);
-    background:rgba(255,255,255,.05);
-    mask-image: linear-gradient(to bottom, transparent 0, black 12px, black calc(100% - 12px), transparent 100%);
-  }
+    overflow: visible !important;
+    height: auto !important;
+    mask-image: none !important;
+    padding: 12px;
+}
   .spot-vert{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap: clamp(8px, 1vw, 10px) }
   .spot-row{
     display:grid; grid-template-columns:auto 1fr; grid-template-rows:auto auto; gap: 6px 10px;
@@ -451,7 +448,7 @@
       li.className = "spot-row";
       const order = (x.order ?? (idx+1));
       li.innerHTML = `
-        <div class="rank-pill rank-${idx+1}">#${order}</div>
+        <div class="rank-pill rank-${idx+1}">ลำดับที่ ${order}</div>
         <div class="s-name">${x.name || "ผู้เข้าร่วม"}</div>
         <div class="s-meta">
           ${ (x.department||"").toString().trim() ? `<span class="meta-icon">🏢</span>แผนก ${(x.department||"").toString().trim()} • ` : "" }
@@ -495,7 +492,7 @@
       const order = (x.order ?? (i+1));
       const name  = (x.name || "ผู้เข้าร่วม");
       const dept  = (x.department || "").toString().trim();
-      const line1 = `<div class="r-name">#${order}  ${name}</div>`;
+      const line1 = `<div class="r-name">ลำดับ ${order}  ${name}</div>`;
       const line2 = `<div class="r-meta">${dept ? `<span class="meta-icon">🏢</span>แผนก ${dept} • ` : ""}<span class="meta-icon">⏰</span>เวลา ${fmt(x.timestamp)}</div>`;
       const li = document.createElement("li");
       li.innerHTML = line1 + line2;

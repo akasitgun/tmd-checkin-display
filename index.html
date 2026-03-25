@@ -215,9 +215,47 @@
   @media (prefers-reduced-motion: reduce){
     *{ animation: none !important; transition: none !important; }
   }
+
+#congrats-popup {
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%) scale(.6);
+  background: linear-gradient(90deg,#ff4d4d,#ffcd38,#4dff4d,#4dc3ff,#b84dff);
+  color: #fff;
+  padding: 25px 40px;
+  border-radius: 18px;
+  font-size: 32px;
+  font-weight: bold;
+  box-shadow: 0 4px 15px rgba(0,0,0,.3);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 9999;
+  transition: opacity .5s, transform .5s;
+}
+#congrats-popup.show {
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
+}
+.spark {
+  position: fixed;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  opacity: 0;
+  animation: spark-fly 1.4s ease-out forwards;
+}
+@keyframes spark-fly {
+  0% { transform: translateY(0) scale(.8); opacity:1; }
+  100% { transform: translateY(-120px) scale(1.2); opacity:0; }
+}
+
 </style>
 </head>
 <body>
+<div id="congrats-popup">🎉 Congratulations! มีผู้เช็คอินใหม่ 🎉</div>
+<div id="spark-box"></div>
+
   <!-- Header -->
   <div class="header">
     <div class="brand">
@@ -586,7 +624,24 @@
   $("#spot-viewport").addEventListener("mouseleave", ()=> startAutoScroll($("#spot-viewport"), spotState, SPOT_STEP, SPOT_TICK));
 
   /* ===== Data loop ===== */
-  async function load(){
+  
+function showCongratulations() {
+  const box = document.getElementById("congrats-popup");
+  const sparkBox = document.getElementById("spark-box");
+  box.classList.add("show");
+  sparkBox.innerHTML = "";
+  for (let i = 0; i < 45; i++) {
+    const s = document.createElement("div");
+    s.className = "spark";
+    s.style.background = `hsl(${Math.random()*360},90%,60%)`;
+    s.style.top = (50 + Math.random() * 20) + "%";
+    s.style.left = (40 + Math.random() * 20) + "%";
+    document.body.appendChild(s);
+  }
+  setTimeout(() => box.classList.remove("show"), 2600);
+}
+
+async function load(){
     try{
       const r = await fetch(DATA_URL + "?t=" + Date.now(), { cache:"no-store" });
       if (!r.ok) throw new Error("HTTP " + r.status);
@@ -597,6 +652,12 @@
       const key  = buildKey(list, data.updated);
 
       if (key !== lastKey){
+        const newTop1Ts = list[0]?.timestamp || "";
+        if (lastTop1Ts && newTop1Ts !== lastTop1Ts) {
+            showCongratulations();
+        }
+        lastTop1Ts = newTop1Ts;
+
         lastKey = key; items = list;
 
         renderHeader(data.updated, data);

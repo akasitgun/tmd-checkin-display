@@ -215,49 +215,9 @@
   @media (prefers-reduced-motion: reduce){
     *{ animation: none !important; transition: none !important; }
   }
-
-#congrats-popup {
-  position: fixed;
-  top: 18%;
-  left: 50%;
-  transform: translateX(-50%) scale(.8);
-  background: linear-gradient(90deg,#ff4d4d,#ffcd38,#4dff4d,#4dc3ff,#b84dff);
-  color: #fff;
-  padding: 18px 32px;
-  border-radius: 16px;
-  font-size: 28px;
-  font-weight: 900;
-  opacity: 0;
-  transition: opacity .2s ease-out, transform .2s ease-out;
-  z-index: 9999;
-}
-
-#congrats-popup.show {
-  opacity: 1;
-  transform: translateX(-50%) scale(1);
-}
-
-.spark {
-  position: fixed;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  opacity: 0;
-  animation: spark-fly .9s ease-out forwards;
-}
-
-@keyframes spark-fly {
-  0% { opacity:1; transform: translateY(0px) scale(.6); }
-  100% { opacity:0; transform: translateY(-80px) scale(1.2); }
-}
-
 </style>
 </head>
 <body>
-<canvas id="confetti-canvas"></canvas>
-<div id="congrats-popup">🎉 Congratulations! มีผู้เช็คอินใหม่ 🎉</div>
-<div id="spark-box"></div>
-
   <!-- Header -->
   <div class="header">
     <div class="brand">
@@ -626,95 +586,7 @@
   $("#spot-viewport").addEventListener("mouseleave", ()=> startAutoScroll($("#spot-viewport"), spotState, SPOT_STEP, SPOT_TICK));
 
   /* ===== Data loop ===== */
-  
-function showCongratulations() {
-  const box = document.getElementById("congrats-popup");
-  const sparkBox = document.getElementById("spark-box");
-
-  // แสดง popup ทันที
-  box.classList.add("show");
-
-  // ล้าง spark เก่า
-  sparkBox.innerHTML = "";
-
-  // สร้าง spark น้อยลง = เร็วขึ้น
-  for (let i = 0; i < 20; i++) {
-    const s = document.createElement("div");
-    s.className = "spark";
-    s.style.background = `hsl(${Math.random() * 360}, 90%, 60%)`;
-    s.style.top = (45 + Math.random() * 10) + "%";
-    s.style.left = (45 + Math.random() * 10) + "%";
-    sparkBox.appendChild(s);
-  }
-
-  // ซ่อนไว้เร็วขึ้น
-  setTimeout(() => {
-    box.classList.remove("show");
-  }, 1000);
-}
-
-
-/* Canvas for confetti */
-const confettiCanvas = document.getElementById("confetti-canvas");
-const ctx = confettiCanvas.getContext("2d");
-function resizeConfetti(){ confettiCanvas.width=window.innerWidth; confettiCanvas.height=window.innerHeight; }
-window.addEventListener("resize", resizeConfetti);
-resizeConfetti();
-let confettiParticles = [];
-
-/* -------------------------------------
-   ✅ Firework Blast Effect (Canvas)
---------------------------------------*/
-function fireworkBlast(x, y) {
-  const count = 30; // จำนวนชิ้นต่อการระเบิด
-  const speed = 5;
-
-  for (let i = 0; i < count; i++) {
-    confettiParticles.push({
-      x: x,
-      y: y,
-      size: 6 + Math.random() * 4,
-      color: `hsl(${Math.random() * 360}, 90%, 60%)`,
-      speedY: speed * (Math.random() - 0.5),
-      speedX: speed * (Math.random() - 0.5),
-      rotate: Math.random() * 360,
-      gravity: 0.18,
-      fade: 1
-    });
-  }
-
-  animateFirework();
-}
-
-function animateFirework() {
-  ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
-
-  confettiParticles.forEach((p, index) => {
-    p.x += p.speedX;
-    p.y += p.speedY;
-    p.speedY += p.gravity;
-    p.rotate += 6;
-    p.fade -= 0.02;
-
-    ctx.save();
-    ctx.globalAlpha = p.fade;
-    ctx.translate(p.x, p.y);
-    ctx.rotate((p.rotate * Math.PI) / 180);
-
-    ctx.fillStyle = p.color;
-    ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
-
-    ctx.restore();
-
-    if (p.fade <= 0) confettiParticles.splice(index, 1);
-  });
-
-  if (confettiParticles.length > 0) {
-    requestAnimationFrame(animateFirework);
-  }
-}
-
-async function load(){
+  async function load(){
     try{
       const r = await fetch(DATA_URL + "?t=" + Date.now(), { cache:"no-store" });
       if (!r.ok) throw new Error("HTTP " + r.status);
@@ -725,18 +597,7 @@ async function load(){
       const key  = buildKey(list, data.updated);
 
       if (key !== lastKey){
-        
-const newTop1Ts = list[0]?.timestamp || "";
-if (lastTop1Ts && newTop1Ts !== lastTop1Ts) {
-    showCongratulations();
-    launchConfettiFast();
-    fireworkBlast(window.innerWidth/2, window.innerHeight*0.35);
-}
-lastTop1Ts = newTop1Ts;
-
-
-        lastTop1Ts = newTop1Ts;
-            lastKey = key; items = list;
+        lastKey = key; items = list;
 
         renderHeader(data.updated, data);
         renderSpotlightVertical(SPOT_N);

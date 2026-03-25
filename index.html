@@ -254,6 +254,7 @@
 </style>
 </head>
 <body>
+<canvas id="confetti-canvas"></canvas>
 <div id="congrats-popup">🎉 Congratulations! มีผู้เช็คอินใหม่ 🎉</div>
 <div id="spark-box"></div>
 
@@ -652,6 +653,15 @@ function showCongratulations() {
   }, 1000);
 }
 
+
+/* Canvas for confetti */
+const confettiCanvas = document.getElementById("confetti-canvas");
+const ctx = confettiCanvas.getContext("2d");
+function resizeConfetti(){ confettiCanvas.width=window.innerWidth; confettiCanvas.height=window.innerHeight; }
+window.addEventListener("resize", resizeConfetti);
+resizeConfetti();
+let confettiParticles = [];
+
 /* -------------------------------------
    ✅ Firework Blast Effect (Canvas)
 --------------------------------------*/
@@ -715,18 +725,15 @@ async function load(){
       const key  = buildKey(list, data.updated);
 
       if (key !== lastKey){
-        const newTop1Ts = list[0]?.timestamp || "";
-        if (lastTop1Ts && newTop1Ts !== lastTop1Ts) {
+        
+const newTop1Ts = list[0]?.timestamp || "";
+if (lastTop1Ts && newTop1Ts !== lastTop1Ts) {
     showCongratulations();
-    launchConfettiFast();  // confetti แบบเร็ว
-
-    // ✅ Firework ตรงกลางจอ
-    fireworkBlast(
-        window.innerWidth / 2,
-        window.innerHeight * 0.35
-    );
+    launchConfettiFast();
+    fireworkBlast(window.innerWidth/2, window.innerHeight*0.35);
 }
-// lastTop1Ts = newTop1Ts;
+lastTop1Ts = newTop1Ts;
+
 
         lastTop1Ts = newTop1Ts;
             lastKey = key; items = list;

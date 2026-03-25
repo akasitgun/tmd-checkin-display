@@ -218,36 +218,37 @@
 
 #congrats-popup {
   position: fixed;
-  top: 20%;
+  top: 18%;
   left: 50%;
-  transform: translateX(-50%) scale(.6);
+  transform: translateX(-50%) scale(.8);
   background: linear-gradient(90deg,#ff4d4d,#ffcd38,#4dff4d,#4dc3ff,#b84dff);
   color: #fff;
-  padding: 25px 40px;
-  border-radius: 18px;
-  font-size: 32px;
-  font-weight: bold;
-  box-shadow: 0 4px 15px rgba(0,0,0,.3);
+  padding: 18px 32px;
+  border-radius: 16px;
+  font-size: 28px;
+  font-weight: 900;
   opacity: 0;
-  pointer-events: none;
+  transition: opacity .2s ease-out, transform .2s ease-out;
   z-index: 9999;
-  transition: opacity .5s, transform .5s;
 }
+
 #congrats-popup.show {
   opacity: 1;
   transform: translateX(-50%) scale(1);
 }
+
 .spark {
   position: fixed;
-  width: 12px;
-  height: 12px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   opacity: 0;
-  animation: spark-fly 1.4s ease-out forwards;
+  animation: spark-fly .9s ease-out forwards;
 }
+
 @keyframes spark-fly {
-  0% { transform: translateY(0) scale(.8); opacity:1; }
-  100% { transform: translateY(-120px) scale(1.2); opacity:0; }
+  0% { opacity:1; transform: translateY(0px) scale(.6); }
+  100% { opacity:0; transform: translateY(-80px) scale(1.2); }
 }
 
 </style>
@@ -628,18 +629,29 @@
 function showCongratulations() {
   const box = document.getElementById("congrats-popup");
   const sparkBox = document.getElementById("spark-box");
+
+  // แสดง popup ทันที
   box.classList.add("show");
+
+  // ล้าง spark เก่า
   sparkBox.innerHTML = "";
-  for (let i = 0; i < 45; i++) {
+
+  // สร้าง spark น้อยลง = เร็วขึ้น
+  for (let i = 0; i < 20; i++) {
     const s = document.createElement("div");
     s.className = "spark";
-    s.style.background = `hsl(${Math.random()*360},90%,60%)`;
-    s.style.top = (50 + Math.random() * 20) + "%";
-    s.style.left = (40 + Math.random() * 20) + "%";
-    document.body.appendChild(s);
+    s.style.background = `hsl(${Math.random() * 360}, 90%, 60%)`;
+    s.style.top = (45 + Math.random() * 10) + "%";
+    s.style.left = (45 + Math.random() * 10) + "%";
+    sparkBox.appendChild(s);
   }
-  setTimeout(() => box.classList.remove("show"), 2600);
+
+  // ซ่อนไว้เร็วขึ้น
+  setTimeout(() => {
+    box.classList.remove("show");
+  }, 1000);
 }
+
 
 async function load(){
     try{

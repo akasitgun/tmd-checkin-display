@@ -1,640 +1,813 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="utf-8" />
-<title>TMD Check-in – One-page Dashboard (Full-screen Spotlight Step)</title>
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="utf-8"/>
+<title>TMD Check-in Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700;800;900&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --brand-blue:#0b59a1; --brand-green:#22c55e;
-    --bg: var(--brand-blue); --ink:#ffffff; --sub:#d3e6ff;
-    --card: rgba(255,255,255,.10); --stroke: rgba(255,255,255,.15);
-    --accent:#22c55e; --accent2:#60a5fa;
-  }
-  *{ box-sizing:border-box } html,body{ height:100% }
-  body{
-    margin:0; color:var(--ink);
-    font-family:"Segoe UI", system-ui, -apple-system, Arial, Helvetica, sans-serif;
-    display:flex; flex-direction:column; overflow:hidden;
-    background:
-      radial-gradient(1200px 700px at 12% 10%, rgba(255,255,255,.10), transparent 60%),
-      radial-gradient(1200px 700px at 88% 90%, rgba(255,255,255,.06), transparent 60%),
-      linear-gradient(180deg, #0a4e8d 0%, #0b59a1 50%, #083d6b 100%);
-  }
-
-  /* ===== Header ===== */
-  .header{
-    display:grid; align-items:center; gap:1rem;
-    grid-template-columns: 1fr 1.2fr 1fr;
-    padding: clamp(10px, 1.3vw, 18px) clamp(14px, 1.6vw, 22px);
-    background: linear-gradient(90deg, rgba(255,255,255,.08), rgba(255,255,255,0));
-    border-bottom: 2px solid var(--stroke);
-  }
-  .brand{
-    display:flex; align-items:center; gap:.6rem; font-weight:900; font-size: clamp(18px, 2.1vw, 24px)
-  }
-  .brand .logo{
-    height: clamp(38px, 5vw, 70px);
-    width:auto; object-fit:contain; display:inline-block;
-    margin-right:.45rem;
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,.25));
-  }
-  .live{
-    display:inline-flex; align-items:center; gap:.45rem; background:#ef4444; color:#fff; font-weight:900;
-    font-size: clamp(10px, 1.2vw, 12px); padding:.35rem .6rem; border-radius:999px; letter-spacing:.6px;
-    box-shadow: 0 0 0 2px rgba(255,255,255,.15) inset, 0 6px 18px rgba(239,68,68,.35);
-    animation: blink 1s steps(2,end) infinite;
-  }
-  .dot{ width:.55rem; height:.55rem; background:#fff; border-radius:50% }
-  @keyframes blink{ 50% { opacity:.45 } }
-
-  .bigkpi{
-    display:flex; align-items:center; justify-content:center;
-    gap: clamp(.8rem, 1.4vw, 1.2rem); flex-wrap: nowrap;
-  }
-  .kpi-total, .kpi-dept{
-    background: rgba(255,255,255,.10); border: 1px solid rgba(255,255,255,.20);
-    padding:.7rem 1rem; border-radius:12px; min-width: clamp(220px, 24vw, 360px);
-    text-align:center; white-space:nowrap;
-  }
-  .kpi-total{
-    background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.25);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.25), 0 8px 30px rgba(0,0,0,.25);
-  }
-  .kpi-total .num{ font-weight:900; line-height:1; letter-spacing:.5px; text-shadow:0 6px 0 rgba(0,0,0,.15); font-size: clamp(40px, 6.6vw, 92px) }
-  .kpi-total .lbl, .kpi-dept .lbl{ color:var(--sub); margin-top:.35rem; font-size: clamp(11px, 1.1vw, 13px) }
-  .kpi-dept .num{ font-weight:900; line-height:1.05; letter-spacing:.3px; font-size: clamp(18px, 2.6vw, 28px) }
-
-  .timebox{ text-align:right; line-height:1.25 }
-  .now{ font-size: clamp(22px, 3.8vw, 44px); font-weight:900; letter-spacing:.5px; text-shadow:0 4px 0 rgba(0,0,0,.15) }
-  .date{ font-size: clamp(14px, 2.2vw, 20px); font-weight:700; color:var(--sub) }
-  .upd{ font-size: clamp(11px, 1.4vw, 13px); color:var(--sub); margin-top:.2rem }
-
-  /* ===== Body layout ===== */
-  .wrap{ flex:1; padding: clamp(12px, 1.6vw, 18px) clamp(14px, 1.6vw, 22px); overflow:hidden; }
-  .cols{
-    height:100%; display:grid; gap: clamp(12px, 1.4vw, 18px);
-    grid-template-columns: 1.15fr 1fr 1.15fr;
-  }
-  @media (max-width: 1440px){ .cols{ grid-template-columns: 1fr 1fr } }
-  @media (max-width: 992px){  .cols{ grid-template-columns: 1fr } }
-
-  .card{
-    height:100%; background:var(--card); border:1px solid var(--stroke);
-    border-radius:14px; padding: clamp(12px, 1.4vw, 18px); overflow:auto;
-    backdrop-filter: blur(4px);
-  }
-  .card .h3{
-    margin:0 0 .7rem 0; font-size: clamp(14px, 1.6vw, 16px); color:var(--sub); font-weight:800; letter-spacing:.2px
-  }
-
-  /* ===== Spotlight (Auto-scroll in card) ===== */
-  .spot-viewport{
-    overflow: visible !important;
-    height: auto !important;
-    mask-image: none !important;
-    padding: 12px;
+:root {
+  --bg:       #050d1a;
+  --surface:  #0b1628;
+  --surface2: #112040;
+  --border:   rgba(96,165,250,.15);
+  --border2:  rgba(96,165,250,.08);
+  --blue:     #3b82f6;
+  --blue-lt:  #60a5fa;
+  --green:    #10b981;
+  --green-lt: #34d399;
+  --amber:    #f59e0b;
+  --red:      #ef4444;
+  --ink:      #f0f6ff;
+  --muted:    #7096c0;
+  --sub:      #3d6490;
+  --glow-b:   rgba(59,130,246,.35);
+  --glow-g:   rgba(16,185,129,.35);
+  --font:     'Sarabun', sans-serif;
+  --mono:     'IBM Plex Mono', monospace;
 }
-  .spot-vert{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap: clamp(8px, 1vw, 10px) }
-  .spot-row{
-    display:grid; grid-template-columns:auto 1fr; grid-template-rows:auto auto; gap: 6px 10px;
-    grid-template-areas: "rank name" "rank meta";
-    padding: clamp(10px, 1.1vw, 14px);
-    border:1px solid rgba(255,255,255,.16); border-radius:12px;
-    background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
-    box-shadow: 0 10px 30px rgba(0,0,0,.15), inset 0 1px 0 rgba(255,255,255,.22);
-  }
-  .rank-pill{
-    grid-area:rank; align-self:center; min-width:46px; text-align:center;
-    font-weight:900; font-size: clamp(12px, 1.4vw, 13px);
-    padding:.4rem .6rem; border-radius:999px; letter-spacing:.4px; border:1px solid rgba(0,0,0,.12);
-    background: linear-gradient(180deg, rgba(255,255,255,.65), rgba(255,255,255,.35)); color:#071a0c;
-    box-shadow: 0 6px 12px rgba(0,0,0,.2), inset 0 1px 0 rgba(255,255,255,.75);
-  }
-  .rank-1{ background: linear-gradient(180deg, #ffd64d, #ffb300); color:#3a2a00 }
-  .rank-2{ background: linear-gradient(180deg, #e5e7eb, #cfd4dd); color:#273245 }
-  .rank-3{ background: linear-gradient(180deg, #f1a97a, #e07b39); color:#3a1d00 }
-  .rank-4{ background: linear-gradient(180deg, #7dd3fc, #38bdf8); color:#082f49 }
-  .rank-5{ background: linear-gradient(180deg, #86efac, #22c55e); color:#052e16 }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0 }
+html, body { height: 100%; overflow: hidden }
 
-  .s-name{
-    grid-area:name; font-weight:900; font-size: clamp(18px, 2.4vw, 28px);
-    letter-spacing:.3px; text-shadow:0 2px 0 rgba(0,0,0,.15);
-    overflow:hidden; white-space:nowrap; text-overflow:ellipsis;
-  }
-  .s-meta{
-    grid-area:meta; color:var(--sub); font-size: clamp(12px, 1.7vw, 14px);
-    overflow:hidden; white-space:nowrap; text-overflow:ellipsis;
-  }
-  .meta-icon{ opacity:.9; margin-right:.35rem }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+}
 
-  /* ===== Department Summary ===== */
-  .scroll-viewport{
-    overflow:auto; scroll-behavior:smooth;
-    border:1px solid rgba(255,255,255,.12); border-radius:10px; padding: clamp(6px, 1vw, 8px);
-    background:rgba(255,255,255,.05);
-    height: min(520px, 58vh); max-height: calc(100% - 12px);
-    mask-image: linear-gradient(to bottom, transparent 0, black 12px, black calc(100% - 12px), transparent 100%);
-  }
-  .dept-item{ margin: clamp(6px, 1vw, 10px) 0 }
-  .dept-row{ display:flex; align-items:center; justify-content:space-between; gap:10px }
-  .dept-name{ font-weight:900; font-size: clamp(14px, 1.8vw, 16px); overflow:hidden; white-space:nowrap; text-overflow:ellipsis }
-  .dept-count{ color:var(--sub); font-size: clamp(12px, 1.6vw, 13px); min-width:60px; text-align:right }
-  .dept-count::after{ content:" คน"; }
-  .bar{ position:relative; height:12px; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.2); border-radius:999px; overflow:hidden; margin-top:.35rem; }
-  .bar > span{ position:absolute; inset:0 auto 0 0; width:0%; background:linear-gradient(90deg,var(--brand-green),#86efac); border-right:1px solid rgba(255,255,255,.4) }
+/* ─── noise grain overlay ─── */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity: .55;
+}
 
-  /* ===== Recent 50 ===== */
-  .recent-viewport{
-    overflow:auto; scroll-behavior:smooth;
-    border:1px solid rgba(255,255,255,.12); border-radius:10px; padding: clamp(6px, 1vw, 8px);
-    background:rgba(255,255,255,.05);
-    height: min(520px, 58vh); max-height: calc(100% - 12px);
-    mask-image: linear-gradient(to bottom, transparent 0, black 12px, black calc(100% - 12px), transparent 100%);
-  }
-  .recent-list{ list-style:none; padding:0; margin:0; }
-  .recent-list li{
-    padding: clamp(8px, 1.2vw, 12px) clamp(6px, 1vw, 10px);
-    border-bottom:1px solid rgba(255,255,255,.12);
-    display:flex; flex-direction:column; gap:4px; animation: fade .25s ease-in-out;
-  }
-  .recent-list li:last-child{ border-bottom:0 }
-  .r-name{ font-size: clamp(16px, 2.1vw, 20px); font-weight:900; overflow:hidden; white-space:nowrap; text-overflow:ellipsis }
-  .r-meta{ font-size: clamp(12px, 1.7vw, 14px); color:var(--sub); overflow:hidden; white-space:nowrap; text-overflow:ellipsis }
-  .scroll-controls{ display:flex; gap:.5rem; justify-content:flex-end; margin-top:.6rem }
-  .btn{ background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.25); color:#fff; padding:.45rem .65rem; border-radius:8px; cursor:pointer; font-weight:800; font-size: clamp(11px, 1.5vw, 12px) }
-  .btn:hover{ filter:brightness(1.1) }
+/* ambient glow blobs */
+.blob {
+  position: fixed; border-radius: 50%; filter: blur(120px);
+  pointer-events: none; z-index: 0; opacity: .18;
+}
+.blob-1 { width: 600px; height: 600px; background: var(--blue);  top: -200px; left: -150px }
+.blob-2 { width: 400px; height: 400px; background: var(--green); bottom: -100px; right: -100px }
 
-  .footer{ padding: .6rem clamp(12px, 1.6vw, 22px) .8rem; font-size: clamp(11px, 1.5vw, 13px); color:var(--sub); text-align:center }
+/* ─── HEADER ─── */
+.hdr {
+  position: relative; z-index: 10;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 1rem;
+  padding: clamp(10px,1.2vw,16px) clamp(16px,2vw,28px);
+  background: linear-gradient(180deg, rgba(11,22,40,.95) 0%, rgba(11,22,40,.7) 100%);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(12px);
+}
 
-  /* ===== Full-screen Spotlight Player ===== */
-  .fs{ position:fixed; inset:0; z-index:9999; background:
-        radial-gradient(1200px 700px at 10% 10%, rgba(255,255,255,.10), transparent 60%),
-        radial-gradient(1200px 700px at 90% 90%, rgba(255,255,255,.08), transparent 60%),
-        linear-gradient(180deg, #0a4e8d 0%, #0b59a1 50%, #083d6b 100%);
-       display:none; }
-  .fs.show{ display:flex; }
-  .fs-wrap{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:2vw }
-  .fs-title{ font-size: clamp(28px, 3.2vw, 54px); font-weight:900; letter-spacing:.6px; margin-bottom:1.2rem; }
-  .fs-card{
-    width:min(1200px, 92vw);
-    border:1px solid rgba(255,255,255,.22);
-    border-radius:22px;
-    padding: clamp(18px, 2.2vw, 32px);
-    background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
-    box-shadow: 0 30px 120px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.25);
-    text-align:center;
-  }
-  .fs-name{ font-size: clamp(36px, 6vw, 92px); font-weight:900; letter-spacing:.8px; text-shadow:0 6px 0 rgba(0,0,0,.15); margin:.2rem 0 1rem }
-  .fs-meta{ font-size: clamp(18px, 2.2vw, 30px); color:var(--sub) }
-  .fs-rank{
-    display:inline-block; font-weight:900; font-size: clamp(14px, 1.8vw, 22px);
-    padding:.5rem 1rem; border-radius:999px; margin-bottom:1rem;
-    background: linear-gradient(90deg, #ffd64d, #ffb300);
-    color:#3a2a00; border:1px solid rgba(0,0,0,.12);
-    box-shadow: 0 10px 24px rgba(0,0,0,.2), inset 0 1px 0 rgba(255,255,255,.75);
-  }
-  .fs-progress{
-    width:min(1200px, 92vw); height:10px; border-radius:999px; overflow:hidden;
-    border:1px solid rgba(255,255,255,.22); background:rgba(255,255,255,.10);
-    margin:1.2rem auto 0;
-  }
-  .fs-progress > span{
-    display:block; height:100%; width:0%;
-    background:linear-gradient(90deg, var(--accent), var(--accent2));
-  }
-  .fs-ctrl{
-    position:absolute; top:18px; right:18px; display:flex; gap:.5rem; flex-wrap:wrap;
-  }
-  .fs-ctrl .btn{
-    background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.25);
-    padding:.5rem .75rem; border-radius:10px; font-weight:800; color:#fff; cursor:pointer;
-  }
-  .fs-hint{ margin-top:1rem; color:var(--sub); font-size: clamp(12px, 1.4vw, 14px) }
+.brand {
+  display: flex; align-items: center; gap: .7rem;
+}
+.brand img { height: clamp(36px,4.5vw,60px); width: auto; filter: drop-shadow(0 0 8px rgba(96,165,250,.4)) }
+.brand-text { line-height: 1.1 }
+.brand-title { font-size: clamp(13px,1.5vw,18px); font-weight: 900; letter-spacing: .5px }
+.brand-sub { font-size: clamp(10px,1vw,12px); color: var(--muted); font-family: var(--mono) }
 
-  @media (prefers-reduced-motion: reduce){
-    *{ animation: none !important; transition: none !important; }
-  }
+.live-pill {
+  display: inline-flex; align-items: center; gap: .4rem;
+  background: rgba(239,68,68,.12); border: 1px solid rgba(239,68,68,.4);
+  color: #fca5a5; font-size: 11px; font-weight: 700;
+  padding: .3rem .65rem; border-radius: 999px;
+  letter-spacing: .8px; font-family: var(--mono);
+}
+.pulse-dot {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--red);
+  box-shadow: 0 0 0 0 rgba(239,68,68,.5);
+  animation: pulse-ring 1.4s ease infinite;
+}
+@keyframes pulse-ring {
+  0%   { box-shadow: 0 0 0 0 rgba(239,68,68,.6) }
+  70%  { box-shadow: 0 0 0 6px rgba(239,68,68,0) }
+  100% { box-shadow: 0 0 0 0 rgba(239,68,68,0) }
+}
+
+/* KPI row in header */
+.kpi-row {
+  display: flex; align-items: center; justify-content: center; gap: 1rem;
+}
+.kpi-chip {
+  text-align: center;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: .5rem 1.2rem;
+  min-width: clamp(120px,12vw,170px);
+}
+.kpi-chip .num {
+  font-size: clamp(28px,4vw,52px);
+  font-weight: 900;
+  line-height: 1;
+  font-family: var(--mono);
+  background: linear-gradient(135deg, #fff 30%, var(--blue-lt));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.kpi-chip.green .num {
+  background: linear-gradient(135deg, #fff 30%, var(--green-lt));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.kpi-chip .lbl { font-size: clamp(10px,.9vw,12px); color: var(--muted); margin-top: .25rem; font-weight: 700; letter-spacing: .3px }
+
+.timebox { text-align: right; line-height: 1.2 }
+.time-big { font-size: clamp(22px,3vw,40px); font-weight: 900; font-family: var(--mono); letter-spacing: 1px; color: var(--ink) }
+.time-date { font-size: clamp(11px,1vw,13px); color: var(--muted); margin-top: .2rem }
+.time-upd { font-size: clamp(10px,.9vw,11px); color: var(--sub); margin-top: .15rem; font-family: var(--mono }
+
+/* ─── MAIN GRID ─── */
+.main {
+  flex: 1; overflow: hidden;
+  position: relative; z-index: 5;
+  display: grid;
+  grid-template-columns: 1fr 1.5fr 1fr;
+  grid-template-rows: 1fr;
+  gap: clamp(10px,1.2vw,14px);
+  padding: clamp(10px,1.2vw,14px) clamp(14px,1.6vw,20px) clamp(8px,1vw,12px);
+}
+
+/* ─── CARDS ─── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+.card::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(96,165,250,.04) 0%, transparent 60%);
+  pointer-events: none; border-radius: inherit;
+}
+
+.card-hdr {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: clamp(10px,1.1vw,14px) clamp(12px,1.3vw,18px);
+  border-bottom: 1px solid var(--border2);
+  flex-shrink: 0;
+}
+.card-title {
+  font-size: clamp(12px,1.1vw,14px); font-weight: 800;
+  color: var(--muted); letter-spacing: .4px; text-transform: uppercase;
+}
+.card-badge {
+  font-family: var(--mono); font-size: 11px; font-weight: 600;
+  background: var(--surface2); border: 1px solid var(--border);
+  padding: .2rem .55rem; border-radius: 999px; color: var(--muted);
+}
+.card-body { flex: 1; overflow: hidden; position: relative }
+
+/* ─── SCROLL CONTAINER ─── */
+.scroll-body {
+  height: 100%; overflow-y: auto; overflow-x: hidden;
+  padding: clamp(8px,1vw,12px);
+  scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+}
+.scroll-body::-webkit-scrollbar { width: 4px }
+.scroll-body::-webkit-scrollbar-track { background: transparent }
+.scroll-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px }
+
+/* fade mask top/bottom */
+.card-body::before,
+.card-body::after {
+  content: ''; position: absolute; left: 0; right: 0; height: 28px;
+  pointer-events: none; z-index: 2;
+}
+.card-body::before { top: 0; background: linear-gradient(to bottom, var(--surface), transparent) }
+.card-body::after  { bottom: 0; background: linear-gradient(to top,   var(--surface), transparent) }
+
+/* ─── SPOTLIGHT (LEFT) ─── */
+.spot-list { list-style: none; display: flex; flex-direction: column; gap: clamp(7px,.8vw,10px) }
+
+.spot-item {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  grid-template-rows: auto auto;
+  grid-template-areas: "num name" "num dept";
+  gap: 2px 10px;
+  padding: clamp(10px,1.1vw,14px);
+  border-radius: 12px;
+  border: 1px solid var(--border2);
+  background: linear-gradient(135deg, rgba(255,255,255,.04), rgba(255,255,255,.01));
+  transition: transform .15s, border-color .15s;
+  animation: slide-in .25s ease-out both;
+}
+.spot-item:hover { transform: translateX(3px); border-color: var(--border) }
+
+@keyframes slide-in { from { opacity: 0; transform: translateX(-8px) } }
+
+.spot-num {
+  grid-area: num; align-self: center;
+  width: 40px; height: 40px;
+  border-radius: 10px; display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-weight: 700; font-size: 14px;
+  flex-shrink: 0;
+}
+.spot-num.r1 { background: linear-gradient(135deg,#ffd700,#f59e0b); color: #1c1200; box-shadow: 0 4px 12px rgba(245,158,11,.4) }
+.spot-num.r2 { background: linear-gradient(135deg,#e2e8f0,#94a3b8); color: #1e293b; box-shadow: 0 4px 12px rgba(148,163,184,.3) }
+.spot-num.r3 { background: linear-gradient(135deg,#fb923c,#ea580c); color: #1c0800; box-shadow: 0 4px 12px rgba(234,88,12,.3) }
+.spot-num.r4 { background: linear-gradient(135deg,#38bdf8,#0284c7); color: #082f49; box-shadow: 0 4px 12px rgba(56,189,248,.25) }
+.spot-num.r5 { background: linear-gradient(135deg,#4ade80,#16a34a); color: #052e16; box-shadow: 0 4px 12px rgba(74,222,128,.25) }
+.spot-num.rn { background: var(--surface2); color: var(--muted); border: 1px solid var(--border) }
+
+.spot-name { grid-area: name; font-size: clamp(14px,1.6vw,18px); font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; align-self: end }
+.spot-dept { grid-area: dept; font-size: clamp(11px,1vw,12px); color: var(--muted); font-family: var(--mono); white-space: nowrap; overflow: hidden; text-overflow: ellipsis }
+
+/* ─── CENTER: BIG STATS + DEPT BAR CHART ─── */
+.center-card {
+  display: flex; flex-direction: column; gap: 0;
+}
+
+/* progress bars dept */
+.dept-list { display: flex; flex-direction: column; gap: clamp(8px,.9vw,11px) }
+.dept-row { }
+.dept-top { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 5px; gap: 6px }
+.dept-name { font-size: clamp(13px,1.3vw,15px); font-weight: 700; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width: 70% }
+.dept-count-wrap { display: flex; align-items: baseline; gap: 3px; flex-shrink: 0 }
+.dept-n { font-family: var(--mono); font-size: clamp(15px,1.6vw,19px); font-weight: 700; color: var(--green-lt) }
+.dept-lbl { font-size: 10px; color: var(--sub) }
+.dept-bar { height: 8px; background: var(--surface2); border-radius: 999px; overflow: hidden }
+.dept-fill {
+  height: 100%; border-radius: 999px; width: 0%;
+  background: linear-gradient(90deg, var(--green), var(--green-lt));
+  transition: width .6s cubic-bezier(.4,0,.2,1);
+  box-shadow: 0 0 8px rgba(16,185,129,.4);
+}
+
+/* percent label */
+.dept-pct { font-family: var(--mono); font-size: 10px; color: var(--sub); float: right }
+
+/* ─── RIGHT: RECENT LIST ─── */
+.recent-list { list-style: none; display: flex; flex-direction: column }
+
+.recent-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: clamp(8px,.9vw,11px) clamp(8px,1vw,12px);
+  border-bottom: 1px solid var(--border2);
+  animation: fade-up .2s ease-out both;
+  transition: background .1s;
+}
+.recent-item:last-child { border-bottom: none }
+.recent-item:hover { background: rgba(96,165,250,.04) }
+@keyframes fade-up { from { opacity:0; transform: translateY(4px) } }
+
+.r-order {
+  font-family: var(--mono); font-size: 11px;
+  color: var(--sub); min-width: 28px; text-align: right;
+  flex-shrink: 0;
+}
+.r-body { flex: 1; min-width: 0 }
+.r-name { font-size: clamp(13px,1.3vw,15px); font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis }
+.r-meta { font-size: clamp(10px,.9vw,11px); color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; font-family: var(--mono) }
+.r-time {
+  font-family: var(--mono); font-size: 10px;
+  color: var(--sub); flex-shrink: 0; text-align: right;
+}
+
+/* NEW badge */
+.badge-new {
+  font-size: 9px; font-weight: 800; letter-spacing: .6px;
+  background: rgba(16,185,129,.15); color: var(--green-lt);
+  border: 1px solid rgba(16,185,129,.3);
+  padding: 1px 5px; border-radius: 4px;
+}
+
+/* ─── FOOTER ─── */
+.footer {
+  position: relative; z-index: 10;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: .35rem clamp(14px,1.6vw,20px);
+  border-top: 1px solid var(--border2);
+  background: rgba(5,13,26,.8);
+  backdrop-filter: blur(8px);
+}
+.footer-status { font-family: var(--mono); font-size: 10px; color: var(--sub) }
+.footer-hint   { font-size: 10px; color: var(--sub) }
+
+/* ─── FULLSCREEN SPOTLIGHT ─── */
+.fs-overlay {
+  display: none; position: fixed; inset: 0; z-index: 9999;
+  background:
+    radial-gradient(ellipse 80% 80% at 50% 50%, rgba(59,130,246,.08), transparent),
+    linear-gradient(180deg, #030810 0%, #050d1a 100%);
+  flex-direction: column; align-items: center; justify-content: center;
+  gap: 1.5rem;
+}
+.fs-overlay.show { display: flex }
+
+.fs-card {
+  width: min(900px, 88vw);
+  border: 1px solid rgba(96,165,250,.2);
+  border-radius: 24px;
+  padding: clamp(24px,3vw,48px);
+  text-align: center;
+  background: linear-gradient(180deg, rgba(17,32,64,.9), rgba(11,22,40,.95));
+  box-shadow: 0 0 80px rgba(59,130,246,.12), 0 60px 120px rgba(0,0,0,.5);
+  position: relative; overflow: hidden;
+}
+.fs-card::before {
+  content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 60%; height: 1px; background: linear-gradient(90deg, transparent, var(--blue-lt), transparent);
+}
+
+.fs-order {
+  font-family: var(--mono); font-size: clamp(14px,1.5vw,18px);
+  font-weight: 700; color: var(--amber);
+  padding: .4rem 1.2rem; border-radius: 999px;
+  background: rgba(245,158,11,.1); border: 1px solid rgba(245,158,11,.3);
+  display: inline-block; margin-bottom: 1.2rem;
+}
+.fs-name { font-size: clamp(40px,7vw,100px); font-weight: 900; line-height: 1.05; letter-spacing: .5px; margin-bottom: .8rem }
+.fs-dept { font-size: clamp(18px,2vw,28px); color: var(--muted); font-family: var(--mono) }
+.fs-time { font-size: clamp(14px,1.5vw,18px); color: var(--sub); margin-top: .5rem; font-family: var(--mono) }
+
+.fs-progress { width: min(900px,88vw); height: 4px; border-radius: 2px; background: var(--surface2) }
+.fs-progress-bar {
+  height: 100%; width: 0%; border-radius: 2px;
+  background: linear-gradient(90deg, var(--blue), var(--green-lt));
+  box-shadow: 0 0 8px var(--blue);
+}
+
+.fs-ctrl {
+  position: fixed; top: 16px; right: 16px;
+  display: flex; gap: .5rem;
+}
+.btn-ctrl {
+  background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.12);
+  color: var(--ink); padding: .45rem .7rem; border-radius: 8px;
+  cursor: pointer; font-family: var(--font); font-size: 12px; font-weight: 700;
+  transition: background .15s, border-color .15s;
+}
+.btn-ctrl:hover { background: rgba(255,255,255,.14); border-color: var(--border) }
+
+/* ─── OPEN FS BTN (header) ─── */
+.btn-fs {
+  background: rgba(59,130,246,.12); border: 1px solid rgba(59,130,246,.3);
+  color: var(--blue-lt); padding: .3rem .75rem; border-radius: 8px;
+  cursor: pointer; font-family: var(--font); font-size: clamp(10px,.9vw,12px); font-weight: 700;
+  transition: all .15s;
+}
+.btn-fs:hover { background: rgba(59,130,246,.2) }
+
+/* confetti */
+.confetti-wrap { position: absolute; inset: 0; pointer-events: none; overflow: hidden }
+.confetti-wrap i {
+  position: absolute; bottom: 100%;
+  width: 8px; height: 8px; border-radius: 2px;
+  animation: fall 1.8s ease-in forwards;
+}
+@keyframes fall {
+  to { transform: translateY(120vh) rotate(720deg); opacity: 0 }
+}
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 1200px) {
+  .main { grid-template-columns: 1fr 1fr }
+  .card:nth-child(1) { grid-column: 1 }
+  .card:nth-child(2) { grid-column: 2 }
+  .card:nth-child(3) { grid-column: 1 / -1; max-height: 280px }
+}
+@media (max-width: 768px) {
+  .main { grid-template-columns: 1fr; grid-template-rows: auto; overflow-y: auto }
+  html, body { overflow: auto }
+  .card:nth-child(3) { max-height: none }
+  .hdr { grid-template-columns: 1fr 1fr; grid-template-rows: auto auto }
+  .kpi-row { grid-column: 1/-1 }
+}
 </style>
 </head>
 <body>
-  <!-- Header -->
-  <div class="header">
-    <div class="brand">
-      <img id="brand-logo" class="logo" alt="TMD logo" src="" />
-      ✔ TMD 60th Anniversary • Check‑in Dashboard
-      <span class="live"><span class="dot"></span>LIVE</span>
-    </div>
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
 
-    <!-- KPI: 2 ช่อง -->
-    <div class="bigkpi">
-      <div class="kpi-total">
-        <div class="num" id="kpi-total">0</div>
-        <div class="lbl">จำนวนผู้เช็คอินทั้งหมด</div>
-      </div>
-      <div class="kpi-dept">
-        <div class="num" id="kpi-dept">0</div>
-        <div class="lbl">จำนวนแผนก</div>
-      </div>
+<!-- ─── HEADER ─── -->
+<header class="hdr">
+  <div class="brand">
+    <img id="brand-logo" src="https://raw.githubusercontent.com/akasitgun/tmd-checkin-display/main/MEIDEN.png" alt="TMD" onerror="this.style.display='none'"/>
+    <div class="brand-text">
+      <div class="brand-title">TMD 60th Anniversary</div>
+      <div class="brand-sub">CHECK-IN DASHBOARD</div>
     </div>
+    <span class="live-pill"><span class="pulse-dot"></span>LIVE</span>
+    <button class="btn-fs" id="btn-fs">⛶ Spotlight</button>
+  </div>
 
-    <div class="timebox">
-      <div class="now" id="now">--:--:--</div>
-      <div class="date" id="date">----</div>
-      <div class="upd" id="updated">ข้อมูลอัปเดต: -</div>
+  <div class="kpi-row">
+    <div class="kpi-chip">
+      <div class="num" id="kpi-total">0</div>
+      <div class="lbl">ผู้เช็คอินทั้งหมด</div>
+    </div>
+    <div class="kpi-chip green">
+      <div class="num" id="kpi-dept">0</div>
+      <div class="lbl">แผนก</div>
     </div>
   </div>
 
-  <!-- Body -->
-  <div class="wrap">
-    <div class="cols">
+  <div class="timebox">
+    <div class="time-big" id="now">--:--:--</div>
+    <div class="time-date" id="date-str">----</div>
+    <div class="time-upd" id="upd-str">อัปเดต: —</div>
+  </div>
+</header>
 
-      <!-- Spotlight Top-5 (Auto-scroll) -->
-      <div class="card">
-        <div class="h3" style="display:flex; align-items:center; justify-content:space-between; gap:.6rem;">
-          <span>Spotlight – ผู้เช็คอินล่าสุด 5 ลำดับแรก</span>
-          <button id="btn-fs" class="btn">Full Screen Spotlight</button>
-        </div>
-        <div class="spot-viewport" id="spot-viewport">
-          <ul id="spot-list" class="spot-vert"></ul>
-        </div>
-        <div id="spot-confetti" class="spot-confetti"></div>
+<!-- ─── MAIN ─── -->
+<main class="main">
+
+  <!-- LEFT: Spotlight Top 5 -->
+  <div class="card">
+    <div class="card-hdr">
+      <span class="card-title">🏆 เช็คอินล่าสุด</span>
+      <span class="card-badge" id="spot-badge">0 คน</span>
+    </div>
+    <div class="card-body">
+      <div class="scroll-body">
+        <ul id="spot-list" class="spot-list"></ul>
       </div>
+    </div>
+    <div class="confetti-wrap" id="confetti-wrap"></div>
+  </div>
 
-      <!-- Department Summary (auto scroll) -->
-      <div class="card">
-        <div class="h3">สรุปจำนวนตามแผนก</div>
-        <div id="dept-viewport" class="scroll-viewport">
-          <div id="dept-wrap"></div>
-        </div>
+  <!-- CENTER: Dept bar chart -->
+  <div class="card">
+    <div class="card-hdr">
+      <span class="card-title">📊 สรุปตามแผนก</span>
+      <span class="card-badge" id="dept-badge">0 แผนก</span>
+    </div>
+    <div class="card-body">
+      <div class="scroll-body">
+        <div id="dept-list" class="dept-list"></div>
       </div>
-
-      <!-- Recent 50 (auto scroll) -->
-      <div class="card">
-        <div class="h3">เช็คอินล่าสุด 50 รายชื่อ</div>
-        <div class="scroll-wrap">
-          <div id="recent-viewport" class="recent-viewport">
-            <ul id="recent-list" class="recent-list"></ul>
-          </div>
-          <div class="scroll-controls">
-            <button id="btn-up" class="btn">▲ Up</button>
-            <button id="btn-down" class="btn">▼ Down</button>
-            <button id="btn-pause" class="btn">⏸ Pause</button>
-            <button id="btn-resume" class="btn">▶ Resume</button>
-          </div>
-        </div>
-      </div>
-
     </div>
   </div>
 
-  <!-- Full-screen Spotlight Player -->
-  <div id="fs-spotlight" class="fs" aria-hidden="true">
-    <div class="fs-ctrl">
-      <button id="fs-prev" class="btn">⟵ Prev</button>
-      <button id="fs-play" class="btn">▶ Play</button>
-      <button id="fs-pause" class="btn">⏸ Pause</button>
-      <button id="fs-next" class="btn">Next ⟶</button>
-      <button id="fs-close" class="btn">✕ Close</button>
+  <!-- RIGHT: Recent 50 -->
+  <div class="card">
+    <div class="card-hdr">
+      <span class="card-title">⏱ รายชื่อเข้าล่าสุด</span>
+      <span class="card-badge" id="recent-badge">0 รายการ</span>
     </div>
-    <div class="fs-wrap">
-      <div class="fs-title">Full‑Screen Spotlight</div>
-      <div class="fs-card">
-        <div id="fs-rank" class="fs-rank">#1</div>
-        <div id="fs-name" class="fs-name">Waiting…</div>
-        <div id="fs-meta" class="fs-meta">—</div>
+    <div class="card-body">
+      <div class="scroll-body">
+        <ul id="recent-list" class="recent-list"></ul>
       </div>
-      <div class="fs-progress"><span id="fs-progress-bar"></span></div>
-      <div class="fs-hint">Space = Play/Pause • ←/→ = Prev/Next • Esc = Close</div>
     </div>
   </div>
 
-  <div id="status" class="footer">Initializing…</div>
+</main>
+
+<!-- ─── FOOTER ─── -->
+<footer class="footer">
+  <span class="footer-status" id="status">กำลังโหลด...</span>
+  <span class="footer-hint">Poll ทุก 1.2 วินาที — GitHub Raw</span>
+</footer>
+
+<!-- ─── FULLSCREEN SPOTLIGHT ─── -->
+<div id="fs-overlay" class="fs-overlay">
+  <div class="fs-ctrl">
+    <button class="btn-ctrl" id="fs-prev">← Prev</button>
+    <button class="btn-ctrl" id="fs-play">▶ Play</button>
+    <button class="btn-ctrl" id="fs-pause">⏸ Pause</button>
+    <button class="btn-ctrl" id="fs-next">Next →</button>
+    <button class="btn-ctrl" id="fs-close">✕ ปิด</button>
+  </div>
+  <div class="fs-card">
+    <div id="fs-order" class="fs-order">#1</div>
+    <div id="fs-name"  class="fs-name">กำลังโหลด…</div>
+    <div id="fs-dept"  class="fs-dept">—</div>
+    <div id="fs-time"  class="fs-time">—</div>
+  </div>
+  <div class="fs-progress"><div id="fs-bar" class="fs-progress-bar"></div></div>
+  <div style="color:var(--sub);font-size:12px;font-family:var(--mono)">Space=Play/Pause • ←/→=เลื่อน • Esc=ปิด</div>
+</div>
 
 <script>
-  /* ===== Settings ===== */
-  const DATA_URL    = "https://raw.githubusercontent.com/akasitgun/tmd-checkin-display/main/data.json";
-  const POLL_MS     = 1200;
-  const TOP_DEPT    = 50;
-  const RECENT_N    = 50;
-  const SPOT_N      = 5;          // แสดง 5 คนบนการ์ด (โซน Spotlight ปกติ)
-  const ORDER_LABEL = 'ลำดับ';
+/* ═══════════════════════════════════════
+   CONFIG
+═══════════════════════════════════════ */
+const DATA_URL   = "https://raw.githubusercontent.com/akasitgun/tmd-checkin-display/main/data.json";
+const POLL_MS    = 1200;
+const SPOT_N     = 10;   // spotlight shows recent N
+const RECENT_N   = 50;
+const FS_ITEM_MS = 3000;
 
-  // Auto-scroll speeds
-  const RECENT_STEP = 1.2, RECENT_TICK = 16;  // recent list
-  const DEPT_STEP   = 1.0, DEPT_TICK   = 16;  // department summary
-  const SPOT_STEP   = 1.0, SPOT_TICK   = 20;  // spotlight (ในการ์ด)
+/* ═══════════════════════════════════════
+   STATE
+═══════════════════════════════════════ */
+let items    = [];
+let lastKey  = "";
+let lastTotal = 0;
+let lastTs1  = "";
 
-  // Full-screen Spotlight Player
-  const LOGO_URL   = 'https://raw.githubusercontent.com/akasitgun/tmd-checkin-display/main/MEIDEN.png';
-  const FS_SOURCE  = 'recent';    // 'recent' ใช้ 50 ล่าสุด, 'topN' ใช้ 5 คนล่าสุด (ตาม SPOT_N)
-  const FS_COUNT   = 50;          // จำนวนรายการในโหมดเต็มจอ (เมื่อใช้ 'recent')
-  const FS_ITEM_MS = 2500;        // ระยะเวลาต่อคน (มิลลิวินาที)
+// auto-scroll
+const scrollStates = {};
 
-  /* ===== State ===== */
-  let lastKey   = "";
-  let lastTotal = 0;
-  let lastTop1Ts= "";
-  let items     = [];
+// FS
+let fsActive = false;
+let fsTimer  = null;
+let fsIdx    = 0;
+let fsList   = [];
 
-  const recentState = { dir:1, timer:null };
-  const deptState   = { dir:1, timer:null };
-  const spotState   = { dir:1, timer:null };
+/* ═══════════════════════════════════════
+   HELPERS
+═══════════════════════════════════════ */
+const $ = s => document.querySelector(s);
+const fmt = ts => { try { return new Date(ts).toLocaleTimeString('th-TH',{hour12:false}); } catch { return ts||"" } };
+const fmtFull = ts => { try { return new Date(ts).toLocaleString('th-TH',{hour12:false}); } catch { return ts||"" } };
+const fmtDate = () => new Date().toLocaleDateString('th-TH',{weekday:'short',year:'numeric',month:'short',day:'numeric'});
 
-  // FS state
-  let fsActive  = false;
-  let fsTimer   = null;
-  let fsIdx     = 0;
-  let fsList    = [];
+function normalize(d){
+  if (!d) return { items:[], updated:"" };
+  if (Array.isArray(d.items)) return { items:d.items.slice(), updated: d.updated||"" };
+  if (typeof d === 'object')  return { items:[d], updated: d.timestamp||"" };
+  try { return normalize(JSON.parse(d)) } catch { return { items:[], updated:"" } }
+}
+function byNewest(a,b){ return new Date(b.timestamp||0)-new Date(a.timestamp||0) }
+function buildKey(list, upd){ return upd+"::"+list.slice(0,100).map(x=>`${x.name}|${x.order}|${x.timestamp}`).join("|") }
+function groupDept(list){
+  const m=new Map();
+  list.forEach(x=>{ const d=(x.department||"ไม่ระบุ").trim(); m.set(d,(m.get(d)||0)+1) });
+  return [...m.entries()].sort((a,b)=>b[1]-a[1]);
+}
 
-  /* ===== Helpers ===== */
-  const $  = s => document.querySelector(s);
-  const $$ = s => document.querySelectorAll(s);
-  const fmt = ts => { try{ return new Date(ts).toLocaleString('th-TH',{ hour12:false }); }catch{return ts||"";} };
-  const fmtDate = d => { try{ return new Date(d).toLocaleDateString('th-TH',{weekday:'long', year:'numeric', month:'long', day:'numeric'}); } catch{ return d || "" } };
+/* ═══════════════════════════════════════
+   CLOCK
+═══════════════════════════════════════ */
+function tickClock(){
+  $("#now").textContent = new Date().toLocaleTimeString('th-TH',{hour12:false});
+  $("#date-str").textContent = fmtDate();
+}
+setInterval(tickClock,500); tickClock();
 
-  function normalize(d){
-    if (!d) return { items:[], updated:"" };
-    if (Array.isArray(d.items)) return { items:d.items.slice(), updated: d.updated || (d.items[0]?.timestamp || "") };
-    if (typeof d === 'object')  return { items:[d], updated: d.timestamp || "" };
-    try{ return normalize(JSON.parse(d)); }catch{ return { items:[], updated:"" }; }
+/* ═══════════════════════════════════════
+   ANIMATE NUMBER
+═══════════════════════════════════════ */
+function animateNum(el, from, to, ms=600){
+  const start = performance.now();
+  function step(t){
+    const p = Math.min(1,(t-start)/ms);
+    const eased = p<.5 ? 2*p*p : 1-Math.pow(-2*p+2,2)/2;
+    el.textContent = Math.round(from+(to-from)*eased).toLocaleString('th-TH');
+    if (p<1) requestAnimationFrame(step);
   }
-  function byNewest(a,b){ return new Date(b.timestamp||0) - new Date(a.timestamp||0); }
-  function buildKey(list, updated){
-    return (updated || (list[0]?.timestamp || "")) + "::" + list.slice(0,200).map(x=>`${x.name}|${x.order}|${x.department}|${x.timestamp}`).join("||");
-  }
-  function groupDept(list){
-    const m = new Map(); list.forEach(x=>{ const d=(x.department||"Other").trim(); m.set(d,(m.get(d)||0)+1); });
-    return [...m.entries()].sort((a,b)=>b[1]-a[1]);
-  }
+  requestAnimationFrame(step);
+}
 
-  /* ===== Header ===== */
-  function tickClock(){
-    const now = new Date();
-    $("#now").textContent  = now.toLocaleTimeString('th-TH',{hour12:false});
-    $("#date").textContent = fmtDate(now);
-  }
-  setInterval(tickClock, 500); tickClock();
+/* ═══════════════════════════════════════
+   AUTO SCROLL
+═══════════════════════════════════════ */
+function initScroll(id, step=1.0, tick=16){
+  const state = { dir:1, timer:null, paused:false };
+  scrollStates[id] = state;
+  const vp = document.getElementById(id);
+  if (!vp) return;
+  state.timer = setInterval(()=>{
+    if (state.paused || vp.scrollHeight <= vp.clientHeight+2) return;
+    vp.scrollTop += step * state.dir;
+    if (vp.scrollTop + vp.clientHeight >= vp.scrollHeight-2) state.dir=-1;
+    if (vp.scrollTop <= 0) state.dir=1;
+  }, tick);
+  vp.addEventListener('mouseenter',()=>state.paused=true);
+  vp.addEventListener('mouseleave',()=>state.paused=false);
+}
 
-  function animateTotal(from, to, ms=700){
-    const el = $("#kpi-total"); const start = performance.now();
-    function step(t){ const p=Math.min(1,(t-start)/ms); const val=Math.round(from + (to-from)*p); el.textContent = val.toLocaleString('th-TH'); if (p<1) requestAnimationFrame(step); }
-    requestAnimationFrame(step);
+/* ═══════════════════════════════════════
+   CONFETTI
+═══════════════════════════════════════ */
+function confetti(N=50){
+  const wrap = $("#confetti-wrap");
+  wrap.innerHTML="";
+  for(let i=0;i<N;i++){
+    const el=document.createElement("i");
+    const h=Math.random()*360;
+    el.style.cssText=`left:${Math.random()*100}%;background:hsl(${h},90%,65%);animation-duration:${1.4+Math.random()*.8}s;animation-delay:${Math.random()*.4}s`;
+    wrap.appendChild(el);
   }
-  function safeTotal(data){
-    const t = (typeof data?.total === 'number') ? data.total : items?.length;
-    return (typeof t === 'number' && isFinite(t)) ? t : 0;
-  }
-  function msToSec(ms) { return Math.max(0, Math.round(ms/1000)); }
+  setTimeout(()=>wrap.innerHTML="",2400);
+}
 
-  function renderHeader(updated, data){
-    const total = safeTotal(data);
-    if (total !== lastTotal){ animateTotal(lastTotal, total); lastTotal = total; }
-    else { $("#kpi-total").textContent = total.toLocaleString('th-TH'); }
+/* ═══════════════════════════════════════
+   RENDER SPOTLIGHT
+═══════════════════════════════════════ */
+function renderSpot(){
+  const ul = $("#spot-list"); ul.innerHTML="";
+  const top = items.slice(0,SPOT_N);
+  $("#spot-badge").textContent = `${top.length} คน`;
 
-    $("#kpi-dept").textContent  = groupDept(items).length;
-
-    const latestTs = items[0]?.timestamp || "";
-    const firstTs  = items[items.length - 1]?.timestamp || "";
-    const now = Date.now();
-    const latencySec = latestTs ? msToSec(now - new Date(latestTs).getTime()) : null;
-
-    const updLine = [
-      `ข้อมูลอัปเดต: ${updated ? fmt(updated) : (latestTs ? fmt(latestTs) : "-")}`,
-      (firstTs && latestTs) ? `ช่วงเวลา: ${fmt(firstTs)} – ${fmt(latestTs)}` : null,
-      (latencySec !== null) ? `ดีเลย์ ~${latencySec} วิ` : null
-    ].filter(Boolean).join(" • ");
-    $("#updated").textContent = updLine;
-  }
-
-  /* ===== Auto scroll (generic) ===== */
-  function startAutoScroll(vp, state, step, tick){
-    stopAutoScroll(state);
-    state.timer = setInterval(()=>{
-      if (!vp) return;
-      if (vp.scrollHeight <= vp.clientHeight) return;
-      vp.scrollTop += step * state.dir;
-      const endBottom = (vp.scrollTop + vp.clientHeight >= vp.scrollHeight - 1);
-      const endTop    = (vp.scrollTop <= 0);
-      if (endBottom) state.dir = -1;
-      if (endTop)    state.dir = 1;
-    }, tick);
-  }
-  function stopAutoScroll(state){ if (state.timer){ clearInterval(state.timer); state.timer = null; } }
-
-  /* ===== Spotlight (in card) – Auto-scroll list of 5 ===== */
-  function confettiInto(container, ms=1500, N=60){
-    container.innerHTML = "";
-    for(let i=0;i<N;i++){
-      const el = document.createElement("i");
-      const h  = Math.floor(Math.random()*360);
-      el.style.left = Math.random()*100 + "%";
-      el.style.background = `hsl(${h} 90% 60%)`;
-      el.style.animationDuration = (1.6 + Math.random()*0.9) + "s";
-      el.style.transform = `translateX(${(Math.random()*40-20)}px)`;
-      container.appendChild(el);
-    }
-    setTimeout(()=>{ container.innerHTML=""; }, ms+300);
-  }
-
-  function renderSpotlightVertical(n=SPOT_N){
-    const ul = $("#spot-list");
-    const vp = $("#spot-viewport");
-    ul.innerHTML = "";
-
-    const top = items.slice(0, n);
-    top.forEach((x, idx)=>{
-      const li   = document.createElement("li");
-      li.className = "spot-row";
-      const order = (x.order ?? (idx+1));
-      li.innerHTML = `
-        <div class="rank-pill rank-${idx+1}">ลำดับที่ ${order}</div>
-        <div class="s-name">${x.name || "ผู้เข้าร่วม"}</div>
-        <div class="s-meta">
-          ${ (x.department||"").toString().trim() ? `<span class="meta-icon">🏢</span>แผนก ${(x.department||"").toString().trim()} • ` : "" }
-          <span class="meta-icon">⏰</span>เวลา ${fmt(x.timestamp)}
-        </div>
-      `;
-      ul.appendChild(li);
-    });
-
-    // confetti เมื่อ #1 เปลี่ยน
-    const ts1 = top[0]?.timestamp || "";
-    if (ts1 && ts1 !== lastTop1Ts){ lastTop1Ts = ts1; confettiInto($("#spot-confetti")); }
-
-    requestAnimationFrame(()=> startAutoScroll(vp, spotState, SPOT_STEP, SPOT_TICK));
-  }
-
-  /* ===== Department Summary ===== */
-  function renderDept(){
-    const wrap = $("#dept-wrap"); wrap.innerHTML="";
-    const pairs = groupDept(items).slice(0, TOP_DEPT);
-    const max = Math.max(1, ...pairs.map(p=>p[1]));
-    pairs.forEach(([name,count])=>{
-      const row = document.createElement("div");
-      row.className = "dept-item";
-      row.innerHTML = `
-        <div class="dept-row">
-          <div class="dept-name">${name||"Other"}</div>
-          <div class="dept-count">${count}</div>
-        </div>
-        <div class="bar"><span style="width:${Math.round(count/max*100)}%"></span></div>
-      `;
-      wrap.appendChild(row);
-    });
-    requestAnimationFrame(()=> startAutoScroll($("#dept-viewport"), deptState, DEPT_STEP, DEPT_TICK));
-  }
-
-  /* ===== Recent 50 ===== */
-  function renderRecent(){
-    const ul = $("#recent-list"); ul.innerHTML="";
-    items.slice(0, RECENT_N).forEach((x, i)=>{
-      const order = (x.order ?? (i+1));
-      const name  = (x.name || "ผู้เข้าร่วม");
-      const dept  = (x.department || "").toString().trim();
-      const line1 = `<div class="r-name">ลำดับ ${order}  ${name}</div>`;
-      const line2 = `<div class="r-meta">${dept ? `<span class="meta-icon">🏢</span>แผนก ${dept} • ` : ""}<span class="meta-icon">⏰</span>เวลา ${fmt(x.timestamp)}</div>`;
-      const li = document.createElement("li");
-      li.innerHTML = line1 + line2;
-      ul.appendChild(li);
-    });
-    requestAnimationFrame(()=> startAutoScroll($("#recent-viewport"), recentState, RECENT_STEP, RECENT_TICK));
-  }
-
-  // Controls for Recent scroll
-  $("#btn-up").addEventListener("click", ()=>{ recentState.dir = -1; startAutoScroll($("#recent-viewport"), recentState, RECENT_STEP, RECENT_TICK); });
-  $("#btn-down").addEventListener("click", ()=>{ recentState.dir =  1; startAutoScroll($("#recent-viewport"), recentState, RECENT_STEP, RECENT_TICK); });
-  $("#btn-pause").addEventListener("click", ()=> stopAutoScroll(recentState));
-  $("#btn-resume").addEventListener("click", ()=> startAutoScroll($("#recent-viewport"), recentState, RECENT_STEP, RECENT_TICK));
-
-  /* ===== Full-screen Spotlight Player ===== */
-  function buildFsList(){
-    if (FS_SOURCE === 'topN') return items.slice(0, SPOT_N);
-    return items.slice(0, FS_COUNT); // recent N
-  }
-  function fsOpen(){
-    fsList = buildFsList();
-    fsIdx  = 0;
-    fsActive = true;
-    $("#fs-spotlight").classList.add('show');
-    document.body.style.overflow = 'hidden';
-    fsRender();
-    fsPlay();
-  }
-  function fsClose(){
-    fsActive = false;
-    $("#fs-spotlight").classList.remove('show');
-    document.body.style.overflow = '';
-    fsPause();
-  }
-  function fsRender(){
-    const x = fsList[fsIdx];
-    const name = x?.name || "ผู้เข้าร่วม";
-    const order= x?.order ?? (fsIdx+1);
-    const dept = (x?.department || "").toString().trim();
-    $("#fs-rank").textContent = `#${order}`;
-    $("#fs-name").textContent = name;
-    $("#fs-meta").innerHTML = `${dept ? `🏢 แผนก ${dept} • ` : ""}⏰ เวลา ${fmt(x?.timestamp)}`;
-    // progress reset
-    const bar = $("#fs-progress-bar");
-    bar.style.transition = 'none';
-    bar.style.width = '0%';
-    requestAnimationFrame(()=>{
-      bar.style.transition = `width ${FS_ITEM_MS}ms linear`;
-      bar.style.width = '100%';
-    });
-  }
-  function fsNext(){
-    if (!fsList.length) return;
-    fsIdx = (fsIdx + 1) % fsList.length;
-    fsRender();
-  }
-  function fsPrev(){
-    if (!fsList.length) return;
-    fsIdx = (fsIdx - 1 + fsList.length) % fsList.length;
-    fsRender();
-  }
-  function fsPlay(){
-    fsPause();
-    fsTimer = setInterval(fsNext, FS_ITEM_MS);
-  }
-  function fsPause(){
-    if (fsTimer){ clearInterval(fsTimer); fsTimer = null; }
-  }
-
-  // Buttons & keys
-  $("#btn-fs").addEventListener("click", fsOpen);
-  $("#fs-close").addEventListener("click", fsClose);
-  $("#fs-play").addEventListener("click", fsPlay);
-  $("#fs-pause").addEventListener("click", fsPause);
-  $("#fs-next").addEventListener("click", ()=>{ fsPause(); fsNext(); });
-  $("#fs-prev").addEventListener("click", ()=>{ fsPause(); fsPrev(); });
-  window.addEventListener("keydown",(e)=>{
-    if (!fsActive) return;
-    if (e.key === 'Escape') fsClose();
-    if (e.key === ' ') { e.preventDefault(); if (fsTimer) fsPause(); else fsPlay(); }
-    if (e.key === 'ArrowRight') { fsPause(); fsNext(); }
-    if (e.key === 'ArrowLeft')  { fsPause(); fsPrev(); }
+  top.forEach((x,i)=>{
+    const li = document.createElement("li");
+    li.className = "spot-item";
+    const numClass = i<5 ? `r${i+1}` : "rn";
+    li.innerHTML=`
+      <div class="spot-num ${numClass}">${x.order??i+1}</div>
+      <div class="spot-name">${x.name||"ผู้เข้าร่วม"}</div>
+      <div class="spot-dept">${(x.department||"").trim()||"ไม่ระบุแผนก"} · ${fmt(x.timestamp)}</div>
+    `;
+    ul.appendChild(li);
   });
 
-  /* ===== Hover pause (card lists) ===== */
-  $("#recent-viewport").addEventListener("mouseenter", ()=> stopAutoScroll(recentState));
-  $("#recent-viewport").addEventListener("mouseleave", ()=> startAutoScroll($("#recent-viewport"), recentState, RECENT_STEP, RECENT_TICK));
-  $("#dept-viewport").addEventListener("mouseenter", ()=> stopAutoScroll(deptState));
-  $("#dept-viewport").addEventListener("mouseleave", ()=> startAutoScroll($("#dept-viewport"), deptState, DEPT_STEP, DEPT_TICK));
-  $("#spot-viewport").addEventListener("mouseenter", ()=> stopAutoScroll(spotState));
-  $("#spot-viewport").addEventListener("mouseleave", ()=> startAutoScroll($("#spot-viewport"), spotState, SPOT_STEP, SPOT_TICK));
+  const ts1 = top[0]?.timestamp||"";
+  if (ts1 && ts1!==lastTs1){ lastTs1=ts1; confetti(); }
+}
 
-  /* ===== Data loop ===== */
-  async function load(){
-    try{
-      const r = await fetch(DATA_URL + "?t=" + Date.now(), { cache:"no-store" });
-      if (!r.ok) throw new Error("HTTP " + r.status);
-      let raw = await r.json(); if (typeof raw === "string"){ try{ raw = JSON.parse(raw); }catch{} }
+/* ═══════════════════════════════════════
+   RENDER DEPT
+═══════════════════════════════════════ */
+function renderDept(){
+  const wrap = $("#dept-list"); wrap.innerHTML="";
+  const pairs = groupDept(items);
+  const max = Math.max(1,...pairs.map(p=>p[1]));
+  const total = items.length || 1;
+  $("#dept-badge").textContent = `${pairs.length} แผนก`;
 
-      const data = normalize(raw);
-      const list = (data.items||[]).slice().sort(byNewest);
-      const key  = buildKey(list, data.updated);
+  pairs.forEach(([name,count])=>{
+    const pct = Math.round(count/total*100);
+    const barW = Math.round(count/max*100);
+    const div = document.createElement("div");
+    div.className="dept-row";
+    div.innerHTML=`
+      <div class="dept-top">
+        <div class="dept-name">${name}</div>
+        <div class="dept-count-wrap">
+          <div class="dept-n">${count}</div>
+          <div class="dept-lbl"> คน</div>
+          <div class="dept-pct">&nbsp;${pct}%</div>
+        </div>
+      </div>
+      <div class="dept-bar"><div class="dept-fill" style="width:0%" data-w="${barW}%"></div></div>
+    `;
+    wrap.appendChild(div);
+  });
 
-      if (key !== lastKey){
-        lastKey = key; items = list;
+  // animate bars next frame
+  requestAnimationFrame(()=>{
+    wrap.querySelectorAll('.dept-fill').forEach(el=>{
+      el.style.width = el.dataset.w;
+    });
+  });
+}
 
-        renderHeader(data.updated, data);
-        renderSpotlightVertical(SPOT_N);
-        renderDept();
-        renderRecent();
+/* ═══════════════════════════════════════
+   RENDER RECENT
+═══════════════════════════════════════ */
+function renderRecent(){
+  const ul = $("#recent-list"); ul.innerHTML="";
+  const list = items.slice(0,RECENT_N);
+  $("#recent-badge").textContent = `${list.length} รายการ`;
 
-        // ถ้าอยู่ในโหมดเต็มจอ อัปเดตลิสต์ทันที
-        if (fsActive){
-          const current = fsList[fsIdx]?.timestamp;
-          fsList = buildFsList();
-          // ถ้ารายการเดิมยังอยู่ ให้คง index โดยหา timestamp เดิม
-          const j = fsList.findIndex(v=>v.timestamp===current);
-          fsIdx = j >= 0 ? j : 0;
-          fsRender();
-        }
+  const nowMs = Date.now();
+  list.forEach((x,i)=>{
+    const li = document.createElement("li");
+    li.className="recent-item";
+    const ageSec = x.timestamp ? Math.round((nowMs-new Date(x.timestamp).getTime())/1000) : null;
+    const isNew = ageSec !== null && ageSec < 120; // ใหม่ภายใน 2 นาที
+    li.innerHTML=`
+      <div class="r-order">${x.order??i+1}</div>
+      <div class="r-body">
+        <div class="r-name">${x.name||"ผู้เข้าร่วม"} ${isNew ? '<span class="badge-new">NEW</span>' : ''}</div>
+        <div class="r-meta">🏢 ${(x.department||"ไม่ระบุ").trim()}</div>
+      </div>
+      <div class="r-time">${fmt(x.timestamp)}</div>
+    `;
+    ul.appendChild(li);
+  });
+}
 
-        $("#status").textContent = `Showing ${items.length} items • Poll ${POLL_MS}ms • Source: RAW • FS items: ${FS_SOURCE==='recent'?FS_COUNT:SPOT_N}`;
-      }
-    }catch(e){
-      $("#status").textContent = "Fetch error: " + (e.message || e);
-    }
+/* ═══════════════════════════════════════
+   RENDER HEADER KPI
+═══════════════════════════════════════ */
+function renderHeader(data){
+  const total = typeof data.total==='number' ? data.total : items.length;
+  if (total !== lastTotal){
+    animateNum($("#kpi-total"), lastTotal, total);
+    lastTotal = total;
+  } else {
+    $("#kpi-total").textContent = total.toLocaleString('th-TH');
   }
+  $("#kpi-dept").textContent = groupDept(items).length;
 
-  // โลโก้จริง
-  (function initLogo(){
-    const img = document.getElementById('brand-logo');
-    if (img){
-      img.src = LOGO_URL;
-      img.addEventListener('error', ()=>{ img.style.display='none'; });
+  const latestTs = items[0]?.timestamp;
+  const delaySec = latestTs ? Math.max(0,Math.round((Date.now()-new Date(latestTs).getTime())/1000)) : null;
+  $("#upd-str").textContent = data.updated
+    ? `อัปเดต: ${fmtFull(data.updated)}${delaySec!==null?' · ดีเลย์ ~'+delaySec+'s':''}` : "—";
+}
+
+/* ═══════════════════════════════════════
+   FULLSCREEN SPOTLIGHT
+═══════════════════════════════════════ */
+function fsRender(){
+  const x = fsList[fsIdx];
+  if (!x) return;
+  $("#fs-order").textContent = `#${x.order ?? fsIdx+1}`;
+  $("#fs-name").textContent  = x.name || "ผู้เข้าร่วม";
+  $("#fs-dept").textContent  = (x.department||"").trim() || "ไม่ระบุแผนก";
+  $("#fs-time").textContent  = `⏰ ${fmtFull(x.timestamp)}`;
+
+  const bar = $("#fs-bar");
+  bar.style.transition="none"; bar.style.width="0%";
+  requestAnimationFrame(()=>{
+    bar.style.transition=`width ${FS_ITEM_MS}ms linear`;
+    bar.style.width="100%";
+  });
+}
+function fsNext(){ fsIdx=(fsIdx+1)%fsList.length; fsRender(); }
+function fsPrev(){ fsIdx=(fsIdx-1+fsList.length)%fsList.length; fsRender(); }
+function fsPlay(){ if(fsTimer) return; fsTimer=setInterval(fsNext,FS_ITEM_MS); }
+function fsPause(){ clearInterval(fsTimer); fsTimer=null; }
+function fsOpen(){
+  fsList=items.slice(0,RECENT_N); fsIdx=0; fsActive=true;
+  $("#fs-overlay").classList.add('show');
+  fsRender(); fsPlay();
+}
+function fsClose(){
+  fsActive=false; fsPause();
+  $("#fs-overlay").classList.remove('show');
+}
+
+$("#btn-fs").addEventListener("click", fsOpen);
+$("#fs-close").addEventListener("click", fsClose);
+$("#fs-play").addEventListener("click", fsPlay);
+$("#fs-pause").addEventListener("click", fsPause);
+$("#fs-next").addEventListener("click", ()=>{ fsPause(); fsNext(); });
+$("#fs-prev").addEventListener("click", ()=>{ fsPause(); fsPrev(); });
+window.addEventListener("keydown",e=>{
+  if (!fsActive) return;
+  if (e.key==="Escape") fsClose();
+  if (e.key===" "){ e.preventDefault(); fsTimer ? fsPause() : fsPlay(); }
+  if (e.key==="ArrowRight"){ fsPause(); fsNext(); }
+  if (e.key==="ArrowLeft") { fsPause(); fsPrev(); }
+});
+
+/* ═══════════════════════════════════════
+   DATA FETCH LOOP
+═══════════════════════════════════════ */
+async function load(){
+  try {
+    const r = await fetch(DATA_URL+"?t="+Date.now(), { cache:"no-store" });
+    if (!r.ok) throw new Error("HTTP "+r.status);
+    let raw = await r.json();
+    if (typeof raw==="string"){ try{ raw=JSON.parse(raw) }catch{} }
+
+    const data = normalize(raw);
+    const list = (data.items||[]).slice().sort(byNewest);
+    const key  = buildKey(list, data.updated);
+
+    if (key !== lastKey){
+      lastKey = key;
+      items   = list;
+      renderHeader(data);
+      renderSpot();
+      renderDept();
+      renderRecent();
+
+      if (fsActive){
+        const cur=fsList[fsIdx]?.timestamp;
+        fsList=items.slice(0,RECENT_N);
+        const j=fsList.findIndex(v=>v.timestamp===cur);
+        fsIdx=j>=0?j:0;
+      }
+
+      $("#status").textContent = `✓ ${items.length} รายการ · Poll ${POLL_MS}ms · ${new Date().toLocaleTimeString('th-TH')}`;
     }
-  })();
+  } catch(e){
+    $("#status").textContent = "⚠ Fetch error: "+(e.message||e);
+  }
+}
 
-  // ค่าเริ่มต้นกันหน้าว่าง
-  document.getElementById('kpi-total').textContent = '0';
+/* ─── INIT ─── */
+// Scroll bodies — we target the scroll-body divs inside each card
+// We need to init auto-scroll after first render, so defer
+function initScrolls(){
+  const bodies = document.querySelectorAll('.scroll-body');
+  bodies.forEach((el,i)=>{
+    const id = 'sb-'+i; el.id=id;
+    const steps=[1.0,0.8,1.1]; const ticks=[18,18,16];
+    const state={dir:1,paused:false};
+    scrollStates[id]=state;
+    setInterval(()=>{
+      if(state.paused||el.scrollHeight<=el.clientHeight+2) return;
+      el.scrollTop+=steps[i%3]*state.dir;
+      if(el.scrollTop+el.clientHeight>=el.scrollHeight-2) state.dir=-1;
+      if(el.scrollTop<=0) state.dir=1;
+    }, ticks[i%3]);
+    el.addEventListener('mouseenter',()=>state.paused=true);
+    el.addEventListener('mouseleave',()=>state.paused=false);
+  });
+}
 
-  load();
-  setInterval(load, POLL_MS);
+load().then(()=>{ setTimeout(initScrolls,300); });
+setInterval(load, POLL_MS);
 </script>
 </body>
 </html>

@@ -3,28 +3,47 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TMD 60ᵗʰ Anniversary : ★ Lucky Draw 2026</title>
-<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;700;900&family=Sarabun:wght@300;400;500&display=swap" rel="stylesheet">
+<title>TMD 60th Anniversary : Lucky Draw 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;700;900&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --gold: #FFD700;
-    --gold-dim: #B8922A;
-    --gold-glow: rgba(255,215,0,0.25);
-    --blue: #38BDF8;
-    --blue-dim: #0369A1;
-    --purple: #C084FC;
-    --purple-dim: #7E22CE;
-    --bg: #06060F;
-    --bg2: #0D0D1E;
-    --bg3: #12122A;
-    --text: #E8E8F0;
-    --text-dim: #6B6B8A;
-    --border: rgba(255,255,255,0.07);
-    --round1-color: #38BDF8;
-    --round2-color: #C084FC;
-    --grand-color: #FFD700;
+    /* Gold palette */
+    --gold:        #FFD700;
+    --gold-light:  #FFE566;
+    --gold-dim:    #C9922A;
+    --gold-muted:  rgba(255,215,0,0.55);
+
+    /* Royal Blue palette — matches event backdrop */
+    --blue-royal:  #1A3A8F;   /* deep royal blue */
+    --blue-mid:    #1E4FC2;   /* mid blue */
+    --blue-bright: #4A80F0;   /* bright accent */
+    --blue-sky:    #7EB3FF;   /* light label blue */
+
+    /* Round 2 — keep silver/white accent for contrast */
+    --silver:      #C8D8F0;
+    --silver-dim:  #6B88B8;
+
+    /* Backgrounds — dark navy */
+    --bg:   #050C1F;          /* darkest navy */
+    --bg2:  #091530;          /* panel bg */
+    --bg3:  #0D1E40;          /* card bg */
+    --bg4:  #122354;          /* hover / elevated */
+
+    /* Text — high contrast on dark blue */
+    --text:      #F0F4FF;     /* near-white, cool tint */
+    --text-sub:  #B8CCEE;     /* secondary — clearly readable */
+    --text-dim:  #7A99CC;     /* muted — still readable */
+
+    /* Borders */
+    --border:        rgba(100,140,220,0.18);
+    --border-bright: rgba(100,160,255,0.35);
+
+    /* Round accent colors */
+    --round1-color:  #5A9EFF;   /* bright blue */
+    --round2-color:  #A8C8FF;   /* silver-blue */
+    --grand-color:   #FFD700;
   }
 
   html, body {
@@ -58,10 +77,10 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 18px 32px 14px;
-    border-bottom: 0.5px solid var(--border);
-    background: rgba(6,6,15,0.85);
-    backdrop-filter: blur(12px);
+    padding: 16px 32px 14px;
+    border-bottom: 1px solid var(--border-bright);
+    background: linear-gradient(180deg, rgba(10,25,70,0.97) 0%, rgba(5,12,31,0.97) 100%);
+    backdrop-filter: blur(16px);
     gap: 24px;
     flex-shrink: 0;
   }
@@ -69,16 +88,17 @@
   .header-left { display: flex; align-items: center; gap: 16px; }
 
   .logo-ring {
-    width: 44px; height: 44px;
+    width: 48px; height: 48px;
     border-radius: 50%;
-    border: 1.5px solid var(--gold-dim);
+    border: 2px solid var(--gold-dim);
     display: flex; align-items: center; justify-content: center;
-    background: rgba(255,215,0,0.06);
+    background: radial-gradient(circle, rgba(255,215,0,0.15) 0%, rgba(26,58,143,0.3) 100%);
+    box-shadow: 0 0 16px rgba(255,215,0,0.2);
     flex-shrink: 0;
   }
 
   .logo-star {
-    font-size: 20px;
+    font-size: 22px;
     line-height: 1;
     animation: spin-slow 12s linear infinite;
   }
@@ -89,23 +109,25 @@
 
   .header-title {
     font-family: 'Prompt', sans-serif;
-    font-size: 22px;
+    font-size: 20px;
     font-weight: 700;
     color: var(--gold);
     letter-spacing: 1px;
-    line-height: 1;
+    line-height: 1.1;
+    text-shadow: 0 0 20px rgba(255,215,0,0.35);
   }
 
   .header-sub {
     font-size: 12px;
-    color: var(--text-dim);
-    margin-top: 3px;
-    letter-spacing: 0.5px;
+    color: var(--text-sub);       /* ← สว่างขึ้น — อ่านง่าย */
+    margin-top: 4px;
+    letter-spacing: 0.3px;
+    font-weight: 400;
   }
 
   .header-meta {
     display: flex;
-    gap: 20px;
+    gap: 14px;
     align-items: center;
     flex-shrink: 0;
   }
@@ -113,39 +135,42 @@
   .meta-chip {
     display: flex;
     align-items: center;
-    gap: 6px;
-    padding: 5px 12px;
+    gap: 7px;
+    padding: 6px 14px;
     border-radius: 20px;
-    background: var(--bg3);
-    border: 0.5px solid var(--border);
+    background: rgba(30,79,194,0.25);
+    border: 1px solid var(--border-bright);
     font-size: 12px;
-    color: var(--text-dim);
+    font-weight: 500;
+    color: var(--text-sub);       /* ← ชัดขึ้น */
   }
 
   .meta-chip .val {
     font-family: 'Prompt', sans-serif;
-    font-weight: 500;
-    color: var(--text);
-    font-size: 13px;
+    font-weight: 600;
+    color: var(--gold-light);     /* ← ตัวเลขเป็นสีทองสว่าง */
+    font-size: 14px;
   }
 
   .live-dot {
-    width: 6px; height: 6px;
+    width: 7px; height: 7px;
     border-radius: 50%;
-    background: #22C55E;
+    background: #4ADE80;
+    box-shadow: 0 0 6px #4ADE80;
     animation: pulse-dot 2s infinite;
   }
 
   @keyframes pulse-dot {
     0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.5; transform: scale(0.8); }
+    50% { opacity: 0.5; transform: scale(0.75); }
   }
 
   .last-updated {
     font-size: 11px;
-    color: var(--text-dim);
+    color: var(--text-sub);
     text-align: right;
-    line-height: 1.4;
+    line-height: 1.6;
+    font-weight: 500;
   }
 
   /* ─── MAIN GRID ─── */
@@ -162,8 +187,9 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    border-right: 0.5px solid var(--border);
+    border-right: 1px solid var(--border);
     position: relative;
+    background: linear-gradient(180deg, var(--bg2) 0%, var(--bg) 100%);
   }
 
   .panel:last-child { border-right: none; }
@@ -178,33 +204,33 @@
   .panel-grand  .panel-top-bar { background: linear-gradient(90deg, transparent, var(--grand-color), transparent); }
 
   .panel-header {
-    padding: 18px 24px 14px;
+    padding: 16px 24px 13px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-bottom: 0.5px solid var(--border);
+    border-bottom: 1px solid var(--border);
     flex-shrink: 0;
-    background: rgba(6,6,15,0.6);
+    background: rgba(9,21,48,0.75);
   }
 
   .panel-label-group { display: flex; align-items: center; gap: 10px; }
 
   .panel-icon {
-    width: 32px; height: 32px;
+    width: 34px; height: 34px;
     border-radius: 8px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 14px;
+    font-size: 15px;
     flex-shrink: 0;
   }
 
-  .panel-round1 .panel-icon { background: rgba(56,189,248,0.12); border: 0.5px solid rgba(56,189,248,0.25); }
-  .panel-round2 .panel-icon { background: rgba(192,132,252,0.12); border: 0.5px solid rgba(192,132,252,0.25); }
-  .panel-grand  .panel-icon { background: rgba(255,215,0,0.10); border: 0.5px solid rgba(255,215,0,0.25); }
+  .panel-round1 .panel-icon { background: rgba(90,158,255,0.15); border: 1px solid rgba(90,158,255,0.35); }
+  .panel-round2 .panel-icon { background: rgba(168,200,255,0.12); border: 1px solid rgba(168,200,255,0.3); }
+  .panel-grand  .panel-icon { background: rgba(255,215,0,0.12); border: 1px solid rgba(255,215,0,0.35); }
 
   .panel-title {
     font-family: 'Prompt', sans-serif;
-    font-size: 14px;
-    font-weight: 500;
+    font-size: 15px;
+    font-weight: 600;
     letter-spacing: 0.5px;
   }
 
@@ -214,27 +240,27 @@
 
   .panel-count {
     font-family: 'Prompt', sans-serif;
-    font-size: 11px;
-    padding: 3px 10px;
+    font-size: 12px;
+    padding: 4px 12px;
     border-radius: 12px;
-    font-weight: 500;
+    font-weight: 600;
   }
 
-  .panel-round1 .panel-count { background: rgba(56,189,248,0.12); color: var(--round1-color); border: 0.5px solid rgba(56,189,248,0.2); }
-  .panel-round2 .panel-count { background: rgba(192,132,252,0.12); color: var(--round2-color); border: 0.5px solid rgba(192,132,252,0.2); }
+  .panel-round1 .panel-count { background: rgba(90,158,255,0.18); color: #8BBEFF; border: 1px solid rgba(90,158,255,0.3); }
+  .panel-round2 .panel-count { background: rgba(168,200,255,0.15); color: #C0D8FF; border: 1px solid rgba(168,200,255,0.3); }
 
   /* ─── WINNER LIST ─── */
   .winner-scroll {
     flex: 1;
     overflow-y: auto;
-    padding: 16px 20px;
+    padding: 14px 18px;
     scrollbar-width: thin;
-    scrollbar-color: rgba(255,255,255,0.08) transparent;
+    scrollbar-color: rgba(90,158,255,0.2) transparent;
   }
 
-  .winner-scroll::-webkit-scrollbar { width: 3px; }
+  .winner-scroll::-webkit-scrollbar { width: 4px; }
   .winner-scroll::-webkit-scrollbar-track { background: transparent; }
-  .winner-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+  .winner-scroll::-webkit-scrollbar-thumb { background: rgba(90,158,255,0.25); border-radius: 2px; }
 
   .winner-item {
     display: flex;
@@ -243,53 +269,62 @@
     padding: 10px 14px;
     border-radius: 8px;
     margin-bottom: 6px;
-    background: rgba(255,255,255,0.03);
-    border: 0.5px solid var(--border);
-    animation: reveal 0.45s cubic-bezier(.22,1,.36,1) both;
-    transition: background 0.15s;
+    background: rgba(30,79,194,0.12);
+    border: 1px solid var(--border);
+    animation: reveal 0.4s cubic-bezier(.22,1,.36,1) both;
+    transition: background 0.15s, border-color 0.15s;
   }
 
-  .winner-item:hover { background: rgba(255,255,255,0.055); }
+  .winner-item:hover {
+    background: rgba(30,79,194,0.22);
+    border-color: var(--border-bright);
+  }
 
   @keyframes reveal {
-    from { opacity: 0; transform: translateX(-12px); }
+    from { opacity: 0; transform: translateX(-14px); }
     to   { opacity: 1; transform: translateX(0); }
   }
 
   .winner-rank {
-    width: 24px; height: 24px;
+    width: 26px; height: 26px;
     border-radius: 6px;
     display: flex; align-items: center; justify-content: center;
     font-family: 'Prompt', sans-serif;
-    font-size: 11px;
-    font-weight: 500;
+    font-size: 12px;
+    font-weight: 600;
     flex-shrink: 0;
   }
 
-  .panel-round1 .winner-rank { background: rgba(56,189,248,0.15); color: var(--round1-color); }
-  .panel-round2 .winner-rank { background: rgba(192,132,252,0.15); color: var(--round2-color); }
+  .panel-round1 .winner-rank { background: rgba(90,158,255,0.2); color: #8BBEFF; }
+  .panel-round2 .winner-rank { background: rgba(168,200,255,0.18); color: #C0D8FF; }
 
   .winner-info { flex: 1; min-width: 0; }
 
   .winner-name {
-    font-size: 16px;
-    font-weight: 500;
-    color: var(--text);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);           /* ← สีขาวชัดเจน */
     white-space: nowrap;
+    overflow: hidden;
     text-overflow: ellipsis;
   }
 
   .winner-dept {
-    font-size: 15px;
-    color: var(--text-dim);
-    margin-top: 1px;
+    font-size: 12px;
+    color: var(--text-sub);       /* ← สว่างขึ้น อ่านง่าย */
+    margin-top: 2px;
+    font-weight: 400;
   }
 
   .winner-order {
     font-family: 'Prompt', sans-serif;
-    font-size: 16px;
+    font-size: 11px;
     color: var(--text-dim);
     flex-shrink: 0;
+    background: var(--bg3);
+    padding: 2px 8px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
   }
 
   /* ─── EMPTY STATE ─── */
@@ -299,42 +334,42 @@
     align-items: center;
     justify-content: center;
     height: 100%;
-    gap: 10px;
+    gap: 12px;
     color: var(--text-dim);
   }
 
   .empty-ring {
-    width: 48px; height: 48px;
+    width: 52px; height: 52px;
     border-radius: 50%;
-    border: 1.5px dashed rgba(255,255,255,0.1);
+    border: 1.5px dashed rgba(90,158,255,0.25);
     display: flex; align-items: center; justify-content: center;
-    font-size: 18px;
-    opacity: 0.4;
+    font-size: 20px;
+    opacity: 0.5;
   }
 
-  .empty-text { font-size: 13px; opacity: 0.5; }
+  .empty-text { font-size: 14px; color: var(--text-dim); font-weight: 500; }
 
   /* ─── DRAW BUTTON ─── */
   .panel-footer {
-    padding: 14px 20px;
-    border-top: 0.5px solid var(--border);
+    padding: 14px 18px;
+    border-top: 1px solid var(--border);
     flex-shrink: 0;
-    background: rgba(6,6,15,0.7);
+    background: rgba(9,21,48,0.8);
   }
 
   .draw-btn {
     width: 100%;
-    padding: 13px 20px;
+    padding: 14px 20px;
     border: none;
     border-radius: 10px;
     font-family: 'Prompt', sans-serif;
     font-size: 15px;
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
     letter-spacing: 0.5px;
     position: relative;
     overflow: hidden;
-    transition: transform 0.15s, opacity 0.2s;
+    transition: transform 0.15s, box-shadow 0.2s;
   }
 
   .draw-btn::before {
@@ -344,22 +379,46 @@
     transition: background 0.15s;
   }
 
-  .draw-btn:not(:disabled):hover::before { background: rgba(255,255,255,0.08); }
+  .draw-btn:not(:disabled):hover::before { background: rgba(255,255,255,0.1); }
+  .draw-btn:not(:disabled):hover { box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
   .draw-btn:not(:disabled):active { transform: scale(0.98); }
-  .draw-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .draw-btn:disabled { opacity: 0.28; cursor: not-allowed; }
 
-  .btn-round1 { background: linear-gradient(135deg, var(--blue-dim) 0%, var(--blue) 100%); color: #fff; }
-  .btn-round2 { background: linear-gradient(135deg, var(--purple-dim) 0%, var(--purple) 100%); color: #fff; }
-  .btn-grand  { background: linear-gradient(135deg, #B45309 0%, var(--gold) 100%); color: #1A0F00; }
-  .btn-done   { background: rgba(255,255,255,0.05) !important; color: var(--text-dim) !important; cursor: default !important; }
+  /* ปุ่มรอบที่ 1 — Royal Blue gradient */
+  .btn-round1 {
+    background: linear-gradient(135deg, #0D3699 0%, #2563EB 60%, #5A9EFF 100%);
+    color: #fff;
+    box-shadow: 0 2px 14px rgba(37,99,235,0.35);
+  }
+  /* ปุ่มรอบที่ 2 — Silver-Blue */
+  .btn-round2 {
+    background: linear-gradient(135deg, #1E3A6E 0%, #2E5DAA 60%, #7EB3FF 100%);
+    color: #fff;
+    box-shadow: 0 2px 14px rgba(46,93,170,0.35);
+  }
+  /* ปุ่ม Grand Prize — Gold */
+  .btn-grand {
+    background: linear-gradient(135deg, #92600A 0%, #D4900A 50%, #FFD700 100%);
+    color: #1A0800;
+    font-weight: 700;
+    box-shadow: 0 2px 18px rgba(212,144,10,0.4);
+  }
+  .btn-done {
+    background: rgba(30,79,194,0.08) !important;
+    color: var(--text-dim) !important;
+    border: 1px solid var(--border) !important;
+    cursor: default !important;
+    box-shadow: none !important;
+    font-weight: 500 !important;
+  }
 
   /* ─── GRAND PRIZE PANEL ─── */
   .grand-body {
     flex: 1;
     display: flex;
     flex-direction: column;
-    padding: 20px;
-    gap: 16px;
+    padding: 18px;
+    gap: 12px;
     overflow: hidden;
   }
 
@@ -371,9 +430,9 @@
     flex: 1;
     gap: 10px;
     border-radius: 12px;
-    border: 0.5px solid rgba(255,215,0,0.12);
-    background: rgba(255,215,0,0.03);
-    padding: 24px 16px;
+    border: 1px solid rgba(255,215,0,0.25);
+    background: radial-gradient(ellipse at center, rgba(255,215,0,0.07) 0%, rgba(9,21,48,0.6) 70%);
+    padding: 22px 16px;
     position: relative;
     overflow: hidden;
   }
@@ -381,60 +440,60 @@
   .grand-trophy-zone::before {
     content: '';
     position: absolute;
-    width: 180px; height: 180px;
+    width: 200px; height: 200px;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(255,215,0,0.08) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(255,215,0,0.1) 0%, transparent 70%);
     top: 50%; left: 50%;
     transform: translate(-50%,-50%);
   }
 
   .grand-waiting {
     text-align: center;
-    color: var(--text-dim);
+    color: var(--text-sub);       /* ← ชัดขึ้น */
     font-size: 13px;
-    line-height: 1.7;
-    opacity: 0.5;
+    line-height: 1.8;
+    font-weight: 400;
   }
 
   .grand-trophy-icon {
-    font-size: 40px;
+    font-size: 42px;
     animation: float 3s ease-in-out infinite;
-    position: relative;
-    z-index: 1;
+    position: relative; z-index: 1;
   }
 
   @keyframes float {
     0%, 100% { transform: translateY(0); }
-    50%       { transform: translateY(-6px); }
+    50%       { transform: translateY(-7px); }
   }
 
   .grand-order-badge {
     font-family: 'Prompt', sans-serif;
-    font-size: 12px;
+    font-size: 11px;
     letter-spacing: 2px;
-    color: var(--gold-dim);
+    color: var(--gold-muted);
     text-transform: uppercase;
     position: relative; z-index: 1;
   }
 
   .grand-name {
     font-family: 'Prompt', sans-serif;
-    font-size: 26px;
+    font-size: 24px;
     font-weight: 700;
     color: var(--gold);
     text-align: center;
-    line-height: 1.2;
+    line-height: 1.25;
     position: relative; z-index: 1;
     animation: name-glow 2s ease-in-out infinite alternate;
   }
 
   @keyframes name-glow {
-    from { text-shadow: 0 0 12px rgba(255,215,0,0.3); }
-    to   { text-shadow: 0 0 30px rgba(255,215,0,0.7), 0 0 60px rgba(255,215,0,0.2); }
+    from { text-shadow: 0 0 10px rgba(255,215,0,0.4); }
+    to   { text-shadow: 0 0 28px rgba(255,215,0,0.85), 0 0 50px rgba(255,215,0,0.25); }
   }
 
   .grand-dept {
     font-size: 13px;
+    font-weight: 500;
     color: var(--gold-dim);
     position: relative; z-index: 1;
   }
@@ -442,7 +501,7 @@
   .grand-reg {
     font-family: 'Prompt', sans-serif;
     font-size: 11px;
-    color: rgba(255,215,0,0.4);
+    color: rgba(255,215,0,0.5);
     letter-spacing: 1px;
     position: relative; z-index: 1;
   }
@@ -456,13 +515,38 @@
 
   .stat-card {
     background: var(--bg3);
-    border: 0.5px solid var(--border);
+    border: 1px solid var(--border);
     border-radius: 8px;
-    padding: 10px 12px;
+    padding: 10px 13px;
   }
 
-  .stat-label { font-size: 10px; color: var(--text-dim); letter-spacing: 0.5px; margin-bottom: 3px; }
-  .stat-value { font-family: 'Prompt', sans-serif; font-size: 18px; font-weight: 500; color: var(--text); }
+  .stat-label {
+    font-size: 11px;
+    color: var(--text-sub);       /* ← ชัดขึ้น */
+    letter-spacing: 0.3px;
+    margin-bottom: 3px;
+    font-weight: 500;
+  }
+  .stat-value {
+    font-family: 'Prompt', sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--gold-light);     /* ← ตัวเลขสีทอง */
+  }
+
+  /* ─── STATUS STRIPS ─── */
+  .status-strip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 13px;
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .strip-done    { background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); color: #6EE7A0; }
+  .strip-pending { background: rgba(30,79,194,0.1); border: 1px solid var(--border);       color: var(--text-sub); }
 
   /* ─── SPINNING ANIMATION ─── */
   .spin { display: inline-block; animation: spin-anim 0.6s linear infinite; }
@@ -482,47 +566,6 @@
     from { transform: translateY(-20px) rotate(0deg); opacity: 1; }
     to   { transform: translateY(500px) rotate(720deg); opacity: 0; }
   }
-
-  /* ─── ROLLING ANIMATION FOR NAMES ─── */
-  .rolling-slot {
-    background: rgba(255,255,255,0.04);
-    border: 0.5px solid var(--border);
-    border-radius: 8px;
-    padding: 10px 14px;
-    margin-bottom: 6px;
-    font-size: 14px;
-    color: var(--text-dim);
-    font-family: 'Prompt', sans-serif;
-    animation: slot-roll 0.1s linear infinite;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  @keyframes slot-roll {
-    0%   { opacity: 0.3; }
-    50%  { opacity: 0.9; }
-    100% { opacity: 0.3; }
-  }
-
-  /* ─── SHIMMER ─── */
-  @keyframes shimmer {
-    0%   { background-position: -400px 0; }
-    100% { background-position: 400px 0; }
-  }
-
-  .status-strip {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 12px;
-    border-radius: 6px;
-    font-size: 11px;
-    margin-bottom: 8px;
-  }
-
-  .strip-done { background: rgba(34,197,94,0.08); border: 0.5px solid rgba(34,197,94,0.2); color: #4ADE80; }
-  .strip-pending { background: rgba(255,255,255,0.03); border: 0.5px solid var(--border); color: var(--text-dim); }
 
   /* ─── RESPONSIVE FULLSCREEN ─── */
   @media (max-width: 900px) {
@@ -545,7 +588,7 @@
     <div class="header-left">
       <div class="logo-ring"><div class="logo-star">✦</div></div>
       <div>
-        <div class="header-title">TMD 60ᵗʰ Anniversary : ★ Lucky Draw 2026</div>
+        <div class="header-title">TMD 60th Anniversary : ★ Lucky Draw 2026</div>
         <div class="header-sub">กดปุ่มเพื่อสุ่มผู้โชคดี • ข้อมูลจาก Microsoft Forms + Power Automate</div>
       </div>
     </div>
@@ -575,7 +618,7 @@
       <div class="panel-top-bar"></div>
       <div class="panel-header">
         <div class="panel-label-group">
-          <div class="panel-icon">🎁</div>
+          <div class="panel-icon">🎯</div>
           <div>
             <div class="panel-title">รอบที่ 1</div>
           </div>
@@ -651,7 +694,7 @@
 
       </div>
       <div class="panel-footer">
-        <button class="draw-btn btn-grand" id="btn3" disabled onclick="revealGrand()">★ รางวัล Grand Prize</button>
+        <button class="draw-btn btn-grand" id="btn3" disabled onclick="revealGrand()">★ เปิดเผย Grand Prize</button>
       </div>
     </div>
 
@@ -662,7 +705,7 @@
 // ──────────────────────────────────────────────
 //  STATE
 // ──────────────────────────────────────────────
-const DATA_URL = './data.json';
+const DATA_URL = './data/registrations.json';
 const GRAND_ORDER = 60;
 const DRAW_PER_ROUND = 10;
 const DRAW_INTERVAL_MS = 150;
@@ -676,7 +719,7 @@ let round2Done = false;
 let grandDone = false;
 
 // ──────────────────────────────────────────────
-//  PARTICLE BACKGROUND
+//  PARTICLE BACKGROUND — Royal Blue + Gold stars
 // ──────────────────────────────────────────────
 (function initCanvas() {
   const cvs = document.getElementById('canvas');
@@ -692,14 +735,17 @@ let grandDone = false;
   resize();
   window.addEventListener('resize', resize);
 
-  for (let i = 0; i < 80; i++) {
+  // Mix of gold stars and blue glints
+  for (let i = 0; i < 90; i++) {
+    const isGold = Math.random() < 0.35;
     particles.push({
-      x: Math.random() * 2000,
-      y: Math.random() * 1200,
-      r: Math.random() * 1.2 + 0.2,
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
+      r: Math.random() * 1.4 + 0.3,
       a: Math.random(),
-      speed: Math.random() * 0.003 + 0.001,
-      drift: (Math.random() - 0.5) * 0.2,
+      speed: Math.random() * 0.004 + 0.001,
+      drift: (Math.random() - 0.5) * 0.15,
+      isGold,
     });
   }
 
@@ -707,12 +753,15 @@ let grandDone = false;
     ctx.clearRect(0, 0, W, H);
     const t = Date.now() * 0.001;
     particles.forEach(p => {
-      p.a = 0.15 + 0.15 * Math.sin(t * p.speed * 60 + p.x);
+      p.a = 0.12 + 0.18 * Math.sin(t * p.speed * 60 + p.x);
       p.x += p.drift;
       if (p.x > W + 10) p.x = -10;
+      if (p.x < -10) p.x = W + 10;
       ctx.beginPath();
-      ctx.arc(p.x % W, p.y % H, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(255,215,0,${p.a})`;
+      ctx.arc(p.x, p.y % H, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = p.isGold
+        ? `rgba(255,215,0,${p.a})`
+        : `rgba(90,158,255,${p.a * 0.7})`;
       ctx.fill();
     });
     requestAnimationFrame(draw);
@@ -742,7 +791,7 @@ async function loadData() {
 
     const upd = new Date(json.updated);
     document.getElementById('last-updated').innerHTML =
-      `อัปเดทล่าสุด<br>${upd.toLocaleDateString('th-TH')} ${upd.toLocaleTimeString('th-TH', {hour:'2-digit',minute:'2-digit'})}`;
+      `อัพเดทล่าสุด<br>${upd.toLocaleDateString('th-TH')} ${upd.toLocaleTimeString('th-TH', {hour:'2-digit',minute:'2-digit'})}`;
 
   } catch(e) {
     document.getElementById('last-updated').textContent = 'ไม่สามารถโหลดข้อมูลได้';
@@ -793,7 +842,7 @@ function startDraw(round) {
           <div class="winner-name">${winner.name}</div>
           <div class="winner-dept">${winner.department}</div>
         </div>
-        <div class="winner-order">หมายเลขลงทะเบียน # ${winner.order}</div>
+        <div class="winner-order">#${winner.order}</div>
       `;
       list.appendChild(el);
       list.scrollTop = list.scrollHeight;
@@ -825,7 +874,7 @@ function startDraw(round) {
             document.getElementById('stat-rounds').textContent = '2 / 2';
           }
 
-          spawnConfetti(round === 1 ? '#38BDF8' : '#C084FC');
+          spawnConfetti(round === 1 ? '#5A9EFF' : '#A8C8FF');
         }, 300);
       }
     }, i * DRAW_INTERVAL_MS);

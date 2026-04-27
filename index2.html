@@ -287,7 +287,7 @@
 
   .winner-order {
     font-family: 'Prompt', sans-serif;
-    font-size: 10px;
+    font-size: 16px;
     color: var(--text-dim);
     flex-shrink: 0;
   }
@@ -742,7 +742,7 @@ async function loadData() {
 
     const upd = new Date(json.updated);
     document.getElementById('last-updated').innerHTML =
-      `อัพเดทล่าสุด<br>${upd.toLocaleDateString('th-TH')} ${upd.toLocaleTimeString('th-TH', {hour:'2-digit',minute:'2-digit'})}`;
+      `อัพเดปล่าสุด<br>${upd.toLocaleDateString('th-TH')} ${upd.toLocaleTimeString('th-TH', {hour:'2-digit',minute:'2-digit'})}`;
 
   } catch(e) {
     document.getElementById('last-updated').textContent = 'ไม่สามารถโหลดข้อมูลได้';

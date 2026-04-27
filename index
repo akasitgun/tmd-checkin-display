@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lucky Draw 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;700;900&family=Sarabun:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --gold: #FFD700;
+    --gold-dim: #B8922A;
+    --gold-glow: rgba(255,215,0,0.25);
+    --blue: #38BDF8;
+    --blue-dim: #0369A1;
+    --purple: #C084FC;
+    --purple-dim: #7E22CE;
+    --bg: #06060F;
+    --bg2: #0D0D1E;
+    --bg3: #12122A;
+    --text: #E8E8F0;
+    --text-dim: #6B6B8A;
+    --border: rgba(255,255,255,0.07);
+    --round1-color: #38BDF8;
+    --round2-color: #C084FC;
+    --grand-color: #FFD700;
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Sarabun', sans-serif;
+    overflow: hidden;
+  }
+
+  /* ─── PARTICLE CANVAS ─── */
+  #canvas {
+    position: fixed; inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ─── LAYOUT ─── */
+  .shell {
+    position: relative;
+    z-index: 1;
+    height: 100vh;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  /* ─── HEADER ─── */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 32px 14px;
+    border-bottom: 0.5px solid var(--border);
+    background: rgba(6,6,15,0.85);
+    backdrop-filter: blur(12px);
+    gap: 24px;
+    flex-shrink: 0;
+  }
+
+  .header-left { display: flex; align-items: center; gap: 16px; }
+
+  .logo-ring {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    border: 1.5px solid var(--gold-dim);
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(255,215,0,0.06);
+    flex-shrink: 0;
+  }
+
+  .logo-star {
+    font-size: 20px;
+    line-height: 1;
+    animation: spin-slow 12s linear infinite;
+  }
+
+  @keyframes spin-slow {
+    to { transform: rotate(360deg); }
+  }
+
+  .header-title {
+    font-family: 'Prompt', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 1px;
+    line-height: 1;
+  }
+
+  .header-sub {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 3px;
+    letter-spacing: 0.5px;
+  }
+
+  .header-meta {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .meta-chip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    background: var(--bg3);
+    border: 0.5px solid var(--border);
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+
+  .meta-chip .val {
+    font-family: 'Prompt', sans-serif;
+    font-weight: 500;
+    color: var(--text);
+    font-size: 13px;
+  }
+
+  .live-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #22C55E;
+    animation: pulse-dot 2s infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  .last-updated {
+    font-size: 11px;
+    color: var(--text-dim);
+    text-align: right;
+    line-height: 1.4;
+  }
+
+  /* ─── MAIN GRID ─── */
+  .main {
+    display: grid;
+    grid-template-columns: 1fr 1fr 320px;
+    gap: 0;
+    overflow: hidden;
+    height: 100%;
+  }
+
+  /* ─── PANELS ─── */
+  .panel {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-right: 0.5px solid var(--border);
+    position: relative;
+  }
+
+  .panel:last-child { border-right: none; }
+
+  .panel-top-bar {
+    height: 3px;
+    flex-shrink: 0;
+  }
+
+  .panel-round1 .panel-top-bar { background: linear-gradient(90deg, transparent, var(--round1-color), transparent); }
+  .panel-round2 .panel-top-bar { background: linear-gradient(90deg, transparent, var(--round2-color), transparent); }
+  .panel-grand  .panel-top-bar { background: linear-gradient(90deg, transparent, var(--grand-color), transparent); }
+
+  .panel-header {
+    padding: 18px 24px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 0.5px solid var(--border);
+    flex-shrink: 0;
+    background: rgba(6,6,15,0.6);
+  }
+
+  .panel-label-group { display: flex; align-items: center; gap: 10px; }
+
+  .panel-icon {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .panel-round1 .panel-icon { background: rgba(56,189,248,0.12); border: 0.5px solid rgba(56,189,248,0.25); }
+  .panel-round2 .panel-icon { background: rgba(192,132,252,0.12); border: 0.5px solid rgba(192,132,252,0.25); }
+  .panel-grand  .panel-icon { background: rgba(255,215,0,0.10); border: 0.5px solid rgba(255,215,0,0.25); }
+
+  .panel-title {
+    font-family: 'Prompt', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+
+  .panel-round1 .panel-title { color: var(--round1-color); }
+  .panel-round2 .panel-title { color: var(--round2-color); }
+  .panel-grand  .panel-title { color: var(--grand-color); }
+
+  .panel-count {
+    font-family: 'Prompt', sans-serif;
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-weight: 500;
+  }
+
+  .panel-round1 .panel-count { background: rgba(56,189,248,0.12); color: var(--round1-color); border: 0.5px solid rgba(56,189,248,0.2); }
+  .panel-round2 .panel-count { background: rgba(192,132,252,0.12); color: var(--round2-color); border: 0.5px solid rgba(192,132,252,0.2); }
+
+  /* ─── WINNER LIST ─── */
+  .winner-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 20px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.08) transparent;
+  }
+
+  .winner-scroll::-webkit-scrollbar { width: 3px; }
+  .winner-scroll::-webkit-scrollbar-track { background: transparent; }
+  .winner-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+
+  .winner-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 6px;
+    background: rgba(255,255,255,0.03);
+    border: 0.5px solid var(--border);
+    animation: reveal 0.45s cubic-bezier(.22,1,.36,1) both;
+    transition: background 0.15s;
+  }
+
+  .winner-item:hover { background: rgba(255,255,255,0.055); }
+
+  @keyframes reveal {
+    from { opacity: 0; transform: translateX(-12px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  .winner-rank {
+    width: 24px; height: 24px;
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Prompt', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+
+  .panel-round1 .winner-rank { background: rgba(56,189,248,0.15); color: var(--round1-color); }
+  .panel-round2 .winner-rank { background: rgba(192,132,252,0.15); color: var(--round2-color); }
+
+  .winner-info { flex: 1; min-width: 0; }
+
+  .winner-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .winner-dept {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 1px;
+  }
+
+  .winner-order {
+    font-family: 'Prompt', sans-serif;
+    font-size: 10px;
+    color: var(--text-dim);
+    flex-shrink: 0;
+  }
+
+  /* ─── EMPTY STATE ─── */
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    gap: 10px;
+    color: var(--text-dim);
+  }
+
+  .empty-ring {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    border: 1.5px dashed rgba(255,255,255,0.1);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    opacity: 0.4;
+  }
+
+  .empty-text { font-size: 13px; opacity: 0.5; }
+
+  /* ─── DRAW BUTTON ─── */
+  .panel-footer {
+    padding: 14px 20px;
+    border-top: 0.5px solid var(--border);
+    flex-shrink: 0;
+    background: rgba(6,6,15,0.7);
+  }
+
+  .draw-btn {
+    width: 100%;
+    padding: 13px 20px;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Prompt', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.15s, opacity 0.2s;
+  }
+
+  .draw-btn::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: rgba(255,255,255,0);
+    transition: background 0.15s;
+  }
+
+  .draw-btn:not(:disabled):hover::before { background: rgba(255,255,255,0.08); }
+  .draw-btn:not(:disabled):active { transform: scale(0.98); }
+  .draw-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  .btn-round1 { background: linear-gradient(135deg, var(--blue-dim) 0%, var(--blue) 100%); color: #fff; }
+  .btn-round2 { background: linear-gradient(135deg, var(--purple-dim) 0%, var(--purple) 100%); color: #fff; }
+  .btn-grand  { background: linear-gradient(135deg, #B45309 0%, var(--gold) 100%); color: #1A0F00; }
+  .btn-done   { background: rgba(255,255,255,0.05) !important; color: var(--text-dim) !important; cursor: default !important; }
+
+  /* ─── GRAND PRIZE PANEL ─── */
+  .grand-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    gap: 16px;
+    overflow: hidden;
+  }
+
+  .grand-trophy-zone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    gap: 10px;
+    border-radius: 12px;
+    border: 0.5px solid rgba(255,215,0,0.12);
+    background: rgba(255,215,0,0.03);
+    padding: 24px 16px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .grand-trophy-zone::before {
+    content: '';
+    position: absolute;
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,215,0,0.08) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+  }
+
+  .grand-waiting {
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 13px;
+    line-height: 1.7;
+    opacity: 0.5;
+  }
+
+  .grand-trophy-icon {
+    font-size: 40px;
+    animation: float 3s ease-in-out infinite;
+    position: relative;
+    z-index: 1;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-6px); }
+  }
+
+  .grand-order-badge {
+    font-family: 'Prompt', sans-serif;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    position: relative; z-index: 1;
+  }
+
+  .grand-name {
+    font-family: 'Prompt', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--gold);
+    text-align: center;
+    line-height: 1.2;
+    position: relative; z-index: 1;
+    animation: name-glow 2s ease-in-out infinite alternate;
+  }
+
+  @keyframes name-glow {
+    from { text-shadow: 0 0 12px rgba(255,215,0,0.3); }
+    to   { text-shadow: 0 0 30px rgba(255,215,0,0.7), 0 0 60px rgba(255,215,0,0.2); }
+  }
+
+  .grand-dept {
+    font-size: 13px;
+    color: var(--gold-dim);
+    position: relative; z-index: 1;
+  }
+
+  .grand-reg {
+    font-family: 'Prompt', sans-serif;
+    font-size: 11px;
+    color: rgba(255,215,0,0.4);
+    letter-spacing: 1px;
+    position: relative; z-index: 1;
+  }
+
+  /* ─── STATS ROW ─── */
+  .stats-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .stat-card {
+    background: var(--bg3);
+    border: 0.5px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+  }
+
+  .stat-label { font-size: 10px; color: var(--text-dim); letter-spacing: 0.5px; margin-bottom: 3px; }
+  .stat-value { font-family: 'Prompt', sans-serif; font-size: 18px; font-weight: 500; color: var(--text); }
+
+  /* ─── SPINNING ANIMATION ─── */
+  .spin { display: inline-block; animation: spin-anim 0.6s linear infinite; }
+  @keyframes spin-anim { to { transform: rotate(360deg); } }
+
+  /* ─── CONFETTI ─── */
+  .confetti-piece {
+    position: fixed;
+    width: 8px; height: 8px;
+    border-radius: 2px;
+    pointer-events: none;
+    z-index: 999;
+    animation: confetti-fall 1.2s ease-out both;
+  }
+
+  @keyframes confetti-fall {
+    from { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    to   { transform: translateY(500px) rotate(720deg); opacity: 0; }
+  }
+
+  /* ─── ROLLING ANIMATION FOR NAMES ─── */
+  .rolling-slot {
+    background: rgba(255,255,255,0.04);
+    border: 0.5px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 6px;
+    font-size: 14px;
+    color: var(--text-dim);
+    font-family: 'Prompt', sans-serif;
+    animation: slot-roll 0.1s linear infinite;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  @keyframes slot-roll {
+    0%   { opacity: 0.3; }
+    50%  { opacity: 0.9; }
+    100% { opacity: 0.3; }
+  }
+
+  /* ─── SHIMMER ─── */
+  @keyframes shimmer {
+    0%   { background-position: -400px 0; }
+    100% { background-position: 400px 0; }
+  }
+
+  .status-strip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 11px;
+    margin-bottom: 8px;
+  }
+
+  .strip-done { background: rgba(34,197,94,0.08); border: 0.5px solid rgba(34,197,94,0.2); color: #4ADE80; }
+  .strip-pending { background: rgba(255,255,255,0.03); border: 0.5px solid var(--border); color: var(--text-dim); }
+
+  /* ─── RESPONSIVE FULLSCREEN ─── */
+  @media (max-width: 900px) {
+    html, body { overflow-y: auto; }
+    .shell { height: auto; grid-template-rows: auto auto; }
+    .main { grid-template-columns: 1fr; grid-template-rows: auto auto auto; height: auto; }
+    .panel { height: 420px; }
+    .panel-grand { height: auto; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="canvas"></canvas>
+
+<div class="shell">
+
+  <!-- ── HEADER ── -->
+  <header class="header">
+    <div class="header-left">
+      <div class="logo-ring"><div class="logo-star">✦</div></div>
+      <div>
+        <div class="header-title">LUCKY DRAW 2026</div>
+        <div class="header-sub">กดปุ่มเพื่อสุ่มผู้โชคดี • ข้อมูลจาก Microsoft Forms + Power Automate</div>
+      </div>
+    </div>
+    <div class="header-meta">
+      <div class="meta-chip">
+        <div class="live-dot"></div>
+        <span>ผู้ลงทะเบียน</span>
+        <span class="val" id="total-count">—</span>
+      </div>
+      <div class="meta-chip">
+        <span>รอบที่ 1</span>
+        <span class="val" id="hdr-r1">0/10</span>
+      </div>
+      <div class="meta-chip">
+        <span>รอบที่ 2</span>
+        <span class="val" id="hdr-r2">0/10</span>
+      </div>
+      <div class="last-updated" id="last-updated">กำลังโหลด...</div>
+    </div>
+  </header>
+
+  <!-- ── MAIN ── -->
+  <div class="main">
+
+    <!-- ── ROUND 1 ── -->
+    <div class="panel panel-round1">
+      <div class="panel-top-bar"></div>
+      <div class="panel-header">
+        <div class="panel-label-group">
+          <div class="panel-icon">🎯</div>
+          <div>
+            <div class="panel-title">รอบที่ 1</div>
+          </div>
+        </div>
+        <div class="panel-count" id="count1">0 / 10</div>
+      </div>
+      <div class="winner-scroll" id="list1">
+        <div class="empty-state">
+          <div class="empty-ring">?</div>
+          <div class="empty-text">รอการสุ่มรอบที่ 1</div>
+        </div>
+      </div>
+      <div class="panel-footer">
+        <button class="draw-btn btn-round1" id="btn1" onclick="startDraw(1)">✦ สุ่มผู้โชคดี รอบที่ 1</button>
+      </div>
+    </div>
+
+    <!-- ── ROUND 2 ── -->
+    <div class="panel panel-round2">
+      <div class="panel-top-bar"></div>
+      <div class="panel-header">
+        <div class="panel-label-group">
+          <div class="panel-icon">🎁</div>
+          <div>
+            <div class="panel-title">รอบที่ 2</div>
+          </div>
+        </div>
+        <div class="panel-count" id="count2">0 / 10</div>
+      </div>
+      <div class="winner-scroll" id="list2">
+        <div class="empty-state">
+          <div class="empty-ring">?</div>
+          <div class="empty-text">รอการสุ่มรอบที่ 2</div>
+        </div>
+      </div>
+      <div class="panel-footer">
+        <button class="draw-btn btn-round2" id="btn2" disabled onclick="startDraw(2)">✦ สุ่มผู้โชคดี รอบที่ 2</button>
+      </div>
+    </div>
+
+    <!-- ── GRAND PRIZE ── -->
+    <div class="panel panel-grand">
+      <div class="panel-top-bar"></div>
+      <div class="panel-header">
+        <div class="panel-label-group">
+          <div class="panel-icon">★</div>
+          <div>
+            <div class="panel-title">Grand Prize</div>
+          </div>
+        </div>
+      </div>
+      <div class="grand-body">
+
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-label">ผู้ลงทะเบียนทั้งหมด</div>
+            <div class="stat-value" id="stat-total">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">รอบที่ผ่านมา</div>
+            <div class="stat-value" id="stat-rounds">0 / 2</div>
+          </div>
+        </div>
+
+        <div id="status-r1" class="status-strip strip-pending">● รอบที่ 1 ยังไม่ได้สุ่ม</div>
+        <div id="status-r2" class="status-strip strip-pending">● รอบที่ 2 ยังไม่ได้สุ่ม</div>
+
+        <div class="grand-trophy-zone" id="grand-zone">
+          <div class="grand-trophy-icon">🏆</div>
+          <div class="grand-order-badge">ลำดับที่ 60</div>
+          <div class="grand-waiting">กดปุ่มด้านล่าง<br>เพื่อเปิดเผยผู้โชคดี Grand Prize</div>
+        </div>
+
+      </div>
+      <div class="panel-footer">
+        <button class="draw-btn btn-grand" id="btn3" disabled onclick="revealGrand()">★ เปิดเผย Grand Prize</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ──────────────────────────────────────────────
+//  STATE
+// ──────────────────────────────────────────────
+const DATA_URL = './data/registrations.json';
+const GRAND_ORDER = 60;
+const DRAW_PER_ROUND = 10;
+const DRAW_INTERVAL_MS = 150;
+
+let allItems = [];
+let pool = [];          // eligible (not yet drawn)
+let round1Winners = [];
+let round2Winners = [];
+let round1Done = false;
+let round2Done = false;
+let grandDone = false;
+
+// ──────────────────────────────────────────────
+//  PARTICLE BACKGROUND
+// ──────────────────────────────────────────────
+(function initCanvas() {
+  const cvs = document.getElementById('canvas');
+  const ctx = cvs.getContext('2d');
+  let W, H;
+  const particles = [];
+
+  function resize() {
+    W = cvs.width = window.innerWidth;
+    H = cvs.height = window.innerHeight;
+  }
+
+  resize();
+  window.addEventListener('resize', resize);
+
+  for (let i = 0; i < 80; i++) {
+    particles.push({
+      x: Math.random() * 2000,
+      y: Math.random() * 1200,
+      r: Math.random() * 1.2 + 0.2,
+      a: Math.random(),
+      speed: Math.random() * 0.003 + 0.001,
+      drift: (Math.random() - 0.5) * 0.2,
+    });
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    const t = Date.now() * 0.001;
+    particles.forEach(p => {
+      p.a = 0.15 + 0.15 * Math.sin(t * p.speed * 60 + p.x);
+      p.x += p.drift;
+      if (p.x > W + 10) p.x = -10;
+      ctx.beginPath();
+      ctx.arc(p.x % W, p.y % H, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255,215,0,${p.a})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ──────────────────────────────────────────────
+//  DATA LOAD
+// ──────────────────────────────────────────────
+async function loadData() {
+  try {
+    const res = await fetch(DATA_URL + '?t=' + Date.now());
+    const json = await res.json();
+    allItems = json.items || [];
+
+    // Sort by order
+    allItems.sort((a, b) => Number(a.order) - Number(b.order));
+
+    // Build pool: exclude grand prize order
+    pool = allItems.filter(x => Number(x.order) !== GRAND_ORDER);
+
+    // Update UI
+    const total = allItems.length;
+    document.getElementById('total-count').textContent = total;
+    document.getElementById('stat-total').textContent = total;
+
+    const upd = new Date(json.updated);
+    document.getElementById('last-updated').innerHTML =
+      `อัพเดทล่าสุด<br>${upd.toLocaleDateString('th-TH')} ${upd.toLocaleTimeString('th-TH', {hour:'2-digit',minute:'2-digit'})}`;
+
+  } catch(e) {
+    document.getElementById('last-updated').textContent = 'ไม่สามารถโหลดข้อมูลได้';
+    console.error(e);
+  }
+}
+
+// ──────────────────────────────────────────────
+//  DRAW LOGIC
+// ──────────────────────────────────────────────
+function pickRandom(arr, n) {
+  const shuffled = [...arr].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, n);
+}
+
+function startDraw(round) {
+  if (pool.length < DRAW_PER_ROUND) {
+    alert('ผู้ลงทะเบียนไม่เพียงพอ');
+    return;
+  }
+
+  const btn = document.getElementById('btn' + round);
+  const list = document.getElementById('list' + round);
+  const count = document.getElementById('count' + round);
+  const hdr = document.getElementById('hdr-r' + round);
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin">⟳</span> กำลังสุ่ม...';
+  list.innerHTML = '';
+
+  // Pick winners
+  const winners = pickRandom(pool, DRAW_PER_ROUND);
+
+  // Remove winners from pool
+  const winnerOrders = new Set(winners.map(w => w.order));
+  pool = pool.filter(x => !winnerOrders.has(x.order));
+
+  // Animate reveal
+  winners.forEach((winner, i) => {
+    setTimeout(() => {
+      // Rolling placeholder
+      const el = document.createElement('div');
+      el.className = 'winner-item';
+      el.style.animationDelay = (i * 0.05) + 's';
+      el.innerHTML = `
+        <div class="winner-rank">${i + 1}</div>
+        <div class="winner-info">
+          <div class="winner-name">${winner.name}</div>
+          <div class="winner-dept">${winner.department}</div>
+        </div>
+        <div class="winner-order">#${winner.order}</div>
+      `;
+      list.appendChild(el);
+      list.scrollTop = list.scrollHeight;
+
+      const c = i + 1;
+      count.textContent = c + ' / 10';
+      hdr.textContent = c + '/10';
+
+      // Done
+      if (c === DRAW_PER_ROUND) {
+        setTimeout(() => {
+          btn.className = 'draw-btn btn-done';
+          btn.textContent = '✓ สุ่มเสร็จแล้ว';
+          btn.disabled = true;
+
+          if (round === 1) {
+            round1Done = true;
+            round1Winners = winners;
+            document.getElementById('btn2').disabled = false;
+            document.getElementById('status-r1').className = 'status-strip strip-done';
+            document.getElementById('status-r1').textContent = '✓ รอบที่ 1 เสร็จสิ้น — ผู้โชคดี 10 คน';
+            document.getElementById('stat-rounds').textContent = '1 / 2';
+          } else {
+            round2Done = true;
+            round2Winners = winners;
+            document.getElementById('btn3').disabled = false;
+            document.getElementById('status-r2').className = 'status-strip strip-done';
+            document.getElementById('status-r2').textContent = '✓ รอบที่ 2 เสร็จสิ้น — ผู้โชคดี 10 คน';
+            document.getElementById('stat-rounds').textContent = '2 / 2';
+          }
+
+          spawnConfetti(round === 1 ? '#38BDF8' : '#C084FC');
+        }, 300);
+      }
+    }, i * DRAW_INTERVAL_MS);
+  });
+}
+
+// ──────────────────────────────────────────────
+//  GRAND PRIZE
+// ──────────────────────────────────────────────
+function revealGrand() {
+  const btn = document.getElementById('btn3');
+  const zone = document.getElementById('grand-zone');
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin">⟳</span> กำลังค้นหา...';
+
+  const grand = allItems.find(x => Number(x.order) === GRAND_ORDER);
+
+  setTimeout(() => {
+    if (!grand) {
+      zone.innerHTML = '<div class="grand-waiting">ไม่พบข้อมูลลำดับที่ ' + GRAND_ORDER + '</div>';
+      return;
+    }
+
+    zone.innerHTML = `
+      <div class="grand-trophy-icon" style="font-size:48px">🏆</div>
+      <div class="grand-order-badge">ผู้โชคดี Grand Prize • ลำดับที่ ${GRAND_ORDER}</div>
+      <div class="grand-name">${grand.name}</div>
+      <div class="grand-dept">${grand.department}</div>
+      <div class="grand-reg">หมายเลขลงทะเบียน #${grand.order}</div>
+    `;
+
+    btn.className = 'draw-btn btn-done';
+    btn.textContent = '★ ประกาศแล้ว';
+    grandDone = true;
+
+    spawnConfetti('#FFD700');
+    spawnConfetti('#FF8C00');
+    spawnConfetti('#FFD700');
+  }, 1400);
+}
+
+// ──────────────────────────────────────────────
+//  CONFETTI
+// ──────────────────────────────────────────────
+function spawnConfetti(color) {
+  for (let i = 0; i < 30; i++) {
+    const el = document.createElement('div');
+    el.className = 'confetti-piece';
+    el.style.background = color;
+    el.style.left = (10 + Math.random() * 80) + 'vw';
+    el.style.top = '0';
+    el.style.animationDelay = (Math.random() * 0.5) + 's';
+    el.style.animationDuration = (0.9 + Math.random() * 0.6) + 's';
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 2000);
+  }
+}
+
+// ──────────────────────────────────────────────
+//  INIT
+// ──────────────────────────────────────────────
+loadData();
+
+// Auto-refresh data every 30s (in case new registrations arrive)
+setInterval(loadData, 30000);
+</script>
+</body>
+</html>

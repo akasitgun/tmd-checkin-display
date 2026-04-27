@@ -413,7 +413,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
         <div id="status-r2" class="status-strip strip-pending">● รอบที่ 2 ยังไม่ได้สุ่ม</div>
         <div class="grand-trophy-zone" id="grand-zone">
           <div class="grand-trophy-icon">🏆</div>
-          <div class="grand-order-badge">ลำดับที่ 60</div>
+          <div class="grand-order-badge">รางวัล Grand Prize</div>
           <div class="grand-waiting">กดปุ่มด้านล่าง<br>เพื่อเปิดเผยผู้โชคดี Grand Prize</div>
         </div>
       </div>
@@ -725,7 +725,7 @@ function revealGrand(){
 
   // Show suspense spin in grand-zone sidebar
   zone.innerHTML=`
-    <div class="grand-trophy-icon" style="font-size:42px">🏆</div>
+    <div class="grand-trophy-icon" style="font-size:60px">🏆</div>
     <div class="grand-order-badge" style="animation:name-glow 0.4s infinite alternate">กำลังค้นหา...</div>
     <div class="grand-suspense-name flicker" id="grand-spin-name">—</div>
   `;
@@ -758,7 +758,7 @@ function showGrandReveal(grand){
   card.style.animation='none'; card.offsetHeight; card.style.animation='';
   card.innerHTML=`
     <div class="rv-badge rv-grand">✦ &nbsp; GRAND PRIZE &nbsp; ✦</div>
-    <div style="font-size:58px;animation:float 2s ease-in-out infinite;margin:4px 0">🏆</div>
+    <div style="font-size:60px;animation:float 2s ease-in-out infinite;margin:4px 0">🏆</div>
     <div style="font-family:'Prompt';font-size:12px;color:var(--text-dim);letter-spacing:3px;margin-bottom:4px;">ผู้โชคดีลำดับที่ ${GRAND_ORDER}</div>
     <div class="rv-name rv-name-grand">${grand ? grand.name : '—'}</div>
     <div class="rv-dept" style="color:var(--gold-dim);font-size:16px;">${grand ? grand.department : ''}</div>

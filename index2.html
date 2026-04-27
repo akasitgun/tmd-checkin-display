@@ -410,7 +410,7 @@
 
   .grand-order-badge {
     font-family: 'Prompt', sans-serif;
-    font-size: 11px;
+    font-size: 16px;
     letter-spacing: 2px;
     color: var(--gold-dim);
     text-transform: uppercase;
@@ -742,7 +742,7 @@ async function loadData() {
 
     const upd = new Date(json.updated);
     document.getElementById('last-updated').innerHTML =
-      `อัพเดปล่าสุด<br>${upd.toLocaleDateString('th-TH')} ${upd.toLocaleTimeString('th-TH', {hour:'2-digit',minute:'2-digit'})}`;
+      `อัปเดทล่าสุด<br>${upd.toLocaleDateString('th-TH')} ${upd.toLocaleTimeString('th-TH', {hour:'2-digit',minute:'2-digit'})}`;
 
   } catch(e) {
     document.getElementById('last-updated').textContent = 'ไม่สามารถโหลดข้อมูลได้';
@@ -793,7 +793,7 @@ function startDraw(round) {
           <div class="winner-name">${winner.name}</div>
           <div class="winner-dept">${winner.department}</div>
         </div>
-        <div class="winner-order">ลำดับที่#${winner.order}</div>
+        <div class="winner-order">หมายเลขลงทะเบียน # ${winner.order}</div>
       `;
       list.appendChild(el);
       list.scrollTop = list.scrollHeight;

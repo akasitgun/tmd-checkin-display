@@ -3,841 +3,152 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>TMD 60ᵗʰ Anniversary : Portal</title>
+  <title>TMD 60ᵗʰ Anniversary · Event Portal</title>
 
-  <!-- Fonts: same family as dashboard -->
-  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;900&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
+  https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;900&family=Sarabun:wght@300;400;500;600&display=swap
 
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
-    /* Theme variables (matched to checkin_dashboard.html) */
     :root{
-      --gold: #FFD700;
-      --gold-light: #FFE566;
-      --gold-dim: #C9922A;
-      --gold-muted: rgba(255,215,0,0.55);
-
-      --bg: #050C1F;
-      --bg2: #091530;
-      --bg3: #0D1E40;
-
-      --text: #F0F4FF;
-      --text-sub: #B8CCEE;
-      --text-dim: #7A99CC;
-
-      --border: rgba(100,140,220,0.18);
-      --border-bright: rgba(100,160,255,0.35);
-
-      --accent-blue: #5A9EFF;
-      --accent-green: #4ADE80;
-      --accent-teal: #22D3EE;
-      --danger: #FB7185;
+      --gold:#FFD700;--gold-light:#FFE566;--gold-dim:#C9922A;
+      --bg:#050C1F;--bg2:#091530;
+      --text:#F0F4FF;--text-sub:#B8CCEE;--text-dim:#7A99CC;
+      --border:rgba(100,140,220,.18);--border-bright:rgba(100,160,255,.35);
+      --blue:#5A9EFF;--green:#4ADE80;--teal:#22D3EE;
     }
 
-    html, body{
-      height: 100%;
-      background: var(--bg);
-      color: var(--text);
-      font-family: "Sarabun", sans-serif;
-      overflow: hidden;
-    }
+    html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Sarabun',sans-serif;overflow:hidden}
+    #canvas{position:fixed;inset:0;pointer-events:none;z-index:0}
 
-    /* starfield canvas */
-    #canvas{ position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+    .shell{position:relative;z-index:1;height:100vh;display:grid;grid-template-rows:auto 1fr auto}
 
-    .shell{
-      position: relative;
-      z-index: 1;
-      height: 100vh;
-      display: grid;
-      grid-template-rows: auto 1fr auto;
-      overflow: hidden;
-    }
+    /* HEADER */
+    .header{display:flex;align-items:center;justify-content:space-between;padding:12px 22px;border-bottom:1px solid var(--border-bright);background:linear-gradient(180deg,rgba(10,25,70,.97),rgba(5,12,31,.97));backdrop-filter:blur(16px)}
+    .header-title{font-family:'Prompt',sans-serif;font-weight:900;letter-spacing:.8px;color:var(--gold);text-shadow:0 0 20px rgba(255,215,0,.4)}
+    .header-sub{font-size:11.5px;color:var(--text-sub)}
+    .clock{font-family:'Prompt',sans-serif;font-weight:800}
 
-    /* header */
-    .header{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding: 12px 22px;
-      border-bottom: 1px solid var(--border-bright);
-      background: linear-gradient(180deg, rgba(10,25,70,0.97) 0%, rgba(5,12,31,0.97) 100%);
-      backdrop-filter: blur(16px);
-      gap: 14px;
-    }
+    /* MAIN LAYOUT */
+    .main{padding:16px;display:flex;flex-direction:column;gap:16px;overflow-y:auto}
 
-    .header-left{
-      display:flex;
-      align-items:center;
-      gap: 14px;
-      min-width: 0;
-    }
+    /* PANEL */
+    .panel{border-radius:16px;border:1px solid var(--border);background:linear-gradient(180deg,rgba(9,21,48,.75),rgba(5,12,31,.55));box-shadow:0 18px 40px rgba(0,0,0,.35);overflow:hidden}
+    .panel-top{height:3px;background:linear-gradient(90deg,transparent,var(--blue),transparent)}
+    .panel-top.gold{background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+    .panel-body{padding:16px;display:flex;flex-direction:column;gap:14px}
 
-    .logo-ring{
-      width: 44px; height: 44px; border-radius: 50%;
-      border: 2px solid var(--gold-dim);
-      display:flex; align-items:center; justify-content:center;
-      background: radial-gradient(circle, rgba(255,215,0,0.15), rgba(26,58,143,0.3));
-      box-shadow: 0 0 18px rgba(255,215,0,0.25);
-      flex-shrink: 0;
-      overflow: hidden;
-    }
-    .logo-ring img{ height: 28px; width:auto; object-fit: contain; }
-    .logo-star{ font-size: 20px; animation: spin-slow 12s linear infinite; display:none; }
-    @keyframes spin-slow { to{ transform: rotate(360deg); } }
+    /* KPI */
+    .kpi-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+    .kpi{border-radius:12px;border:1px solid var(--border-bright);background:rgba(30,79,194,.18);padding:12px;transition:transform .25s,box-shadow .25s}
+    .kpi:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 0 0 1px var(--border-bright),0 12px 28px rgba(90,158,255,.35)}
+    .kpi .v{font-family:'Prompt',sans-serif;font-size:26px;font-weight:900}
+    .kpi .l{font-size:11px;color:var(--text-sub)}
 
-    .header-title{
-      font-family: "Prompt", sans-serif;
-      font-weight: 900;
-      letter-spacing: .8px;
-      color: var(--gold);
-      text-shadow: 0 0 22px rgba(255,215,0,0.40);
-      line-height: 1.15;
-      font-size: 16px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 60vw;
-    }
-    .header-sub{
-      margin-top: 2px;
-      font-size: 11.5px;
-      color: var(--text-sub);
-      font-weight: 500;
-    }
+    /* CARDS */
+    .card{position:relative;border-radius:18px;border:1px solid var(--border);background:linear-gradient(180deg,rgba(13,30,64,.7),rgba(5,12,31,.55));cursor:pointer;overflow:hidden;transition:transform .25s,box-shadow .25s,border-color .25s}
+    .card::before{content:"";position:absolute;inset:-1px;background:linear-gradient(120deg,transparent,rgba(90,158,255,.25),transparent);opacity:0;transition:opacity .3s}
+    .card:hover::before{opacity:1}
+    .card:hover{transform:translateY(-4px) scale(1.01);border-color:var(--border-bright);box-shadow:0 0 0 1px var(--border-bright),0 18px 44px rgba(90,158,255,.35)}
+    .card-body{position:relative;padding:18px;display:flex;flex-direction:column;gap:10px}
+    .card-title{font-family:'Prompt',sans-serif;font-size:18px;font-weight:900}
+    .card-desc{font-size:13px;color:var(--text-sub)}
+    .card-btn{margin-top:auto;align-self:flex-end;font-weight:700;font-size:12px;color:#fff}
 
-    .header-right{
-      text-align: right;
-      flex-shrink: 0;
-      line-height: 1.2;
-    }
-    .clock-time{
-      font-family: "Prompt", sans-serif;
-      font-size: 22px;
-      font-weight: 900;
-      letter-spacing: 1px;
-      color: #fff;
-      text-shadow: 0 2px 0 rgba(0,0,0,0.2);
-    }
-    .clock-date{
-      font-size: 11px;
-      color: var(--text-sub);
-      font-weight: 500;
-      margin-top: 1px;
-    }
+    /* FOOTER */
+    .footer{padding:10px 18px;border-top:1px solid var(--border);font-size:11px;color:var(--text-dim)}
 
-    /* MAIN LAYOUT (re-structured) */
-    .main{
-      display:grid;
-      grid-template-columns: 1.15fr 0.85fr;
-      gap: 14px;
-      padding: 16px;
-      height: 100%;
-      overflow: hidden;
-    }
-
-    /* panel base */
-    .panel{
-      border-radius: 16px;
-      border: 1px solid var(--border);
-      background: linear-gradient(180deg, rgba(9,21,48,0.75), rgba(5,12,31,0.55));
-      box-shadow: 0 18px 40px rgba(0,0,0,0.35);
-      overflow: hidden;
-      display:flex;
-      flex-direction: column;
-      min-height: 0;
-      position: relative;
-    }
-    .panel::before{
-      content:"";
-      position:absolute;
-      inset:-2px;
-      background:
-        radial-gradient(720px 260px at 20% 0%, rgba(90,158,255,0.22), transparent 60%),
-        radial-gradient(720px 260px at 85% 0%, rgba(255,215,0,0.18), transparent 60%);
-      pointer-events:none;
-      opacity:.9;
-    }
-
-    .panel-topbar{
-      height: 3px;
-      background: linear-gradient(90deg, transparent,var(--accent-blue),transparent);
-      opacity:.95;
-      flex-shrink:0;
-      position: relative;
-      z-index: 1;
-    }
-    .panel-topbar.gold{
-      background: linear-gradient(90deg, transparent,var(--gold),transparent);
-    }
-    .panel-body{
-      position: relative;
-      z-index: 1;
-      padding: 16px;
-      display:flex;
-      flex-direction: column;
-      gap: 12px;
-      min-height: 0;
-    }
-
-    /* Overview content */
-    .hero-title{
-      font-family:"Prompt", sans-serif;
-      font-size: 22px;
-      font-weight: 900;
-      letter-spacing: .5px;
-      color:#fff;
-    }
-    .hero-desc{
-      color: var(--text-sub);
-      font-size: 13px;
-      line-height: 1.55;
-      margin-top: 4px;
-    }
-
-    /* KPI mini chips (like dashboard header chips) */
-    .kpi-row{
-      display:grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 10px;
-    }
-    .kpi-chip{
-      border-radius: 12px;
-      border: 1px solid var(--border-bright);
-      background: rgba(30,79,194,0.18);
-      padding: 10px 12px;
-      min-height: 72px;
-      display:flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 3px;
-    }
-    .kpi-chip .kv{
-      font-family:"Prompt", sans-serif;
-      font-size: 22px;
-      font-weight: 900;
-      line-height: 1;
-      color: #fff;
-      letter-spacing: .2px;
-    }
-    .kpi-chip .kl{
-      font-size: 10.5px;
-      color: var(--text-sub);
-      font-weight: 600;
-      letter-spacing: .25px;
-      display:flex;
-      align-items:center;
-      justify-content: space-between;
-      gap: 8px;
-    }
-    .kpi-chip.gold{
-      background: rgba(255,215,0,0.10);
-      border-color: rgba(255,215,0,0.28);
-    }
-    .kpi-chip.gold .kv{ color: var(--gold-light); }
-    .kpi-chip.teal{
-      background: rgba(34,211,238,0.10);
-      border-color: rgba(34,211,238,0.22);
-    }
-    .kpi-chip.teal .kv{ color: #67E8F9; }
-    .kpi-chip.green{
-      background: rgba(74,222,128,0.10);
-      border-color: rgba(74,222,128,0.20);
-    }
-    .kpi-chip.green .kv{ color: #86efac; }
-
-    .mini{
-      font-family:"Prompt", sans-serif;
-      font-size: 10px;
-      color: var(--text-dim);
-      font-weight: 600;
-      letter-spacing: .2px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 16ch;
-    }
-
-    /* Tips / status box */
-    .info-row{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-    .info-box{
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,0.04);
-      padding: 10px 12px;
-    }
-    .info-box .t{
-      font-family:"Prompt", sans-serif;
-      font-weight: 800;
-      font-size: 11.5px;
-      letter-spacing: .25px;
-      color: #A9CCFF;
-    }
-    .info-box .d{
-      margin-top: 4px;
-      color: var(--text-sub);
-      font-size: 11.5px;
-      line-height: 1.45;
-    }
-    .kbd{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      padding: 1px 6px;
-      border-radius: 6px;
-      border: 1px solid rgba(255,255,255,0.18);
-      background: rgba(255,255,255,0.06);
-      font-family: "Prompt", sans-serif;
-      font-size: 10px;
-      font-weight: 800;
-      color: #fff;
-      margin: 0 2px;
-    }
-
-    /* Menu panel */
-    .menu-grid{
-      display:grid;
-      grid-template-columns: 1fr;
-      gap: 12px;
-      min-height: 0;
-    }
-
-    .card{
-      border-radius: 16px;
-      border: 1px solid var(--border);
-      background: linear-gradient(180deg, rgba(13,30,64,0.60), rgba(5,12,31,0.52));
-      overflow: hidden;
-      position: relative;
-      min-height: 160px;
-      transition: transform .15s ease, border-color .15s ease, background .15s ease;
-      cursor: pointer;
-    }
-    .card:hover{
-      transform: translateY(-2px);
-      border-color: var(--border-bright);
-      background: linear-gradient(180deg, rgba(13,30,64,0.78), rgba(5,12,31,0.55));
-    }
-
-    .card::after{
-      content:"";
-      position:absolute;
-      inset:0;
-      background:
-        radial-gradient(520px 220px at 20% 0%, rgba(34,211,238,0.12), transparent 55%),
-        radial-gradient(700px 280px at 90% 0%, rgba(90,158,255,0.16), transparent 60%);
-      opacity:.95;
-      pointer-events:none;
-    }
-
-    .card-topbar{
-      height: 3px;
-      background: linear-gradient(90deg, transparent,var(--accent-blue),transparent);
-      opacity:.92;
-    }
-    .card-topbar.gold{
-      background: linear-gradient(90deg, transparent,var(--gold),transparent);
-    }
-    .card-body{
-      position: relative;
-      z-index: 1;
-      padding: 14px 14px 14px;
-      display:flex;
-      flex-direction: column;
-      gap: 10px;
-      height: calc(100% - 3px);
-    }
-
-    .card-head{
-      display:flex;
-      align-items:center;
-      justify-content: space-between;
-      gap: 12px;
-    }
-    .icon{
-      width: 40px; height: 40px;
-      border-radius: 10px;
-      display:flex; align-items:center; justify-content:center;
-      font-size: 18px;
-      flex-shrink: 0;
-      border: 1px solid rgba(255,255,255,0.14);
-      background: rgba(255,255,255,0.06);
-    }
-    .icon.blue{ border-color: rgba(90,158,255,0.32); background: rgba(90,158,255,0.12); }
-    .icon.gold{ border-color: rgba(255,215,0,0.30); background: rgba(255,215,0,0.10); }
-
-    .badge{
-      font-family:"Prompt", sans-serif;
-      font-size: 11px;
-      font-weight: 800;
-      padding: 4px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.14);
-      color: var(--text-sub);
-      background: rgba(255,255,255,0.06);
-      white-space: nowrap;
-    }
-    .badge.blue{ border-color: rgba(90,158,255,0.30); background: rgba(90,158,255,0.14); color: #A9CCFF; }
-    .badge.gold{ border-color: rgba(255,215,0,0.28); background: rgba(255,215,0,0.10); color: var(--gold-light); }
-
-    .card-title{
-      font-family:"Prompt", sans-serif;
-      font-weight: 900;
-      letter-spacing: .35px;
-      font-size: 16px;
-      color: #fff;
-      margin-top: 2px;
-    }
-    .card-desc{
-      color: var(--text-sub);
-      font-size: 12.5px;
-      line-height: 1.5;
-    }
-
-    .card-actions{
-      margin-top: auto;
-      display:flex;
-      align-items:center;
-      justify-content: space-between;
-      gap: 10px;
-    }
-
-    .btn{
-      appearance:none;
-      border: 1px solid rgba(255,255,255,0.18);
-      background: rgba(255,255,255,0.07);
-      color: var(--text);
-      padding: 9px 12px;
-      border-radius: 10px;
-      font-size: 12px;
-      font-weight: 800;
-      cursor:pointer;
-      transition: background .15s ease, transform .1s ease, border-color .15s ease;
-      display:inline-flex;
-      align-items:center;
-      gap: 8px;
-      text-decoration: none;
-      user-select:none;
-      white-space: nowrap;
-    }
-    .btn:hover{
-      background: rgba(255,255,255,0.12);
-      border-color: rgba(255,255,255,0.26);
-      transform: translateY(-1px);
-    }
-    .btn.primary{
-      border-color: rgba(90,158,255,0.32);
-      background: rgba(90,158,255,0.14);
-    }
-    .btn.primary:hover{
-      background: rgba(90,158,255,0.20);
-      border-color: rgba(90,158,255,0.45);
-    }
-    .btn.gold{
-      border-color: rgba(255,215,0,0.28);
-      background: rgba(255,215,0,0.10);
-      color: var(--gold-light);
-    }
-    .btn.gold:hover{
-      background: rgba(255,215,0,0.14);
-      border-color: rgba(255,215,0,0.42);
-    }
-
-    .hint{
-      font-family:"Prompt", sans-serif;
-      font-size: 11px;
-      color: var(--text-dim);
-      letter-spacing: .25px;
-      display:flex;
-      align-items:center;
-      gap: 6px;
-      white-space: nowrap;
-    }
-
-    .live-dot{
-      width: 7px; height: 7px; border-radius: 50%;
-      background: var(--accent-green);
-      box-shadow: 0 0 8px var(--accent-green);
-      animation: pulse-dot 2s infinite;
-      flex-shrink: 0;
-    }
-    @keyframes pulse-dot{
-      0%,100%{opacity:1;transform:scale(1);}
-      50%{opacity:.55;transform:scale(.75);}
-    }
-
-    /* footer */
-    .footer{
-      padding: 10px 18px;
-      border-top: 1px solid var(--border);
-      background: rgba(5,12,31,0.55);
-      color: var(--text-dim);
-      font-size: 11px;
-      display:flex;
-      align-items:center;
-      justify-content: space-between;
-      gap: 10px;
-    }
-
-    /* responsive */
-    @media (max-width: 980px){
-      body{ overflow:auto; }
-      .shell{ min-height: 100vh; height:auto; overflow: visible; }
-      #canvas{ position: fixed; }
-      .main{ grid-template-columns: 1fr; height:auto; }
-      .header-title{ max-width: 56vw; }
-      .kpi-row{ grid-template-columns: repeat(2, minmax(0,1fr)); }
-      .info-row{ grid-template-columns: 1fr; }
-    }
-
-    @media (prefers-reduced-motion: reduce){
-      *, *::before, *::after { animation: none !important; transition: none !important; }
+    @media(max-width:900px){
+      .kpi-row{grid-template-columns:repeat(2,1fr)}
+      body{overflow:auto}
     }
   </style>
 </head>
-
 <body>
   <canvas id="canvas"></canvas>
 
   <div class="shell">
-    <!-- HEADER -->
     <header class="header">
-      <div class="header-left">
-        <div class="logo-ring">
-          <img id="brand-logo" alt="TMD" src=""
-               onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-          <div class="logo-star">✦</div>
-        </div>
-
-        <div style="min-width:0">
-          <div class="header-title">TMD 60ᵗʰ Anniversary · Event Portal</div>
-          <div class="header-sub">เลือกเมนูเพื่อเริ่มใช้งานระบบ (กด <span class="kbd">1</span>/<span class="kbd">2</span>)</div>
-        </div>
+      <div>
+        <div class="header-title">TMD 60ᵗʰ Anniversary · Event Portal</div>
+        <div class="header-sub">Overview · Check‑ins · Lucky Draw</div>
       </div>
-
-      <div class="header-right">
-        <div class="clock-time" id="clock-time">--:--:--</div>
-        <div class="clock-date" id="clock-date">—</div>
-      </div>
+      <div class="clock" id="clock">--:--:--</div>
     </header>
 
-    <!-- MAIN -->
     <main class="main">
-      <!-- LEFT: OVERVIEW + KPI -->
+      <!-- 1. KPI -->
       <section class="panel">
-        <div class="panel-topbar"></div>
+        <div class="panel-top"></div>
         <div class="panel-body">
-          <div>
-            <div class="hero-title">Welcome ✨</div>
-            <div class="hero-desc">
-              หน้านี้เป็นทางเข้าระบบสำหรับงาน <b>TMD 60ᵗʰ Anniversary</b>
-              พร้อม KPI สรุปแบบ Live จากข้อมูลเช็คอิน
-            </div>
+          <div class="kpi-row">
+            <div class="kpi"><div class="v" id="kpi-total">0</div><div class="l">ผู้เช็คอินทั้งหมด</div></div>
+            <div class="kpi"><div class="v" id="kpi-dept">0</div><div class="l">จำนวนแผนก</div></div>
+            <div class="kpi"><div class="v" id="kpi-latest">—</div><div class="l">ลำดับล่าสุด</div></div>
+            <div class="kpi"><div class="v" id="kpi-upd">—</div><div class="l">อัปเดตล่าสุด</div></div>
           </div>
-
-          <!-- KPI mini chips -->
-          <div class="kpi-row" aria-label="KPI Summary">
-            <div class="kpi-chip">
-              <div class="kv" id="kpi-total">0</div>
-              <div class="kl">
-                <span>ผู้เช็คอินทั้งหมด</span>
-                <span class="mini" id="kpi-total-mini">LIVE</span>
-              </div>
-            </div>
-
-            <div class="kpi-chip teal">
-              <div class="kv" id="kpi-dept">0</div>
-              <div class="kl">
-                <span>จำนวนแผนก</span>
-                <span class="mini" id="kpi-dept-mini">—</span>
-              </div>
-            </div>
-
-            <div class="kpi-chip gold">
-              <div class="kv" id="kpi-latest">—</div>
-              <div class="kl">
-                <span>ลำดับล่าสุด</span>
-                <span class="mini" id="kpi-latest-mini">—</span>
-              </div>
-            </div>
-
-            <div class="kpi-chip green">
-              <div class="kv" id="kpi-upd">—</div>
-              <div class="kl">
-                <span>อัปเดตล่าสุด</span>
-                <span class="mini" id="kpi-upd-mini">—</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Tips / shortcuts -->
-          <div class="info-row">
-            <div class="info-box">
-              <div class="t">Quick Access</div>
-              <div class="d">
-                กด <span class="kbd">1</span> ไปหน้า Dashboard • กด <span class="kbd">2</span> ไปหน้า Lucky Draw • แนะนำเปิดเต็มจอ (Fullscreen) เมื่อฉายบน TV
-              </div>
-            </div>
-            <div class="info-box">
-              <div class="t">Status</div>
-              <div class="d">
-                <span style="display:inline-flex;align-items:center;gap:8px;">
-                  <span class="live-dot"></span>
-                  <span id="status-text">กำลังโหลดข้อมูล…</span>
-                </span>
-              </div>
-            </div>
-          </div>
-
         </div>
       </section>
 
-      <!-- RIGHT: MENU -->
+      <!-- 2. Check-in Dashboard -->
       <section class="panel">
-        <div class="panel-topbar gold"></div>
+        <div class="panel-top"></div>
         <div class="panel-body">
-          <div class="menu-grid">
+          <article class="card" onclick="location.href='checkin_dashboard.html'">
+            <div class="card-body">
+              <div class="card-title">✔ Check‑in Dashboard</div>
+              <div class="card-desc">แสดงสถานะเช็คอินแบบเรียลไทม์ พร้อมสรุปตามแผนก เหมาะสำหรับจอ TV</div>
+              <div class="card-btn">เข้าใช้งาน →</div>
+            </div>
+          </article>
+        </div>
+      </section>
 
-            <article class="card" data-href="./checkin_dashboard.html" aria-label="ไปหน้า Check-in Dashboardiv class="card-head">
-                  <div class="icon blue">✔</div>
-                  <span class="badge blue">LIVE DASHBOARD</span>
-                </div>
-
-                <div>
-                  <div class="card-title">Check-in Dashboard</div>
-                  <div class="card-desc">
-                    ดูยอดผู้เช็คอินล่าสุด, สรุปตามแผนก และรายชื่อทั้งหมดแบบเรียลไทม์
-                  </div>
-                </div>
-
-                <div class="card-actions">
-                  <a class="btn primary" href="./checkin_dashboard.html">
-                    เข้าใช้งาน <span aria-hidden="true">→</span>
-                  </a>
-                  <div class="hint"><span class="live-dot"></span> Auto refresh</div>
-                </div>
-              </div>
-            </article>
-
-            <article class="card" data-href="./luckydraw.html" aria-label="ไปหน้า Lucky Draw           <div class="card-head">
-                  <div class="icon gold">🎁</div>
-                  <span class="badge gold">LUCKY DRAW</span>
-                </div>
-
-                <div>
-                  <div class="card-title">Lucky Draw</div>
-                  <div class="card-desc">
-                    โหมดสุ่มรางวัลสำหรับผู้เข้าร่วมงาน เหมาะสำหรับแสดงผลบนจอใหญ่
-                  </div>
-                </div>
-
-                <div class="card-actions">
-                  <a class="btn gold" href="./luckydraw.html">
-                    เริ่มสุ่มรางวัล <span aria-hidden="true">→</span>
-                  </a>
-                  <div class="hint">Best on Fullscreen ⛶</div>
-                </div>
-              </div>
-            </article>
-
-          </div>
+      <!-- 3. Lucky Draw -->
+      <section class="panel">
+        <div class="panel-top gold"></div>
+        <div class="panel-body">
+          <article class="card" onclick="location.href='luckydraw.html'">
+            <div class="card-body">
+              <div class="card-title">🎁 Lucky Draw</div>
+              <div class="card-desc">ระบบสุ่มรางวัลสำหรับผู้เข้าร่วมงาน เหมาะสำหรับการแสดงผลบนจอใหญ่</div>
+              <div class="card-btn">เริ่มสุ่ม →</div>
+            </div>
+          </article>
         </div>
       </section>
     </main>
 
-    <!-- FOOTER -->
-    <footer class="footer">
-      <div style="display:flex;align-items:center;gap:8px;">
-        <span class="live-dot"></span>
-        <span>Theme: Navy · Gold · Glass</span>
-      </div>
-      <div id="foot-note">© TMD · Event System</div>
-    </footer>
+    <footer class="footer">© TMD · Event System</footer>
   </div>
 
   <script>
-    /* CONFIG (same URLs as dashboard) */
-    const DATA_URL = "https://raw.githubusercontent.com/akasitgun/tmd-checkin-display/main/data.json";
-    const LOGO_URL = "https://raw.githubusercontent.com/akasitgun/tmd-checkin-display/main/MEIDEN.png";
-    const POLL_MS = 1500; // mini KPI refresh (can adjust)
+    const DATA_URL='https://raw.githubusercontent.com/akasitgun/tmd-checkin-display/main/data.json';
 
-    const $ = (s) => document.querySelector(s);
+    function clock(){document.getElementById('clock').textContent=new Date().toLocaleTimeString('th-TH',{hour12:false});}
+    setInterval(clock,500);clock();
 
-    function fmtDate(d){
+    async function loadKPI(){
       try{
-        return new Date(d).toLocaleDateString('th-TH', {
-          weekday:'long', year:'numeric', month:'long', day:'numeric'
-        });
-      }catch(e){ return String(d || ""); }
+        const r=await fetch(DATA_URL+'?t='+Date.now());
+        const d=await r.json();
+        const items=d.items||[];
+        document.getElementById('kpi-total').textContent=items.length;
+        document.getElementById('kpi-dept').textContent=new Set(items.map(i=>i.department)).size;
+        document.getElementById('kpi-latest').textContent=items[0]?.order||'—';
+        document.getElementById('kpi-upd').textContent=new Date(d.updated||Date.now()).toLocaleTimeString('th-TH',{hour12:false});
+      }catch{}
     }
-    function fmtTime(d){
-      try{
-        return new Date(d).toLocaleTimeString('th-TH', { hour12:false, hour:'2-digit', minute:'2-digit' });
-      }catch(e){ return String(d || ""); }
-    }
-    function fmtFull(d){
-      try{ return new Date(d).toLocaleString('th-TH', { hour12:false }); }
-      catch(e){ return String(d || ""); }
-    }
+    loadKPI();setInterval(loadKPI,1500);
 
-    /* Clock */
-    function tickClock(){
-      const now = new Date();
-      $("#clock-time").textContent = now.toLocaleTimeString('th-TH', { hour12:false });
-      $("#clock-date").textContent = fmtDate(now);
-    }
-    setInterval(tickClock, 500);
-    tickClock();
-
-    /* Normalize data (compatible with your dashboard shape) */
-    function normalize(d) {
-      if (!d) return { items: [], updated: "" };
-      if (Array.isArray(d.items)) return { items: d.items.slice(), updated: d.updated || "" };
-      if (typeof d === "object") return { items: [d], updated: d.timestamp || "" };
-      try { return normalize(JSON.parse(d)); } catch { return { items: [], updated: "" }; }
-    }
-    function byNewest(a,b){ return new Date(b.timestamp || 0) - new Date(a.timestamp || 0); }
-
-    function groupDept(list){
-      const m = new Map();
-      list.forEach(x => {
-        const dep = (x.department || "Other").toString().trim() || "Other";
-        m.set(dep, (m.get(dep) || 0) + 1);
-      });
-      return [...m.entries()].sort((a,b) => b[1] - a[1]);
-    }
-
-    /* KPI animation (small + smooth) */
-    function animateNum(el, from, to, ms=650){
-      const start = performance.now();
-      function step(t){
-        const p = Math.min(1, (t - start) / ms);
-        el.textContent = Math.round(from + (to - from) * p).toLocaleString('th-TH');
-        if (p < 1) requestAnimationFrame(step);
-      }
-      requestAnimationFrame(step);
-    }
-
-    let lastTotal = 0;
-    let lastKey = "";
-
-    async function loadKpi(){
-      try{
-        const r = await fetch(DATA_URL + "?t=" + Date.now(), { cache: "no-store" });
-        if (!r.ok) throw new Error("HTTP " + r.status);
-        let raw = await r.json();
-        if (typeof raw === "string") { try { raw = JSON.parse(raw); } catch {} }
-
-        const data = normalize(raw);
-        const items = (data.items || []).slice().sort(byNewest);
-
-        // lightweight key
-        const key = (data.updated || "") + "::" + (items[0]?.timestamp || "") + "::" + items.length;
-        if (key === lastKey) return;
-        lastKey = key;
-
-        // KPI: Total
-        const total = items.length;
-        const totalEl = $("#kpi-total");
-        if (total !== lastTotal) animateNum(totalEl, lastTotal, total);
-        else totalEl.textContent = total.toLocaleString('th-TH');
-        lastTotal = total;
-        $("#kpi-total-mini").textContent = "LIVE";
-
-        // KPI: Departments
-        const depts = groupDept(items);
-        $("#kpi-dept").textContent = depts.length.toLocaleString('th-TH');
-        $("#kpi-dept-mini").textContent = depts.length ? (depts[0][0] + " +" + (depts.length - 1)) : "—";
-
-        // KPI: Latest order
-        const latest = items[0] || null;
-        const latestOrder = latest ? (latest.order ?? "—") : "—";
-        $("#kpi-latest").textContent = latestOrder;
-        $("#kpi-latest-mini").textContent = latest?.name ? String(latest.name).slice(0, 18) : "—";
-
-        // KPI: Updated
-        const upd = data.updated || latest?.timestamp || "";
-        if (upd) {
-          $("#kpi-upd").textContent = fmtTime(upd);
-          $("#kpi-upd-mini").textContent = fmtFull(upd);
-          $("#status-text").textContent = `อัปเดต: ${fmtFull(upd)} • รวม ${total} คน`;
-        } else {
-          $("#kpi-upd").textContent = "—";
-          $("#kpi-upd-mini").textContent = "—";
-          $("#status-text").textContent = "ยังไม่มีข้อมูลอัปเดต";
-        }
-      }catch(e){
-        $("#status-text").textContent = "โหลด KPI ไม่สำเร็จ: " + (e?.message || e);
-      }
-    }
-
-    /* Canvas star field (same vibe) */
-    (function initCanvas(){
-      const canvas = document.getElementById('canvas');
-      const ctx = canvas.getContext('2d');
-
-      let W, H, stars = [];
-      function resize(){
-        W = canvas.width = window.innerWidth;
-        H = canvas.height = window.innerHeight;
-      }
-      function mkStar(){
-        return {
-          x: Math.random() * W,
-          y: Math.random() * H,
-          r: Math.random() * 1.2 + 0.2,
-          a: Math.random(),
-          da: (Math.random() * 0.004 + 0.001) * (Math.random() < 0.5 ? 1 : -1)
-        };
-      }
-
-      resize();
-      for (let i=0; i<170; i++) stars.push(mkStar());
-      window.addEventListener('resize', resize);
-
-      function draw(){
-        ctx.clearRect(0,0,W,H);
-        for (const s of stars){
-          s.a += s.da;
-          if (s.a <= 0 || s.a >= 1) s.da = -s.da;
-          ctx.beginPath();
-          ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
-          ctx.fillStyle = `rgba(180,210,255,${s.a * 0.6})`;
-          ctx.fill();
-        }
-        requestAnimationFrame(draw);
-      }
-      draw();
+    /* star field */
+    (function(){
+      const c=document.getElementById('canvas'),x=c.getContext('2d');let W,H,S=[];
+      function r(){W=c.width=innerWidth;H=c.height=innerHeight}
+      function s(){return{x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.2+.2,a:Math.random(),d:(Math.random()*.004+.001)*(Math.random()<.5?1:-1)}}
+      r();for(let i=0;i<140;i++)S.push(s());addEventListener('resize',r);
+      (function d(){x.clearRect(0,0,W,H);S.forEach(o=>{o.a+=o.d;if(o.a<=0||o.a>=1)o.d=-o.d;x.beginPath();x.arc(o.x,o.y,o.r,0,Math.PI*2);x.fillStyle=`rgba(180,210,255,${o.a*.6})`;x.fill()});requestAnimationFrame(d)})();
     })();
-
-    /* Logo */
-    (function initLogo(){
-      const img = $("#brand-logo");
-      if (img) img.src = LOGO_URL;
-    })();
-
-    /* Make whole card clickable */
-    document.querySelectorAll(".card").forEach(card => {
-      card.addEventListener("click", (e) => {
-        if (e.target.closest("a")) return;
-        const href = card.getAttribute("data-href");
-        if (href) window.location.href = href;
-      });
-    });
-
-    /* Keyboard shortcuts: 1 / 2 */
-    window.addEventListener("keydown", (e) => {
-      if (e.key === "1") window.location.href = "./checkin_dashboard.html";
-      if (e.key === "2") window.location.href = "./luckydraw.html";
-    });
-
-    /* Start */
-    loadKpi();
-    setInterval(loadKpi, POLL_MS);
   </script>
 </body>
 </html>

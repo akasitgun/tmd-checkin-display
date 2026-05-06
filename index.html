@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>TMD 60ᵗʰ Anniversary : Portal</title>
+  <title>TMD 60ᵗʰ Anniversary : Home</title>
 
-  <!-- Fonts: same family as dashboard -->
+  <!-- Theme fonts (same family as checkin_dashboard) -->
   https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;900&family=Sarabun:wght@300;400;500;600&display=swap
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* Theme variables (matched to checkin_dashboard.html) */
+    /* Theme variables copied to match checkin_dashboard.html */
     :root{
       --gold: #FFD700;
       --gold-light: #FFE566;
@@ -43,9 +43,10 @@
       overflow: hidden;
     }
 
-    /* starfield canvas */
+    /* canvas background (same concept as dashboard) */
     #canvas{ position: fixed; inset: 0; pointer-events: none; z-index: 0; }
 
+    /* shell */
     .shell{
       position: relative;
       z-index: 1;
@@ -55,7 +56,7 @@
       overflow: hidden;
     }
 
-    /* header */
+    /* header (similar structure to dashboard header) */
     .header{
       display:flex;
       align-items:center;
@@ -81,7 +82,6 @@
       background: radial-gradient(circle, rgba(255,215,0,0.15), rgba(26,58,143,0.3));
       box-shadow: 0 0 18px rgba(255,215,0,0.25);
       flex-shrink: 0;
-      overflow: hidden;
     }
     .logo-ring img{ height: 28px; width:auto; object-fit: contain; }
     .logo-star{ font-size: 20px; animation: spin-slow 12s linear infinite; display:none; }
@@ -89,7 +89,7 @@
 
     .header-title{
       font-family: "Prompt", sans-serif;
-      font-weight: 900;
+      font-weight: 800;
       letter-spacing: .8px;
       color: var(--gold);
       text-shadow: 0 0 22px rgba(255,215,0,0.40);
@@ -98,7 +98,7 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      max-width: 60vw;
+      max-width: 68vw;
     }
     .header-sub{
       margin-top: 2px;
@@ -115,7 +115,7 @@
     .clock-time{
       font-family: "Prompt", sans-serif;
       font-size: 22px;
-      font-weight: 900;
+      font-weight: 800;
       letter-spacing: 1px;
       color: #fff;
       text-shadow: 0 2px 0 rgba(0,0,0,0.2);
@@ -127,237 +127,138 @@
       margin-top: 1px;
     }
 
-    /* MAIN LAYOUT (re-structured) */
-    .main{
+    /* hero */
+    .hero{
       display:grid;
-      grid-template-columns: 1.15fr 0.85fr;
+      place-items:center;
+      padding: 22px;
+    }
+
+    .hero-inner{
+      width: min(980px, 100%);
+      display:grid;
+      grid-template-columns: 1fr;
       gap: 14px;
-      padding: 16px;
-      height: 100%;
+    }
+
+    .headline{
+      padding: 16px 18px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: linear-gradient(180deg, rgba(9,21,48,0.72), rgba(5,12,31,0.55));
+      box-shadow: 0 16px 36px rgba(0,0,0,0.35);
+      position: relative;
       overflow: hidden;
     }
 
-    /* panel base */
-    .panel{
-      border-radius: 16px;
-      border: 1px solid var(--border);
-      background: linear-gradient(180deg, rgba(9,21,48,0.75), rgba(5,12,31,0.55));
-      box-shadow: 0 18px 40px rgba(0,0,0,0.35);
-      overflow: hidden;
-      display:flex;
-      flex-direction: column;
-      min-height: 0;
-      position: relative;
-    }
-    .panel::before{
+    .headline::before{
       content:"";
       position:absolute;
       inset:-2px;
-      background:
-        radial-gradient(720px 260px at 20% 0%, rgba(90,158,255,0.22), transparent 60%),
-        radial-gradient(720px 260px at 85% 0%, rgba(255,215,0,0.18), transparent 60%);
+      background: radial-gradient(600px 220px at 20% 0%, rgba(90,158,255,0.22), transparent 60%),
+                  radial-gradient(600px 220px at 80% 0%, rgba(255,215,0,0.18), transparent 60%);
       pointer-events:none;
-      opacity:.9;
     }
 
-    .panel-topbar{
-      height: 3px;
-      background: linear-gradient(90deg, transparent,var(--accent-blue),transparent);
-      opacity:.95;
-      flex-shrink:0;
+    .headline h1{
       position: relative;
-      z-index: 1;
-    }
-    .panel-topbar.gold{
-      background: linear-gradient(90deg, transparent,var(--gold),transparent);
-    }
-    .panel-body{
-      position: relative;
-      z-index: 1;
-      padding: 16px;
-      display:flex;
-      flex-direction: column;
-      gap: 12px;
-      min-height: 0;
-    }
-
-    /* Overview content */
-    .hero-title{
       font-family:"Prompt", sans-serif;
       font-size: 22px;
       font-weight: 900;
-      letter-spacing: .5px;
+      letter-spacing: .6px;
       color:#fff;
     }
-    .hero-desc{
+    .headline p{
+      position: relative;
+      margin-top: 6px;
       color: var(--text-sub);
       font-size: 13px;
-      line-height: 1.55;
-      margin-top: 4px;
+      line-height: 1.5;
     }
 
-    /* KPI mini chips (like dashboard header chips) */
-    .kpi-row{
+    /* menu cards */
+    .menu{
       display:grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 10px;
-    }
-    .kpi-chip{
-      border-radius: 12px;
-      border: 1px solid var(--border-bright);
-      background: rgba(30,79,194,0.18);
-      padding: 10px 12px;
-      min-height: 72px;
-      display:flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 3px;
-    }
-    .kpi-chip .kv{
-      font-family:"Prompt", sans-serif;
-      font-size: 22px;
-      font-weight: 900;
-      line-height: 1;
-      color: #fff;
-      letter-spacing: .2px;
-    }
-    .kpi-chip .kl{
-      font-size: 10.5px;
-      color: var(--text-sub);
-      font-weight: 600;
-      letter-spacing: .25px;
-      display:flex;
-      align-items:center;
-      justify-content: space-between;
-      gap: 8px;
-    }
-    .kpi-chip.gold{
-      background: rgba(255,215,0,0.10);
-      border-color: rgba(255,215,0,0.28);
-    }
-    .kpi-chip.gold .kv{ color: var(--gold-light); }
-    .kpi-chip.teal{
-      background: rgba(34,211,238,0.10);
-      border-color: rgba(34,211,238,0.22);
-    }
-    .kpi-chip.teal .kv{ color: #67E8F9; }
-    .kpi-chip.green{
-      background: rgba(74,222,128,0.10);
-      border-color: rgba(74,222,128,0.20);
-    }
-    .kpi-chip.green .kv{ color: #86efac; }
-
-    .mini{
-      font-family:"Prompt", sans-serif;
-      font-size: 10px;
-      color: var(--text-dim);
-      font-weight: 600;
-      letter-spacing: .2px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 16ch;
-    }
-
-    /* Tips / status box */
-    .info-row{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-    .info-box{
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,0.04);
-      padding: 10px 12px;
-    }
-    .info-box .t{
-      font-family:"Prompt", sans-serif;
-      font-weight: 800;
-      font-size: 11.5px;
-      letter-spacing: .25px;
-      color: #A9CCFF;
-    }
-    .info-box .d{
-      margin-top: 4px;
-      color: var(--text-sub);
-      font-size: 11.5px;
-      line-height: 1.45;
-    }
-    .kbd{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      padding: 1px 6px;
-      border-radius: 6px;
-      border: 1px solid rgba(255,255,255,0.18);
-      background: rgba(255,255,255,0.06);
-      font-family: "Prompt", sans-serif;
-      font-size: 10px;
-      font-weight: 800;
-      color: #fff;
-      margin: 0 2px;
-    }
-
-    /* Menu panel */
-    .menu-grid{
-      display:grid;
-      grid-template-columns: 1fr;
-      gap: 12px;
-      min-height: 0;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
     }
 
     .card{
+      position: relative;
       border-radius: 16px;
       border: 1px solid var(--border);
-      background: linear-gradient(180deg, rgba(13,30,64,0.60), rgba(5,12,31,0.52));
+      background: linear-gradient(180deg, rgba(9,21,48,0.75), rgba(5,12,31,0.55));
       overflow: hidden;
-      position: relative;
-      min-height: 160px;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+      transform: translateY(0);
       transition: transform .15s ease, border-color .15s ease, background .15s ease;
-      cursor: pointer;
-    }
-    .card:hover{
-      transform: translateY(-2px);
-      border-color: var(--border-bright);
-      background: linear-gradient(180deg, rgba(13,30,64,0.78), rgba(5,12,31,0.55));
+      min-height: 170px;
     }
 
     .card::after{
       content:"";
       position:absolute;
       inset:0;
-      background:
-        radial-gradient(520px 220px at 20% 0%, rgba(34,211,238,0.12), transparent 55%),
-        radial-gradient(700px 280px at 90% 0%, rgba(90,158,255,0.16), transparent 60%);
-      opacity:.95;
+      background: radial-gradient(500px 220px at 20% 0%, rgba(34,211,238,0.12), transparent 55%),
+                  radial-gradient(640px 260px at 90% 0%, rgba(90,158,255,0.14), transparent 60%);
+      opacity: .9;
       pointer-events:none;
+    }
+
+    .card:hover{
+      transform: translateY(-2px);
+      border-color: var(--border-bright);
+      background: linear-gradient(180deg, rgba(13,30,64,0.78), rgba(5,12,31,0.55));
     }
 
     .card-topbar{
       height: 3px;
-      background: linear-gradient(90deg, transparent,var(--accent-blue),transparent);
-      opacity:.92;
+      background: linear-gradient(90deg, transparent, var(--accent-blue), transparent);
+      opacity: .9;
     }
     .card-topbar.gold{
-      background: linear-gradient(90deg, transparent,var(--gold),transparent);
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
     }
+
     .card-body{
       position: relative;
       z-index: 1;
-      padding: 14px 14px 14px;
+      padding: 14px 16px 16px;
       display:flex;
       flex-direction: column;
-      gap: 10px;
       height: calc(100% - 3px);
+      gap: 10px;
     }
 
     .card-head{
       display:flex;
       align-items:center;
       justify-content: space-between;
-      gap: 12px;
+      gap: 10px;
     }
+
+    .badge{
+      font-family:"Prompt", sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.14);
+      color: var(--text-sub);
+      background: rgba(255,255,255,0.06);
+      white-space: nowrap;
+    }
+    .badge.blue{
+      border-color: rgba(90,158,255,0.30);
+      background: rgba(90,158,255,0.14);
+      color: #A9CCFF;
+    }
+    .badge.gold{
+      border-color: rgba(255,215,0,0.28);
+      background: rgba(255,215,0,0.10);
+      color: var(--gold-light);
+    }
+
     .icon{
       width: 40px; height: 40px;
       border-radius: 10px;
@@ -367,26 +268,18 @@
       border: 1px solid rgba(255,255,255,0.14);
       background: rgba(255,255,255,0.06);
     }
-    .icon.blue{ border-color: rgba(90,158,255,0.32); background: rgba(90,158,255,0.12); }
-    .icon.gold{ border-color: rgba(255,215,0,0.30); background: rgba(255,215,0,0.10); }
-
-    .badge{
-      font-family:"Prompt", sans-serif;
-      font-size: 11px;
-      font-weight: 800;
-      padding: 4px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.14);
-      color: var(--text-sub);
-      background: rgba(255,255,255,0.06);
-      white-space: nowrap;
+    .icon.blue{
+      border-color: rgba(90,158,255,0.32);
+      background: rgba(90,158,255,0.12);
     }
-    .badge.blue{ border-color: rgba(90,158,255,0.30); background: rgba(90,158,255,0.14); color: #A9CCFF; }
-    .badge.gold{ border-color: rgba(255,215,0,0.28); background: rgba(255,215,0,0.10); color: var(--gold-light); }
+    .icon.gold{
+      border-color: rgba(255,215,0,0.30);
+      background: rgba(255,215,0,0.10);
+    }
 
     .card-title{
       font-family:"Prompt", sans-serif;
-      font-weight: 900;
+      font-weight: 800;
       letter-spacing: .35px;
       font-size: 16px;
       color: #fff;
@@ -396,6 +289,7 @@
       color: var(--text-sub);
       font-size: 12.5px;
       line-height: 1.5;
+      max-width: 56ch;
     }
 
     .card-actions{
@@ -414,7 +308,7 @@
       padding: 9px 12px;
       border-radius: 10px;
       font-size: 12px;
-      font-weight: 800;
+      font-weight: 700;
       cursor:pointer;
       transition: background .15s ease, transform .1s ease, border-color .15s ease;
       display:inline-flex;
@@ -422,7 +316,6 @@
       gap: 8px;
       text-decoration: none;
       user-select:none;
-      white-space: nowrap;
     }
     .btn:hover{
       background: rgba(255,255,255,0.12);
@@ -458,18 +351,6 @@
       white-space: nowrap;
     }
 
-    .live-dot{
-      width: 7px; height: 7px; border-radius: 50%;
-      background: var(--accent-green);
-      box-shadow: 0 0 8px var(--accent-green);
-      animation: pulse-dot 2s infinite;
-      flex-shrink: 0;
-    }
-    @keyframes pulse-dot{
-      0%,100%{opacity:1;transform:scale(1);}
-      50%{opacity:.55;transform:scale(.75);}
-    }
-
     /* footer */
     .footer{
       padding: 10px 18px;
@@ -483,15 +364,25 @@
       gap: 10px;
     }
 
+    .live-dot{
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--accent-green);
+      box-shadow: 0 0 8px var(--accent-green);
+      animation: pulse-dot 2s infinite;
+      flex-shrink: 0;
+    }
+    @keyframes pulse-dot{
+      0%,100%{opacity:1;transform:scale(1);}
+      50%{opacity:.55;transform:scale(.75);}
+    }
+
     /* responsive */
-    @media (max-width: 980px){
+    @media (max-width: 860px){
       body{ overflow:auto; }
       .shell{ min-height: 100vh; height:auto; overflow: visible; }
       #canvas{ position: fixed; }
-      .main{ grid-template-columns: 1fr; height:auto; }
-      .header-title{ max-width: 56vw; }
-      .kpi-row{ grid-template-columns: repeat(2, minmax(0,1fr)); }
-      .info-row{ grid-template-columns: 1fr; }
+      .menu{ grid-template-columns: 1fr; }
+      .header-title{ max-width: 60vw; }
     }
 
     @media (prefers-reduced-motion: reduce){
@@ -508,14 +399,13 @@
     <header class="header">
       <div class="header-left">
         <div class="logo-ring">
-          <img id="brand-logo" alt="TMD" src=""
-               onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+          
           <div class="logo-star">✦</div>
         </div>
 
         <div style="min-width:0">
           <div class="header-title">TMD 60ᵗʰ Anniversary · Event Portal</div>
-          <div class="header-sub">เลือกเมนูเพื่อเริ่มใช้งานระบบ (กด <span class="kbd">1</span>/<span class="kbd">2</span>)</div>
+          <div class="header-sub">เลือกเมนูเพื่อเริ่มใช้งานระบบ</div>
         </div>
       </div>
 
@@ -525,134 +415,75 @@
       </div>
     </header>
 
-    <!-- MAIN -->
-    <main class="main">
-      <!-- LEFT: OVERVIEW + KPI -->
-      <section class="panel">
-        <div class="panel-topbar"></div>
-        <div class="panel-body">
-          <div>
-            <div class="hero-title">Welcome ✨</div>
-            <div class="hero-desc">
-              หน้านี้เป็นทางเข้าระบบสำหรับงาน <b>TMD 60ᵗʰ Anniversary</b>
-              พร้อม KPI สรุปแบบ Live จากข้อมูลเช็คอิน
-            </div>
-          </div>
+    <!-- HERO -->
+    <main class="hero">
+      <div class="hero-inner">
 
-          <!-- KPI mini chips -->
-          <div class="kpi-row" aria-label="KPI Summary">
-            <div class="kpi-chip">
-              <div class="kv" id="kpi-total">0</div>
-              <div class="kl">
-                <span>ผู้เช็คอินทั้งหมด</span>
-                <span class="mini" id="kpi-total-mini">LIVE</span>
+        <section class="headline">
+          <h1>Welcome ✨</h1>
+          <p>
+            หน้านี้เป็นทางเข้าระบบสำหรับงาน <b>TMD 60ᵗʰ Anniversary</b>
+            สามารถเลือกเข้า <b>Dashboard</b> เพื่อติดตามสถานะเช็คอินแบบ Live
+            หรือเข้า <b>Lucky Draw</b> เพื่อสุ่มรางวัลได้ทันที
+          </p>
+        </section>
+
+        <section class="menu">
+
+          <!-- Card: Check-in Dashboard -->
+          <article class="card" role="link" aria-label="ไปหน้า Check-in Dashboard">
+            <div class="card-topbar"></div>
+            <div class="card-body">
+              <div class="card-head">
+                <div class="icon blue">✔</div>
+                <span class="badge blue">LIVE DASHBOARD</span>
               </div>
-            </div>
 
-            <div class="kpi-chip teal">
-              <div class="kv" id="kpi-dept">0</div>
-              <div class="kl">
-                <span>จำนวนแผนก</span>
-                <span class="mini" id="kpi-dept-mini">—</span>
-              </div>
-            </div>
-
-            <div class="kpi-chip gold">
-              <div class="kv" id="kpi-latest">—</div>
-              <div class="kl">
-                <span>ลำดับล่าสุด</span>
-                <span class="mini" id="kpi-latest-mini">—</span>
-              </div>
-            </div>
-
-            <div class="kpi-chip green">
-              <div class="kv" id="kpi-upd">—</div>
-              <div class="kl">
-                <span>อัปเดตล่าสุด</span>
-                <span class="mini" id="kpi-upd-mini">—</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Tips / shortcuts -->
-          <div class="info-row">
-            <div class="info-box">
-              <div class="t">Quick Access</div>
-              <div class="d">
-                กด <span class="kbd">1</span> ไปหน้า Dashboard • กด <span class="kbd">2</span> ไปหน้า Lucky Draw • แนะนำเปิดเต็มจอ (Fullscreen) เมื่อฉายบน TV
-              </div>
-            </div>
-            <div class="info-box">
-              <div class="t">Status</div>
-              <div class="d">
-                <span style="display:inline-flex;align-items:center;gap:8px;">
-                  <span class="live-dot"></span>
-                  <span id="status-text">กำลังโหลดข้อมูล…</span>
-                </span>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-      <!-- RIGHT: MENU -->
-      <section class="panel">
-        <div class="panel-topbar gold"></div>
-        <div class="panel-body">
-          <div class="menu-grid">
-
-            ./checkin_dashboard.html
-              <div class="card-topbar"></div>
-              <div class="card-body">
-                <div class="card-head">
-                  <div class="icon blue">✔</div>
-                  <span class="badge blue">LIVE DASHBOARD</span>
-                </div>
-
-                <div>
-                  <div class="card-title">Check-in Dashboard</div>
-                  <div class="card-desc">
-                    ดูยอดผู้เช็คอินล่าสุด, สรุปตามแผนก และรายชื่อทั้งหมดแบบเรียลไทม์
-                  </div>
-                </div>
-
-                <div class="card-actions">
-                  ./checkin_dashboard.html
-                    เข้าใช้งาน <span aria-hidden="true">→</span>
-                  </a>
-                  <div class="hint"><span class="live-dot"></span> Auto refresh</div>
+              <div>
+                <div class="card-title">Check-in Dashboard</div>
+                <div class="card-desc">
+                  ดูยอดผู้เช็คอินล่าสุด, สรุปตามแผนก และรายชื่อทั้งหมดแบบเรียลไทม์
+                  เหมาะสำหรับเปิดบนจอ TV / Projector ระหว่างงาน
                 </div>
               </div>
-            </article>
 
-            ./luckydraw.html
-              <div class="card-topbar gold"></div>
-              <div class="card-body">
-                <div class="card-head">
-                  <div class="icon gold">🎁</div>
-                  <span class="badge gold">LUCKY DRAW</span>
-                </div>
+              <div class="card-actions">
+                ./checkin_dashboard.html
+                  เข้าใช้งาน <span aria-hidden="true">→</span>
+                </a>
+                <div class="hint"><span class="live-dot"></span> Auto refresh</div>
+              </div>
+            </div>
+          </article>
 
-                <div>
-                  <div class="card-title">Lucky Draw</div>
-                  <div class="card-desc">
-                    โหมดสุ่มรางวัลสำหรับผู้เข้าร่วมงาน เหมาะสำหรับแสดงผลบนจอใหญ่
-                  </div>
-                </div>
+          <!-- Card: Lucky Draw -->
+          <article class="card" role="link" aria-label="ไปหน้า Lucky Draw">
+            <div class="card-topbar gold"></div>
+            <div class="card-body">
+              <div class="card-head">
+                <div class="icon gold">🎁</div>
+                <span class="badge gold">LUCKY DRAW</span>
+              </div>
 
-                <div class="card-actions">
-                  ./luckydraw.html
-                    เริ่มสุ่มรางวัล <span aria-hidden="true">→</span>
-                  </a>
-                  <div class="hint">Best on Fullscreen ⛶</div>
+              <div>
+                <div class="card-title">Lucky Draw</div>
+                <div class="card-desc">
+                  เข้าโหมดสุ่มรางวัลสำหรับผู้เข้าร่วมงาน
+                  โทนเดียวกับระบบ และเหมาะสำหรับแสดงผลบนจอใหญ่
                 </div>
               </div>
-            </article>
 
-          </div>
-        </div>
-      </section>
+              <div class="card-actions">
+                ./luckydraw.html
+                  เริ่มสุ่มรางวัล <span aria-hidden="true">→</span>
+                </a>
+                <div class="hint">Best on Fullscreen ⛶</div>
+              </div>
+            </div>
+          </article>
+
+        </section>
+      </div>
     </main>
 
     <!-- FOOTER -->
@@ -666,10 +497,8 @@
   </div>
 
   <script>
-    /* CONFIG (same URLs as dashboard) */
-    const DATA_URL = "https://raw.githubusercontent.com/akasitgun/tmd-checkin-display/main/data.json";
+    /* Same logo approach as your dashboard file */
     const LOGO_URL = "https://raw.githubusercontent.com/akasitgun/tmd-checkin-display/main/MEIDEN.png";
-    const POLL_MS = 1500; // mini KPI refresh (can adjust)
 
     const $ = (s) => document.querySelector(s);
 
@@ -680,17 +509,7 @@
         });
       }catch(e){ return String(d || ""); }
     }
-    function fmtTime(d){
-      try{
-        return new Date(d).toLocaleTimeString('th-TH', { hour12:false, hour:'2-digit', minute:'2-digit' });
-      }catch(e){ return String(d || ""); }
-    }
-    function fmtFull(d){
-      try{ return new Date(d).toLocaleString('th-TH', { hour12:false }); }
-      catch(e){ return String(d || ""); }
-    }
 
-    /* Clock */
     function tickClock(){
       const now = new Date();
       $("#clock-time").textContent = now.toLocaleTimeString('th-TH', { hour12:false });
@@ -699,89 +518,7 @@
     setInterval(tickClock, 500);
     tickClock();
 
-    /* Normalize data (compatible with your dashboard shape) */
-    function normalize(d) {
-      if (!d) return { items: [], updated: "" };
-      if (Array.isArray(d.items)) return { items: d.items.slice(), updated: d.updated || "" };
-      if (typeof d === "object") return { items: [d], updated: d.timestamp || "" };
-      try { return normalize(JSON.parse(d)); } catch { return { items: [], updated: "" }; }
-    }
-    function byNewest(a,b){ return new Date(b.timestamp || 0) - new Date(a.timestamp || 0); }
-
-    function groupDept(list){
-      const m = new Map();
-      list.forEach(x => {
-        const dep = (x.department || "Other").toString().trim() || "Other";
-        m.set(dep, (m.get(dep) || 0) + 1);
-      });
-      return [...m.entries()].sort((a,b) => b[1] - a[1]);
-    }
-
-    /* KPI animation (small + smooth) */
-    function animateNum(el, from, to, ms=650){
-      const start = performance.now();
-      function step(t){
-        const p = Math.min(1, (t - start) / ms);
-        el.textContent = Math.round(from + (to - from) * p).toLocaleString('th-TH');
-        if (p < 1) requestAnimationFrame(step);
-      }
-      requestAnimationFrame(step);
-    }
-
-    let lastTotal = 0;
-    let lastKey = "";
-
-    async function loadKpi(){
-      try{
-        const r = await fetch(DATA_URL + "?t=" + Date.now(), { cache: "no-store" });
-        if (!r.ok) throw new Error("HTTP " + r.status);
-        let raw = await r.json();
-        if (typeof raw === "string") { try { raw = JSON.parse(raw); } catch {} }
-
-        const data = normalize(raw);
-        const items = (data.items || []).slice().sort(byNewest);
-
-        // lightweight key
-        const key = (data.updated || "") + "::" + (items[0]?.timestamp || "") + "::" + items.length;
-        if (key === lastKey) return;
-        lastKey = key;
-
-        // KPI: Total
-        const total = items.length;
-        const totalEl = $("#kpi-total");
-        if (total !== lastTotal) animateNum(totalEl, lastTotal, total);
-        else totalEl.textContent = total.toLocaleString('th-TH');
-        lastTotal = total;
-        $("#kpi-total-mini").textContent = "LIVE";
-
-        // KPI: Departments
-        const depts = groupDept(items);
-        $("#kpi-dept").textContent = depts.length.toLocaleString('th-TH');
-        $("#kpi-dept-mini").textContent = depts.length ? (depts[0][0] + " +" + (depts.length - 1)) : "—";
-
-        // KPI: Latest order
-        const latest = items[0] || null;
-        const latestOrder = latest ? (latest.order ?? "—") : "—";
-        $("#kpi-latest").textContent = latestOrder;
-        $("#kpi-latest-mini").textContent = latest?.name ? String(latest.name).slice(0, 18) : "—";
-
-        // KPI: Updated
-        const upd = data.updated || latest?.timestamp || "";
-        if (upd) {
-          $("#kpi-upd").textContent = fmtTime(upd);
-          $("#kpi-upd-mini").textContent = fmtFull(upd);
-          $("#status-text").textContent = `อัปเดต: ${fmtFull(upd)} • รวม ${total} คน`;
-        } else {
-          $("#kpi-upd").textContent = "—";
-          $("#kpi-upd-mini").textContent = "—";
-          $("#status-text").textContent = "ยังไม่มีข้อมูลอัปเดต";
-        }
-      }catch(e){
-        $("#status-text").textContent = "โหลด KPI ไม่สำเร็จ: " + (e?.message || e);
-      }
-    }
-
-    /* Canvas star field (same vibe) */
+    /* Canvas star field (same vibe as dashboard) */
     (function initCanvas(){
       const canvas = document.getElementById('canvas');
       const ctx = canvas.getContext('2d');
@@ -823,27 +560,18 @@
     /* Logo */
     (function initLogo(){
       const img = $("#brand-logo");
-      if (img) img.src = LOGO_URL;
+      if(img) img.src = LOGO_URL;
     })();
 
-    /* Make whole card clickable */
+    /* Optional: whole card clickable */
     document.querySelectorAll(".card").forEach(card => {
       card.addEventListener("click", (e) => {
+        // prevent double trigger if click on button link
         if (e.target.closest("a")) return;
-        const href = card.getAttribute("data-href");
-        if (href) window.location.href = href;
+        const a = card.querySelector("a[href]");
+        if (a) window.location.href = a.getAttribute("href");
       });
     });
-
-    /* Keyboard shortcuts: 1 / 2 */
-    window.addEventListener("keydown", (e) => {
-      if (e.key === "1") window.location.href = "./checkin_dashboard.html";
-      if (e.key === "2") window.location.href = "./luckydraw.html";
-    });
-
-    /* Start */
-    loadKpi();
-    setInterval(loadKpi, POLL_MS);
   </script>
 </body>
 </html>

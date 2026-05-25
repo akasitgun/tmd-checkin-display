@@ -5,500 +5,651 @@
       "order": "5",
       "department": "IT",
       "timestamp": "2026-04-21T08:57:22.9876543Z",
-      "department_std": "IT"
+      "department_std": "IT",
+      "department_orig": "IT",
+      "department_std_orig": "IT"
     },
     {
       "name": "กมลา เจริญ",
       "order": "8",
-      "department": "HR",
+      "department": "SEO 3",
       "timestamp": "2026-04-21T09:00:00.3333333Z",
-      "department_std": "HR"
+      "department_std": "SEO 3",
+      "department_orig": "HR",
+      "department_std_orig": "HR"
     },
     {
       "name": "กาญจนา ใจเย็น",
       "order": "50",
       "department": "IT",
       "timestamp": "2026-04-21T09:42:00.9393939Z",
-      "department_std": "IT"
+      "department_std": "IT",
+      "department_orig": "IT",
+      "department_std_orig": "IT"
     },
     {
       "name": "กิตติ เก่งกาจ",
       "order": "65",
-      "department": "MKT",
+      "department": "SEO 4",
       "timestamp": "2026-04-21T09:57:00.6262626Z",
-      "department_std": "MKT"
+      "department_std": "SEO 4",
+      "department_orig": "MKT",
+      "department_std_orig": "MKT"
     },
     {
       "name": "จักรพันธ์ พงษ์ดี",
       "order": "49",
-      "department": "OPS",
+      "department": "SEO 2",
       "timestamp": "2026-04-21T09:41:00.8282828Z",
-      "department_std": "OPS"
+      "department_std": "SEO 2",
+      "department_orig": "OPS",
+      "department_std_orig": "OPS"
     },
     {
       "name": "จินดา มีสุข",
       "order": "24",
-      "department": "BP",
+      "department": "Power plant",
       "timestamp": "2026-04-21T09:16:00.1212121Z",
-      "department_std": "BP"
+      "department_std": "Power plant",
+      "department_orig": "BP",
+      "department_std_orig": "BP"
     },
     {
       "name": "จุฑามาศ ฝันดี",
       "order": "56",
       "department": "IT",
       "timestamp": "2026-04-21T09:48:00.6161616Z",
-      "department_std": "IT"
+      "department_std": "IT",
+      "department_orig": "IT",
+      "department_std_orig": "IT"
     },
     {
       "name": "ชนิดา รุ่งเรือง",
       "order": "32",
       "department": "IT",
       "timestamp": "2026-04-21T09:24:00.9191919Z",
-      "department_std": "IT"
+      "department_std": "IT",
+      "department_orig": "IT",
+      "department_std_orig": "IT"
     },
     {
       "name": "ชลธิชา เบิกบาน",
       "order": "61",
-      "department": "BP",
+      "department": "Power plant",
       "timestamp": "2026-04-21T09:53:00.2727272Z",
-      "department_std": "BP"
+      "department_std": "Power plant",
+      "department_orig": "BP",
+      "department_std_orig": "BP"
     },
     {
       "name": "ชัยพร แก้วมณี",
       "order": "14",
       "department": "IT",
       "timestamp": "2026-04-21T09:06:00.9999999Z",
-      "department_std": "IT"
+      "department_std": "IT",
+      "department_orig": "IT",
+      "department_std_orig": "IT"
     },
     {
       "name": "ณรงค์ ยิ่งยง",
       "order": "41",
-      "department": "FIN",
+      "department": "SEO 1",
       "timestamp": "2026-04-21T09:33:00.9292929Z",
-      "department_std": "FIN"
+      "department_std": "SEO 1",
+      "department_orig": "FIN",
+      "department_std_orig": "FIN"
     },
     {
       "name": "ณัฐพล วงษ์ดี",
       "order": "27",
-      "department": "HR",
+      "department": "SEO 3",
       "timestamp": "2026-04-21T09:19:00.4545454Z",
-      "department_std": "HR"
+      "department_std": "SEO 3",
+      "department_orig": "HR",
+      "department_std_orig": "HR"
     },
     {
       "name": "ดารณี สวัสดิ์",
       "order": "34",
-      "department": "MKT",
+      "department": "SEO 4",
       "timestamp": "2026-04-21T09:26:00.2424242Z",
-      "department_std": "MKT"
+      "department_std": "SEO 4",
+      "department_orig": "MKT",
+      "department_std_orig": "MKT"
     },
     {
       "name": "ทวีศักดิ์ บุญดี",
       "order": "21",
-      "department": "HR",
+      "department": "SEO 3",
       "timestamp": "2026-04-21T09:13:00.7070707Z",
-      "department_std": "HR"
+      "department_std": "SEO 3",
+      "department_orig": "HR",
+      "department_std_orig": "HR"
     },
     {
       "name": "ทองใส แก้วงาม",
       "order": "47",
-      "department": "FIN",
+      "department": "SEO 1",
       "timestamp": "2026-04-21T09:39:00.6969696Z",
-      "department_std": "FIN"
+      "department_std": "SEO 1",
+      "department_orig": "FIN",
+      "department_std_orig": "FIN"
     },
     {
       "name": "ทิพวรรณ ใจบุญ",
       "order": "69",
       "department": "IT",
       "timestamp": "2026-04-21T10:01:00.1717171Z",
-      "department_std": "IT"
+      "department_std": "IT",
+      "department_orig": "IT",
+      "department_std_orig": "IT"
     },
     {
       "name": "ธนพล ชัยชนะ",
       "order": "16",
-      "department": "MKT",
+      "department": "SEO 4",
       "timestamp": "2026-04-21T09:08:00.2020202Z",
-      "department_std": "MKT"
+      "department_std": "SEO 4",
+      "department_orig": "MKT",
+      "department_std_orig": "MKT"
     },
     {
       "name": "ธีระ เจริญผล",
       "order": "43",
-      "department": "OPS",
+      "department": "SEO 2",
       "timestamp": "2026-04-21T09:35:00.2525252Z",
-      "department_std": "OPS"
+      "department_std": "SEO 2",
+      "department_orig": "OPS",
+      "department_std_orig": "OPS"
     },
     {
       "name": "นงนุช ใจงาม",
       "order": "38",
       "department": "IT",
       "timestamp": "2026-04-21T09:30:00.6868686Z",
-      "department_std": "IT"
+      "department_std": "IT",
+      "department_orig": "IT",
+      "department_std_orig": "IT"
     },
     {
       "name": "นพดล มงคลดี",
       "order": "68",
-      "department": "OPS",
+      "department": "SEO 2",
       "timestamp": "2026-04-21T10:00:00.9595959Z",
-      "department_std": "OPS"
+      "department_std": "SEO 2",
+      "department_orig": "OPS",
+      "department_std_orig": "OPS"
     },
     {
       "name": "นวลจันทร์ ผ่องใส",
       "order": "46",
-      "department": "MKT",
+      "department": "SEO 4",
       "timestamp": "2026-04-21T09:38:00.5858585Z",
-      "department_std": "MKT"
+      "department_std": "SEO 4",
+      "department_orig": "MKT",
+      "department_std_orig": "MKT"
     },
     {
       "name": "นัทธ์ มงคล",
       "order": "19",
-      "department": "OPS",
+      "department": "SEO 2",
       "timestamp": "2026-04-21T09:11:00.5050505Z",
-      "department_std": "OPS"
+      "department_std": "SEO 2",
+      "department_orig": "OPS",
+      "department_std_orig": "OPS"
     },
     {
       "name": "นิภา วงศ์สุข",
       "order": "2",
-      "department": "HR",
+      "department": "SEO 3",
       "timestamp": "2026-04-21T08:52:33.2278404Z",
-      "department_std": "HR"
+      "department_std": "SEO 3",
+      "department_orig": "HR",
+      "department_std_orig": "HR"
     },
     {
       "name": "บรรจง ศรีวิไล",
       "order": "52",
-      "department": "MKT",
+      "department": "SEO 4",
       "timestamp": "2026-04-21T09:44:00.2626262Z",
-      "department_std": "MKT"
+      "department_std": "SEO 4",
+      "department_orig": "MKT",
+      "department_std_orig": "MKT"
     },
     {
       "name": "บุญมี รักดี",
       "order": "9",
       "department": "IT",
       "timestamp": "2026-04-21T09:01:00.4444444Z",
-      "department_std": "IT"
+      "department_std": "IT",
+      "department_orig": "IT",
+      "department_std_orig": "IT"
     },
     {
       "name": "ประยูร รักงาน",
       "order": "59",
-      "department": "FIN",
+      "department": "SEO 1",
       "timestamp": "2026-04-21T09:51:00.9494949Z",
-      "department_std": "FIN"
+      "department_std": "SEO 1",
+      "department_orig": "FIN",
+      "department_std_orig": "FIN"
     },
     {
       "name": "ประวิทย์ แสงทอง",
       "order": "23",
-      "department": "FIN",
+      "department": "SEO 1",
       "timestamp": "2026-04-21T09:15:00.9090909Z",
-      "department_std": "FIN"
+      "department_std": "SEO 1",
+      "department_orig": "FIN",
+      "department_std_orig": "FIN"
     },
     {
       "name": "ปราณี ดีใจ",
       "order": "18",
-      "department": "BP",
+      "department": "Power plant",
       "timestamp": "2026-04-21T09:10:00.4040404Z",
-      "department_std": "BP"
+      "department_std": "Power plant",
+      "department_orig": "BP",
+      "department_std_orig": "BP"
     },
     {
       "name": "ปัทมา รักสงบ",
       "order": "44",
       "department": "IT",
       "timestamp": "2026-04-21T09:36:00.3636363Z",
-      "department_std": "IT"
+      "department_std": "IT",
+      "department_orig": "IT",
+      "department_std_orig": "IT"
     },
     {
       "name": "ปิติ มีสุข",
       "order": "63",
       "department": "IT",
       "timestamp": "2026-04-21T09:55:00.4949494Z",
-      "department_std": "IT"
+      "department_std": "IT",
+      "department_orig": "IT",
+      "department_std_orig": "IT"
     },
     {
       "name": "ปิยะ ทองดี",
       "order": "12",
-      "department": "BP",
+      "department": "Power plant",
       "timestamp": "2026-04-21T09:04:00.7777777Z",
-      "department_std": "BP"
+      "department_std": "Power plant",
+      "department_orig": "BP",
+      "department_std_orig": "BP"
     },
     {
       "name": "ผู้บริหารท่านนึง",
       "order": "4",
       "department": "MGT",
       "timestamp": "2026-04-21T08:56:11.1234567Z",
-      "department_std": "MGT"
+      "department_std": "MGT",
+      "department_orig": "MGT",
+      "department_std_orig": "MGT"
     },
     {
       "name": "ภาณุ ทองแดง",
       "order": "39",
-      "department": "HR",
+      "department": "SEO 3",
       "timestamp": "2026-04-21T09:31:00.7979797Z",
-      "department_std": "HR"
+      "department_std": "SEO 3",
+      "department_orig": "HR",
+      "department_std_orig": "HR"
     },
     {
       "name": "ภาวิณี คงดี",
       "order": "30",
-      "department": "BP",
+      "department": "Power plant",
       "timestamp": "2026-04-21T09:22:00.7878787Z",
-      "department_std": "BP"
+      "department_std": "Power plant",
+      "department_orig": "BP",
+      "department_std_orig": "BP"
     },
     {
       "name": "มณี ศรีสุข",
       "order": "13",
-      "department": "OPS",
+      "department": "SEO 2",
       "timestamp": "2026-04-21T09:05:00.8888888Z",
-      "department_std": "OPS"
+      "department_std": "SEO 2",
+      "department_orig": "OPS",
+      "department_std_orig": "OPS"
     },
     {
       "name": "มานะ สู้งาน",
       "order": "55",
-      "department": "OPS",
+      "department": "SEO 2",
       "timestamp": "2026-04-21T09:47:00.5959595Z",
-      "department_std": "OPS"
+      "department_std": "SEO 2",
+      "department_orig": "OPS",
+      "department_std_orig": "OPS"
     },
     {
       "name": "ยุทธนา แก้วใส",
       "order": "35",
-      "department": "FIN",
+      "department": "SEO 1",
       "timestamp": "2026-04-21T09:27:00.3535353Z",
-      "department_std": "FIN"
+      "department_std": "SEO 1",
+      "department_orig": "FIN",
+      "department_std_orig": "FIN"
     },
     {
       "name": "รักษ์ สุขสันต์",
       "order": "17",
-      "department": "FIN",
+      "department": "SEO 1",
       "timestamp": "2026-04-21T09:09:00.3030303Z",
-      "department_std": "FIN"
+      "department_std": "SEO 1",
+      "department_orig": "FIN",
+      "department_std_orig": "FIN"
     },
     {
       "name": "รัชนี วรรณงาม",
       "order": "64",
-      "department": "HR",
+      "department": "SEO 3",
       "timestamp": "2026-04-21T09:56:00.5151515Z",
-      "department_std": "HR"
+      "department_std": "SEO 3",
+      "department_orig": "HR",
+      "department_std_orig": "HR"
     },
     {
       "name": "รัตนา พลาย",
       "order": "6",
-      "department": "FIN",
+      "department": "SEO 1",
       "timestamp": "2026-04-21T08:58:00.1111111Z",
-      "department_std": "FIN"
+      "department_std": "SEO 1",
+      "department_orig": "FIN",
+      "department_std_orig": "FIN"
     },
     {
       "name": "ราตรี สดใส",
       "order": "54",
-      "department": "BP",
+      "department": "Power plant",
       "timestamp": "2026-04-21T09:46:00.4848484Z",
-      "department_std": "BP"
+      "department_std": "Power plant",
+      "department_orig": "BP",
+      "department_std_orig": "BP"
     },
     {
       "name": "ลลิตา ทองคำ",
       "order": "26",
       "department": "IT",
       "timestamp": "2026-04-21T09:18:00.3434343Z",
-      "department_std": "IT"
+      "department_std": "IT",
+      "department_orig": "IT",
+      "department_std_orig": "IT"
     },
     {
       "name": "ลัดดา สุขสม",
       "order": "67",
-      "department": "BP",
+      "department": "Power plant",
       "timestamp": "2026-04-21T09:59:00.8484848Z",
-      "department_std": "BP"
+      "department_std": "Power plant",
+      "department_orig": "BP",
+      "department_std_orig": "BP"
     },
     {
       "name": "วรรณา สมหวัง",
       "order": "22",
-      "department": "MKT",
+      "department": "SEO 4",
       "timestamp": "2026-04-21T09:14:00.8080808Z",
-      "department_std": "MKT"
+      "department_std": "SEO 4",
+      "department_orig": "MKT",
+      "department_std_orig": "MKT"
     },
     {
       "name": "วันดี สุขใส",
       "order": "40",
-      "department": "MKT",
+      "department": "SEO 4",
       "timestamp": "2026-04-21T09:32:00.8181818Z",
-      "department_std": "MKT"
+      "department_std": "SEO 4",
+      "department_orig": "MKT",
+      "department_std_orig": "MKT"
     },
     {
       "name": "วิชัย สมบูรณ์",
       "order": "7",
-      "department": "OPS",
+      "department": "SEO 2",
       "timestamp": "2026-04-21T08:59:00.2222222Z",
-      "department_std": "OPS"
+      "department_std": "SEO 2",
+      "department_orig": "OPS",
+      "department_std_orig": "OPS"
     },
     {
       "name": "วิโรจน์ เข้มแข็ง",
       "order": "57",
-      "department": "HR",
+      "department": "SEO 3",
       "timestamp": "2026-04-21T09:49:00.7272727Z",
-      "department_std": "HR"
+      "department_std": "SEO 3",
+      "department_orig": "HR",
+      "department_std_orig": "HR"
     },
     {
       "name": "วิไลพร แสนสุข",
       "order": "60",
       "department": "MGT",
       "timestamp": "2026-04-21T09:52:00.1616161Z",
-      "department_std": "MGT"
+      "department_std": "MGT",
+      "department_orig": "MGT",
+      "department_std_orig": "MGT"
     },
     {
       "name": "วีระ สง่างาม",
       "order": "45",
-      "department": "HR",
+      "department": "SEO 3",
       "timestamp": "2026-04-21T09:37:00.4747474Z",
-      "department_std": "HR"
+      "department_std": "SEO 3",
+      "department_orig": "HR",
+      "department_std_orig": "HR"
     },
     {
       "name": "วุฒิชัย ดีเลิศ",
       "order": "37",
-      "department": "OPS",
+      "department": "SEO 2",
       "timestamp": "2026-04-21T09:29:00.5757575Z",
-      "department_std": "OPS"
+      "department_std": "SEO 2",
+      "department_orig": "OPS",
+      "department_std_orig": "OPS"
     },
     {
       "name": "ศศิธร บุญมา",
       "order": "36",
-      "department": "BP",
+      "department": "Power plant",
       "timestamp": "2026-04-21T09:28:00.4646464Z",
-      "department_std": "BP"
+      "department_std": "Power plant",
+      "department_orig": "BP",
+      "department_std_orig": "BP"
     },
     {
       "name": "ศิริพร หวังดี",
       "order": "10",
-      "department": "MKT",
+      "department": "SEO 4",
       "timestamp": "2026-04-21T09:02:00.5555555Z",
-      "department_std": "MKT"
+      "department_std": "SEO 4",
+      "department_orig": "MKT",
+      "department_std_orig": "MKT"
     },
     {
       "name": "ศุภชัย ร่มเย็น",
       "order": "66",
-      "department": "FIN",
+      "department": "SEO 1",
       "timestamp": "2026-04-21T09:58:00.7373737Z",
-      "department_std": "FIN"
+      "department_std": "SEO 1",
+      "department_orig": "FIN",
+      "department_std_orig": "FIN"
     },
     {
       "name": "ศุภโชค ชื่นพิมลชาญกิจ",
       "order": "600",
       "department": "⭐ VIP - SQT",
       "timestamp": "2026-05-25T03:45:11.6018117Z",
-      "department_std": "VIP SQT"
+      "department_std": "VIP SQT",
+      "department_orig": "⭐ VIP - SQT",
+      "department_std_orig": "VIP SQT"
     },
     {
       "name": "สมชาย ใจดี",
       "order": "1",
       "department": "IT",
       "timestamp": "2026-04-21T08:51:13.7937020Z",
-      "department_std": "IT"
+      "department_std": "IT",
+      "department_orig": "IT",
+      "department_std_orig": "IT"
     },
     {
       "name": "สมพงษ์ ขยันดี",
       "order": "70",
-      "department": "HR",
+      "department": "SEO 3",
       "timestamp": "2026-04-21T10:02:00.2828282Z",
-      "department_std": "HR"
+      "department_std": "SEO 3",
+      "department_orig": "HR",
+      "department_std_orig": "HR"
     },
     {
       "name": "สมศรี บุญรักษ์",
       "order": "48",
-      "department": "BP",
+      "department": "Power plant",
       "timestamp": "2026-04-21T09:40:00.7171717Z",
-      "department_std": "BP"
+      "department_std": "Power plant",
+      "department_orig": "BP",
+      "department_std_orig": "BP"
     },
     {
       "name": "สายชล ดอกไม้",
       "order": "51",
-      "department": "HR",
+      "department": "SEO 3",
       "timestamp": "2026-04-21T09:43:00.1515151Z",
-      "department_std": "HR"
+      "department_std": "SEO 3",
+      "department_orig": "HR",
+      "department_std_orig": "HR"
     },
     {
       "name": "สายฝน มีชัย",
       "order": "42",
-      "department": "BP",
+      "department": "Power plant",
       "timestamp": "2026-04-21T09:34:00.1414141Z",
-      "department_std": "BP"
+      "department_std": "Power plant",
+      "department_orig": "BP",
+      "department_std_orig": "BP"
     },
     {
       "name": "สิทธิ์ ดำรงค์",
       "order": "25",
-      "department": "OPS",
+      "department": "SEO 2",
       "timestamp": "2026-04-21T09:17:00.2323232Z",
-      "department_std": "OPS"
+      "department_std": "SEO 2",
+      "department_orig": "OPS",
+      "department_std_orig": "OPS"
     },
     {
       "name": "สุดา วัฒนา",
       "order": "15",
-      "department": "HR",
+      "department": "SEO 3",
       "timestamp": "2026-04-21T09:07:00.1010101Z",
-      "department_std": "HR"
+      "department_std": "SEO 3",
+      "department_orig": "HR",
+      "department_std_orig": "HR"
     },
     {
       "name": "สุนทร ดีงาม",
       "order": "62",
-      "department": "OPS",
+      "department": "SEO 2",
       "timestamp": "2026-04-21T09:54:00.3838383Z",
-      "department_std": "OPS"
+      "department_std": "SEO 2",
+      "department_orig": "OPS",
+      "department_std_orig": "OPS"
     },
     {
       "name": "สุภาพร มีมาก",
       "order": "58",
-      "department": "MKT",
+      "department": "SEO 4",
       "timestamp": "2026-04-21T09:50:00.8383838Z",
-      "department_std": "MKT"
+      "department_std": "SEO 4",
+      "department_orig": "MKT",
+      "department_std_orig": "MKT"
     },
     {
       "name": "สุรชัย มั่งมี",
       "order": "31",
-      "department": "OPS",
+      "department": "SEO 2",
       "timestamp": "2026-04-21T09:23:00.8989898Z",
-      "department_std": "OPS"
+      "department_std": "SEO 2",
+      "department_orig": "OPS",
+      "department_std_orig": "OPS"
     },
     {
       "name": "อนุชา ยิ้มแย้ม",
       "order": "11",
-      "department": "FIN",
+      "department": "SEO 1",
       "timestamp": "2026-04-21T09:03:00.6666666Z",
-      "department_std": "FIN"
+      "department_std": "SEO 1",
+      "department_orig": "FIN",
+      "department_std_orig": "FIN"
     },
     {
       "name": "อรพิน สุขเจริญ",
       "order": "20",
       "department": "IT",
       "timestamp": "2026-04-21T09:12:00.6060606Z",
-      "department_std": "IT"
+      "department_std": "IT",
+      "department_orig": "IT",
+      "department_std_orig": "IT"
     },
     {
       "name": "อัมพร ยั่งยืน",
       "order": "53",
-      "department": "FIN",
+      "department": "SEO 1",
       "timestamp": "2026-04-21T09:45:00.3737373Z",
-      "department_std": "FIN"
+      "department_std": "SEO 1",
+      "department_orig": "FIN",
+      "department_std_orig": "FIN"
     },
     {
       "name": "อาภา ศรีงาม",
       "order": "28",
-      "department": "MKT",
+      "department": "SEO 4",
       "timestamp": "2026-04-21T09:20:00.5656565Z",
-      "department_std": "MKT"
+      "department_std": "SEO 4",
+      "department_orig": "MKT",
+      "department_std_orig": "MKT"
     },
     {
       "name": "เกรียงศักดิ์ พลแสน",
       "order": "29",
-      "department": "FIN",
+      "department": "SEO 1",
       "timestamp": "2026-04-21T09:21:00.6767676Z",
-      "department_std": "FIN"
+      "department_std": "SEO 1",
+      "department_orig": "FIN",
+      "department_std_orig": "FIN"
     },
     {
       "name": "เขียดผู้มีแกก",
       "order": "3",
-      "department": "BP",
+      "department": "Power plant",
       "timestamp": "2026-04-21T08:55:00.2687156Z",
-      "department_std": "BP"
+      "department_std": "Power plant",
+      "department_orig": "BP",
+      "department_std_orig": "BP"
     },
     {
       "name": "ไพบูลย์ ทรัพย์สิน",
       "order": "33",
-      "department": "HR",
+      "department": "SEO 3",
       "timestamp": "2026-04-21T09:25:00.1313131Z",
-      "department_std": "HR"
+      "department_std": "SEO 3",
+      "department_orig": "HR",
+      "department_std_orig": "HR"
     }
   ],
   "updated": "2026-05-25T03:45:32.2711209Z",
-  "generatedAt": "2026-05-25T04:07:15Z",
-  "dedupeRule": "by name, keep latest timestamp"
+  "generatedAt": "2026-05-25T04:12:49Z",
+  "dedupeRule": "by name, keep latest timestamp",
+  "transform": {
+    "replacedDepartments": {
+      "FIN": "SEO 1",
+      "OPS": "SEO 2",
+      "HR": "SEO 3",
+      "MKT": "SEO 4",
+      "BP": "Power plant"
+    }
+  }
 }

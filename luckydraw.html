@@ -23,6 +23,7 @@
   --border-bright: rgba(100,160,255,0.35);
   --r1:            #5A9EFF;
   --r2:            #A8C8FF;
+  --r3:            #7BE0C8;
   --grand:         #FFD700;
 }
 
@@ -62,7 +63,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .last-updated { font-size:11px; color:var(--text-sub); text-align:right; line-height:1.6; font-weight:500; }
 
 /* ── MAIN ── */
-.main { display:grid; grid-template-columns:1fr 1fr 310px; gap:0; overflow:hidden; height:100%; }
+.main { display:grid; grid-template-columns:1fr 1fr 1fr 310px; gap:0; overflow:hidden; height:100%; }
 
 /* ── PANELS ── */
 .panel { display:flex; flex-direction:column; overflow:hidden; border-right:1px solid var(--border); position:relative; background:linear-gradient(180deg,var(--bg2),var(--bg)); }
@@ -70,6 +71,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .panel-top-bar { height:3px; flex-shrink:0; }
 .p1 .panel-top-bar { background:linear-gradient(90deg,transparent,var(--r1),transparent); }
 .p2 .panel-top-bar { background:linear-gradient(90deg,transparent,var(--r2),transparent); }
+.p3 .panel-top-bar { background:linear-gradient(90deg,transparent,var(--r3),transparent); }
 .pg .panel-top-bar { background:linear-gradient(90deg,transparent,var(--grand),transparent); }
 
 .panel-header { padding:14px 22px 12px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border); flex-shrink:0; background:rgba(9,21,48,0.75); }
@@ -77,14 +79,17 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .panel-icon { width:34px; height:34px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:15px; flex-shrink:0; }
 .p1 .panel-icon { background:rgba(90,158,255,0.15); border:1px solid rgba(90,158,255,0.35); }
 .p2 .panel-icon { background:rgba(168,200,255,0.12); border:1px solid rgba(168,200,255,0.3); }
+.p3 .panel-icon { background:rgba(123,224,200,0.12); border:1px solid rgba(123,224,200,0.3); }
 .pg .panel-icon { background:rgba(255,215,0,0.12); border:1px solid rgba(255,215,0,0.35); }
 .panel-title { font-family:'Prompt',sans-serif; font-size:15px; font-weight:600; letter-spacing:0.5px; }
 .p1 .panel-title { color:var(--r1); }
 .p2 .panel-title { color:var(--r2); }
+.p3 .panel-title { color:var(--r3); }
 .pg .panel-title { color:var(--grand); }
 .panel-count { font-family:'Prompt',sans-serif; font-size:12px; padding:4px 12px; border-radius:12px; font-weight:600; }
 .p1 .panel-count { background:rgba(90,158,255,0.18); color:#8BBEFF; border:1px solid rgba(90,158,255,0.3); }
 .p2 .panel-count { background:rgba(168,200,255,0.15); color:#C0D8FF; border:1px solid rgba(168,200,255,0.3); }
+.p3 .panel-count { background:rgba(123,224,200,0.15); color:#9EEEDD; border:1px solid rgba(123,224,200,0.3); }
 
 /* ── WINNER LIST ── */
 .winner-scroll { flex:1; overflow-y:auto; padding:12px 16px; scrollbar-width:thin; scrollbar-color:rgba(90,158,255,0.2) transparent; }
@@ -96,6 +101,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .winner-rank { width:26px; height:26px; border-radius:6px; display:flex; align-items:center; justify-content:center; font-family:'Prompt',sans-serif; font-size:12px; font-weight:600; flex-shrink:0; }
 .p1 .winner-rank { background:rgba(90,158,255,0.2); color:#8BBEFF; }
 .p2 .winner-rank { background:rgba(168,200,255,0.18); color:#C0D8FF; }
+.p3 .winner-rank { background:rgba(123,224,200,0.18); color:#9EEEDD; }
 .winner-info { flex:1; min-width:0; }
 .winner-name { font-size:15px; font-weight:600; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .winner-dept { font-size:12px; color:var(--text-sub); margin-top:2px; }
@@ -168,6 +174,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 }
 .p1 .slot-window { border:2px solid rgba(90,158,255,0.7); box-shadow:0 0 50px rgba(90,158,255,0.3),inset 0 0 30px rgba(90,158,255,0.08); }
 .p2 .slot-window { border:2px solid rgba(168,200,255,0.7); box-shadow:0 0 50px rgba(168,200,255,0.3),inset 0 0 30px rgba(168,200,255,0.08); }
+.p3 .slot-window { border:2px solid rgba(123,224,200,0.7); box-shadow:0 0 50px rgba(123,224,200,0.3),inset 0 0 30px rgba(123,224,200,0.08); }
 
 .slot-inner { background:rgba(9,21,48,0.9); padding:22px 24px 18px; position:relative; }
 .slot-scan { position:absolute; left:0; right:0; height:2px; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.6),transparent); animation:scan-line 0.35s linear infinite; }
@@ -178,6 +185,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .slot-counter { font-family:'Prompt',sans-serif; font-size:11px; letter-spacing:2px; text-align:center; margin-top:8px; }
 .p1 .slot-counter { color:#8BBEFF; }
 .p2 .slot-counter { color:#C0D8FF; }
+.p3 .slot-counter { color:#9EEEDD; }
 
 /* Corner glow lines */
 .slot-window::before, .slot-window::after {
@@ -187,6 +195,8 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .p1 .slot-window::after  { bottom:0; right:0; border-bottom:2px solid var(--r1); border-right:2px solid var(--r1); }
 .p2 .slot-window::before { top:0; left:0; border-top:2px solid var(--r2); border-left:2px solid var(--r2); }
 .p2 .slot-window::after  { bottom:0; right:0; border-bottom:2px solid var(--r2); border-right:2px solid var(--r2); }
+.p3 .slot-window::before { top:0; left:0; border-top:2px solid var(--r3); border-left:2px solid var(--r3); }
+.p3 .slot-window::after  { bottom:0; right:0; border-bottom:2px solid var(--r3); border-right:2px solid var(--r3); }
 
 /* ══════════════════════════════════════════════
    ROUND COMPLETE BANNER
@@ -204,6 +214,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .banner-title { font-family:'Prompt',sans-serif; font-size:22px; font-weight:700; text-align:center; letter-spacing:1px; }
 .banner-r1 { color:var(--r1); }
 .banner-r2 { color:var(--r2); }
+.banner-r3 { color:var(--r3); }
 .banner-sub { font-size:14px; color:var(--text-sub); }
 .banner-close { margin-top:6px; font-family:'Prompt',sans-serif; font-size:12px; color:var(--text-dim); padding:8px 22px; border-radius:6px; background:rgba(30,79,194,0.15); border:1px solid var(--border); cursor:pointer; transition:background 0.15s; }
 .banner-close:hover { background:rgba(30,79,194,0.3); }
@@ -262,6 +273,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 }
 .rv-b1    { background:rgba(90,158,255,0.15); color:#8BBEFF; border:1px solid rgba(90,158,255,0.4); }
 .rv-b2    { background:rgba(168,200,255,0.12); color:#C0D8FF; border:1px solid rgba(168,200,255,0.35); }
+.rv-b3    { background:rgba(123,224,200,0.12); color:#9EEEDD; border:1px solid rgba(123,224,200,0.35); }
 .rv-grand { background:rgba(255,215,0,0.12); color:var(--gold); border:1px solid rgba(255,215,0,0.4); letter-spacing:3px; }
 
 .rv-num { font-size:13px; color:var(--text-dim); letter-spacing:2px; margin-bottom:-4px; }
@@ -270,6 +282,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 @keyframes name-pop { from{opacity:0;transform:scale(0.5) translateY(16px);} to{opacity:1;transform:scale(1) translateY(0);} }
 .rv-name-r1    { color:var(--text); text-shadow:0 0 30px rgba(90,158,255,0.6); }
 .rv-name-r2    { color:var(--text); text-shadow:0 0 30px rgba(168,200,255,0.6); }
+.rv-name-r3    { color:var(--text); text-shadow:0 0 30px rgba(123,224,200,0.6); }
 .rv-name-grand { color:var(--gold); font-size:52px; text-shadow:0 0 20px rgba(255,215,0,0.7),0 0 60px rgba(255,215,0,0.3); }
 
 .rv-dept { font-size:15px; color:var(--text-sub); font-weight:500; }
@@ -317,6 +330,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
       <div class="meta-chip"><div class="live-dot"></div><span>ผู้ลงทะเบียน</span><span class="val" id="total-count">—</span></div>
       <div class="meta-chip"><span>รอบที่ 1</span><span class="val" id="hdr-r1">0/10</span></div>
       <div class="meta-chip"><span>รอบที่ 2</span><span class="val" id="hdr-r2">0/10</span></div>
+      <div class="meta-chip"><span>รอบที่ 3</span><span class="val" id="hdr-r3">0/10</span></div>
       <div class="last-updated" id="last-updated">กำลังโหลด...</div>
     </div>
   </header>
@@ -395,6 +409,41 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
       </div>
     </div>
 
+    <!-- ══ ROUND 3 ══ -->
+    <div class="panel p3" id="panel3">
+      <div class="panel-top-bar"></div>
+      <div class="panel-header">
+        <div class="panel-label-group">
+          <div class="panel-icon">🎀</div>
+          <div><div class="panel-title">รอบที่ 3</div></div>
+        </div>
+        <div class="panel-count" id="count3">0 / 10</div>
+      </div>
+      <div class="slot-overlay" id="slot3">
+        <div class="slot-label">กำลังสุ่มผู้โชคดี รอบที่ 3</div>
+        <div class="slot-window">
+          <div class="slot-inner">
+            <div class="slot-scan"></div>
+            <div class="slot-rolling" id="roll3-name">—</div>
+            <div class="slot-dept"    id="roll3-dept"></div>
+            <div class="slot-counter" id="roll3-count">0 / 10</div>
+          </div>
+        </div>
+      </div>
+      <div class="round-banner" id="banner3">
+        <div class="banner-icon">🥳</div>
+        <div class="banner-title banner-r3">รอบที่ 3 เสร็จสิ้น!</div>
+        <div class="banner-sub">ผู้โชคดีทั้งหมด 10 คน</div>
+        <div class="banner-close" onclick="closeBanner(3)">ดูรายชื่อทั้งหมด ›</div>
+      </div>
+      <div class="winner-scroll" id="list3">
+        <div class="empty-state"><div class="empty-ring">?</div><div class="empty-text">รอการสุ่มรอบที่ 3</div></div>
+      </div>
+      <div class="panel-footer">
+        <button class="draw-btn btn-r2" id="btn3" disabled onclick="startDraw(3)" style="background:linear-gradient(135deg,#0D5044,#127A66 60%,#7BE0C8);box-shadow:0 2px 16px rgba(18,122,102,0.4);">✦ สุ่มผู้โชคดี รอบที่ 3</button>
+      </div>
+    </div>
+
     <!-- ══ GRAND PRIZE ══ -->
     <div class="panel pg">
       <div class="panel-top-bar"></div>
@@ -407,10 +456,11 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
       <div class="grand-body">
         <div class="stats-row">
           <div class="stat-card"><div class="stat-label">ผู้ลงทะเบียนทั้งหมด</div><div class="stat-value" id="stat-total">—</div></div>
-          <div class="stat-card"><div class="stat-label">รอบที่ผ่านมา</div><div class="stat-value" id="stat-rounds">0 / 2</div></div>
+          <div class="stat-card"><div class="stat-label">รอบที่ผ่านมา</div><div class="stat-value" id="stat-rounds">0 / 3</div></div>
         </div>
         <div id="status-r1" class="status-strip strip-pending">● รอบที่ 1 ยังไม่ได้สุ่ม</div>
         <div id="status-r2" class="status-strip strip-pending">● รอบที่ 2 ยังไม่ได้สุ่ม</div>
+        <div id="status-r3" class="status-strip strip-pending">● รอบที่ 3 ยังไม่ได้สุ่ม</div>
         <div class="grand-trophy-zone" id="grand-zone">
           <div class="grand-trophy-icon">🏆</div>
           <div class="grand-order-badge">รางวัล Grand Prize</div>
@@ -418,7 +468,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
         </div>
       </div>
       <div class="panel-footer">
-        <button class="draw-btn btn-grand" id="btn3" disabled onclick="revealGrand()">★ เปิดเผย Grand Prize</button>
+        <button class="draw-btn btn-grand" id="btn4" disabled onclick="revealGrand()">★ เปิดเผย Grand Prize</button>
       </div>
     </div>
 
@@ -443,7 +493,7 @@ const GRAND_HOLD_MS  = 99999;  // Grand Prize ไม่ auto-close (ต้อง
    STATE
 ════════════════════════════════════════════ */
 let allItems = [], pool = [];
-let round1Done = false, round2Done = false, grandDone = false;
+let round1Done = false, round2Done = false, round3Done = false, grandDone = false;
 
 /* ════════════════════════════════════════════
    PARTICLE CANVAS
@@ -619,7 +669,7 @@ function spinOne(round, winner, idx, total, onDone){
       if(ms < 800){ ms += 75; setTimeout(decel, ms); }
       else {
         nameEl.classList.remove('flicker');
-        nameEl.style.color = round===1 ? '#8BBEFF' : '#C0D8FF';
+        nameEl.style.color = round===1 ? '#8BBEFF' : round===2 ? '#C0D8FF' : '#9EEEDD';
         deptEl.style.color = 'var(--text-sub)';
 
         // Brief pause, then full-screen
@@ -628,8 +678,8 @@ function spinOne(round, winner, idx, total, onDone){
           nameEl.style.color = '';
 
           const badge     = `รอบที่ ${round} • ผู้โชคดีลำดับที่ ${idx+1} / ${total}`;
-          const badgeClass= round===1 ? 'rv-b1' : 'rv-b2';
-          const nameClass = round===1 ? 'rv-name-r1' : 'rv-name-r2';
+          const badgeClass= round===1 ? 'rv-b1' : round===2 ? 'rv-b2' : 'rv-b3';
+          const nameClass = round===1 ? 'rv-name-r1' : round===2 ? 'rv-name-r2' : 'rv-name-r3';
 
           showReveal(winner, badge, badgeClass, nameClass, REVEAL_HOLD_MS, ()=>{
             // Append to list
@@ -697,15 +747,22 @@ function finishRound(round){
     document.getElementById('btn2').disabled=false;
     document.getElementById('status-r1').className='status-strip strip-done';
     document.getElementById('status-r1').textContent='✓ รอบที่ 1 เสร็จสิ้น — ผู้โชคดี 10 คน';
-    document.getElementById('stat-rounds').textContent='1 / 2';
+    document.getElementById('stat-rounds').textContent='1 / 3';
     confetti([...BLUE_COLORS,'#FFFFFF'],70);
-  } else {
+  } else if(round===2){
     round2Done=true;
     document.getElementById('btn3').disabled=false;
     document.getElementById('status-r2').className='status-strip strip-done';
     document.getElementById('status-r2').textContent='✓ รอบที่ 2 เสร็จสิ้น — ผู้โชคดี 10 คน';
-    document.getElementById('stat-rounds').textContent='2 / 2';
+    document.getElementById('stat-rounds').textContent='2 / 3';
     confetti([...BLUE_COLORS,'#C0D8FF','#FFFFFF'],70);
+  } else {
+    round3Done=true;
+    document.getElementById('btn4').disabled=false;
+    document.getElementById('status-r3').className='status-strip strip-done';
+    document.getElementById('status-r3').textContent='✓ รอบที่ 3 เสร็จสิ้น — ผู้โชคดี 10 คน';
+    document.getElementById('stat-rounds').textContent='3 / 3';
+    confetti([...BLUE_COLORS,'#9EEEDD','#FFFFFF'],70);
   }
 }
 
@@ -715,7 +772,7 @@ function closeBanner(round){ document.getElementById('banner'+round).classList.r
    GRAND PRIZE
 ════════════════════════════════════════════ */
 function revealGrand(){
-  const btn  = document.getElementById('btn3');
+  const btn  = document.getElementById('btn4');
   const zone = document.getElementById('grand-zone');
   btn.disabled=true;
   btn.innerHTML='<span class="spin">⟳</span> กำลังค้นหา...';
@@ -780,7 +837,7 @@ function showGrandReveal(grand){
       <div class="grand-dept">${grand.department}</div>
       <div class="grand-reg">หมายเลขลงทะเบียน #${grand.order}</div>
     ` : '<div class="grand-waiting">ไม่พบข้อมูล</div>';
-    const btn = document.getElementById('btn3');
+    const btn = document.getElementById('btn4');
     btn.className='draw-btn btn-done'; btn.textContent='★ ประกาศแล้ว';
     grandDone=true;
   };

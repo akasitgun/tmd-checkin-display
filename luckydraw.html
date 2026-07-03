@@ -25,6 +25,8 @@
   --r2:            #A8C8FF;
   --r3:            #7BE0C8;
   --grand:         #FFD700;
+  --secret:        #C9A8FF;
+  --secret-dim:    #8B5FBF;
 }
 
 html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'Sarabun', sans-serif; overflow: hidden; }
@@ -55,7 +57,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 @keyframes spin-slow { to { transform: rotate(360deg); } }
 .header-title { font-family:'Prompt',sans-serif; font-size:19px; font-weight:700; color:var(--gold); letter-spacing:1px; line-height:1.1; text-shadow:0 0 22px rgba(255,215,0,0.4); }
 .header-sub { font-size:12px; color:var(--text-sub); margin-top:3px; }
-.header-meta { display:flex; gap:12px; align-items:center; flex-shrink:0; }
+.header-meta { display:flex; gap:10px; align-items:center; flex-shrink:0; flex-wrap:wrap; justify-content:flex-end; }
 .meta-chip { display:flex; align-items:center; gap:7px; padding:5px 13px; border-radius:20px; background:rgba(30,79,194,0.25); border:1px solid var(--border-bright); font-size:12px; font-weight:500; color:var(--text-sub); }
 .meta-chip .val { font-family:'Prompt',sans-serif; font-weight:600; color:var(--gold-light); font-size:14px; }
 .live-dot { width:7px; height:7px; border-radius:50%; background:#4ADE80; box-shadow:0 0 6px #4ADE80; animation:pulse-dot 2s infinite; }
@@ -63,7 +65,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .last-updated { font-size:11px; color:var(--text-sub); text-align:right; line-height:1.6; font-weight:500; }
 
 /* ── MAIN ── */
-.main { display:grid; grid-template-columns:1fr 1fr 1fr 310px; gap:0; overflow:hidden; height:100%; }
+.main { display:grid; grid-template-columns:1fr 1fr 1fr 270px 250px; gap:0; overflow:hidden; height:100%; }
 
 /* ── PANELS ── */
 .panel { display:flex; flex-direction:column; overflow:hidden; border-right:1px solid var(--border); position:relative; background:linear-gradient(180deg,var(--bg2),var(--bg)); }
@@ -73,6 +75,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .p2 .panel-top-bar { background:linear-gradient(90deg,transparent,var(--r2),transparent); }
 .p3 .panel-top-bar { background:linear-gradient(90deg,transparent,var(--r3),transparent); }
 .pg .panel-top-bar { background:linear-gradient(90deg,transparent,var(--grand),transparent); }
+.ps .panel-top-bar { background:linear-gradient(90deg,transparent,var(--secret),transparent); }
 
 .panel-header { padding:14px 22px 12px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border); flex-shrink:0; background:rgba(9,21,48,0.75); }
 .panel-label-group { display:flex; align-items:center; gap:10px; }
@@ -81,11 +84,13 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .p2 .panel-icon { background:rgba(168,200,255,0.12); border:1px solid rgba(168,200,255,0.3); }
 .p3 .panel-icon { background:rgba(123,224,200,0.12); border:1px solid rgba(123,224,200,0.3); }
 .pg .panel-icon { background:rgba(255,215,0,0.12); border:1px solid rgba(255,215,0,0.35); }
+.ps .panel-icon { background:rgba(201,168,255,0.12); border:1px solid rgba(201,168,255,0.35); }
 .panel-title { font-family:'Prompt',sans-serif; font-size:15px; font-weight:600; letter-spacing:0.5px; }
 .p1 .panel-title { color:var(--r1); }
 .p2 .panel-title { color:var(--r2); }
 .p3 .panel-title { color:var(--r3); }
 .pg .panel-title { color:var(--grand); }
+.ps .panel-title { color:var(--secret); }
 .panel-count { font-family:'Prompt',sans-serif; font-size:12px; padding:4px 12px; border-radius:12px; font-weight:600; }
 .p1 .panel-count { background:rgba(90,158,255,0.18); color:#8BBEFF; border:1px solid rgba(90,158,255,0.3); }
 .p2 .panel-count { background:rgba(168,200,255,0.15); color:#C0D8FF; border:1px solid rgba(168,200,255,0.3); }
@@ -130,6 +135,21 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .btn-r2 { background:linear-gradient(135deg,#1E3A6E,#2E5DAA 60%,#7EB3FF); color:#fff; box-shadow:0 2px 16px rgba(46,93,170,0.4); }
 .btn-grand { background:linear-gradient(135deg,#92600A,#D4900A 50%,#FFD700); color:#1A0800; font-weight:700; box-shadow:0 2px 20px rgba(212,144,10,0.45); }
 .btn-done { background:rgba(30,79,194,0.08)!important; color:var(--text-dim)!important; border:1px solid var(--border)!important; cursor:default!important; box-shadow:none!important; font-weight:500!important; }
+.btn-secret { background:linear-gradient(135deg,#3B2A5C,#5B3E8C 60%,#8B5FBF); color:#EDE3FF; box-shadow:0 2px 16px rgba(139,95,191,0.4); }
+.btn-secret-ready { background:linear-gradient(135deg,#92600A,#D4900A 50%,#FFD700)!important; color:#1A0800!important; font-weight:700!important; box-shadow:0 2px 22px rgba(255,215,0,0.5)!important; position:relative; overflow:hidden; }
+.btn-secret-ready::after { content:''; position:absolute; top:0; left:-60%; width:40%; height:100%; background:linear-gradient(120deg,transparent,rgba(255,255,255,0.55),transparent); animation:shimmer-sweep 1.8s ease-in-out infinite; }
+@keyframes shimmer-sweep { 0%{left:-60%;} 100%{left:130%;} }
+
+/* ── SECRET PRIZE — ROUND 5 ── */
+.secret-body { flex:1; display:flex; flex-direction:column; overflow:hidden; position:relative; }
+.secret-locked { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; padding:20px 16px; text-align:center; transition:opacity 0.3s; }
+.lock-icon { font-size:40px; opacity:0.55; animation:lock-pulse 2.4s ease-in-out infinite; }
+@keyframes lock-pulse { 0%,100%{transform:scale(1);opacity:0.45;} 50%{transform:scale(1.08);opacity:0.8;} }
+.secret-title { font-family:'Prompt',sans-serif; font-size:16px; font-weight:700; color:var(--secret); letter-spacing:2px; }
+.secret-hint { font-size:11.5px; color:var(--text-dim); line-height:1.7; max-width:190px; }
+.secret-locked.ready .lock-icon { animation:lock-shake 0.7s ease-in-out infinite; opacity:1; }
+@keyframes lock-shake { 0%,100%{transform:rotate(0);} 25%{transform:rotate(-10deg);} 75%{transform:rotate(10deg);} }
+.secret-locked.ready .secret-title { color:var(--gold); animation:name-glow 1.6s ease-in-out infinite alternate; }
 
 /* ── GRAND PANEL ── */
 .grand-body { flex:1; display:flex; flex-direction:column; padding:16px; gap:10px; overflow:hidden; }
@@ -175,6 +195,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .p1 .slot-window { border:2px solid rgba(90,158,255,0.7); box-shadow:0 0 50px rgba(90,158,255,0.3),inset 0 0 30px rgba(90,158,255,0.08); }
 .p2 .slot-window { border:2px solid rgba(168,200,255,0.7); box-shadow:0 0 50px rgba(168,200,255,0.3),inset 0 0 30px rgba(168,200,255,0.08); }
 .p3 .slot-window { border:2px solid rgba(123,224,200,0.7); box-shadow:0 0 50px rgba(123,224,200,0.3),inset 0 0 30px rgba(123,224,200,0.08); }
+.ps .slot-window { border:2px solid rgba(201,168,255,0.7); box-shadow:0 0 50px rgba(201,168,255,0.3),inset 0 0 30px rgba(201,168,255,0.08); }
 
 .slot-inner { background:rgba(9,21,48,0.9); padding:22px 24px 18px; position:relative; }
 .slot-scan { position:absolute; left:0; right:0; height:2px; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.6),transparent); animation:scan-line 0.35s linear infinite; }
@@ -186,6 +207,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .p1 .slot-counter { color:#8BBEFF; }
 .p2 .slot-counter { color:#C0D8FF; }
 .p3 .slot-counter { color:#9EEEDD; }
+.ps .slot-counter { color:var(--secret); }
 
 /* Corner glow lines */
 .slot-window::before, .slot-window::after {
@@ -197,6 +219,8 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .p2 .slot-window::after  { bottom:0; right:0; border-bottom:2px solid var(--r2); border-right:2px solid var(--r2); }
 .p3 .slot-window::before { top:0; left:0; border-top:2px solid var(--r3); border-left:2px solid var(--r3); }
 .p3 .slot-window::after  { bottom:0; right:0; border-bottom:2px solid var(--r3); border-right:2px solid var(--r3); }
+.ps .slot-window::before { top:0; left:0; border-top:2px solid var(--secret); border-left:2px solid var(--secret); }
+.ps .slot-window::after  { bottom:0; right:0; border-bottom:2px solid var(--secret); border-right:2px solid var(--secret); }
 
 /* ══════════════════════════════════════════════
    ROUND COMPLETE BANNER
@@ -215,6 +239,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .banner-r1 { color:var(--r1); }
 .banner-r2 { color:var(--r2); }
 .banner-r3 { color:var(--r3); }
+.banner-r5 { color:var(--gold); }
 .banner-sub { font-size:14px; color:var(--text-sub); }
 .banner-close { margin-top:6px; font-family:'Prompt',sans-serif; font-size:12px; color:var(--text-dim); padding:8px 22px; border-radius:6px; background:rgba(30,79,194,0.15); border:1px solid var(--border); cursor:pointer; transition:background 0.15s; }
 .banner-close:hover { background:rgba(30,79,194,0.3); }
@@ -275,6 +300,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .rv-b2    { background:rgba(168,200,255,0.12); color:#C0D8FF; border:1px solid rgba(168,200,255,0.35); }
 .rv-b3    { background:rgba(123,224,200,0.12); color:#9EEEDD; border:1px solid rgba(123,224,200,0.35); }
 .rv-grand { background:rgba(255,215,0,0.12); color:var(--gold); border:1px solid rgba(255,215,0,0.4); letter-spacing:3px; }
+.rv-secret { background:rgba(255,215,0,0.12); color:var(--gold); border:1px solid rgba(201,168,255,0.55); letter-spacing:3px; }
 
 .rv-num { font-size:13px; color:var(--text-dim); letter-spacing:2px; margin-bottom:-4px; }
 
@@ -284,6 +310,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .rv-name-r2    { color:var(--text); text-shadow:0 0 30px rgba(168,200,255,0.6); }
 .rv-name-r3    { color:var(--text); text-shadow:0 0 30px rgba(123,224,200,0.6); }
 .rv-name-grand { color:var(--gold); font-size:52px; text-shadow:0 0 20px rgba(255,215,0,0.7),0 0 60px rgba(255,215,0,0.3); }
+.rv-name-secret { color:var(--gold); font-size:50px; text-shadow:0 0 20px rgba(255,215,0,0.7),0 0 55px rgba(201,168,255,0.4); }
 
 .rv-dept { font-size:15px; color:var(--text-sub); font-weight:500; }
 .rv-reg  { font-size:13px; color:var(--text-dim); }
@@ -331,6 +358,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
       <div class="meta-chip"><span>รอบที่ 1</span><span class="val" id="hdr-r1">0/10</span></div>
       <div class="meta-chip"><span>รอบที่ 2</span><span class="val" id="hdr-r2">0/10</span></div>
       <div class="meta-chip"><span>รอบที่ 3</span><span class="val" id="hdr-r3">0/10</span></div>
+      <div class="meta-chip"><span>รอบที่ 5</span><span class="val" id="hdr-r5">🔒</span></div>
       <div class="last-updated" id="last-updated">กำลังโหลด...</div>
     </div>
   </header>
@@ -472,6 +500,56 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
       </div>
     </div>
 
+    <!-- ══ ROUND 5 — SECRET PRIZE ══ -->
+    <div class="panel ps" id="panel5">
+      <div class="panel-top-bar"></div>
+      <div class="panel-header">
+        <div class="panel-label-group">
+          <div class="panel-icon">🔒</div>
+          <div>
+            <div class="panel-title">รอบที่ 5</div>
+            <div style="font-size:9.5px;color:var(--text-dim);letter-spacing:2px;margin-top:1px;">รางวัลลับ • ทอง</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="secret-body" id="secret-body">
+        <!-- Locked state -->
+        <div class="secret-locked" id="secret-locked">
+          <div class="lock-icon">🔒</div>
+          <div class="secret-title">รางวัลลับ</div>
+          <div class="secret-hint">จะปลดล็อกอัตโนมัติ<br>หลังประกาศ Grand Prize</div>
+        </div>
+
+        <!-- Slot overlay (reused pattern) -->
+        <div class="slot-overlay" id="slot5">
+          <div class="slot-label">กำลังเปิดผนึกรางวัลลับ</div>
+          <div class="slot-window">
+            <div class="slot-inner">
+              <div class="slot-scan"></div>
+              <div class="slot-rolling" id="roll5-name">—</div>
+              <div class="slot-dept"    id="roll5-dept"></div>
+              <div class="slot-counter" id="roll5-count">0 / 1</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Complete banner -->
+        <div class="round-banner" id="banner5">
+          <div class="banner-icon">✨</div>
+          <div class="banner-title banner-r5">รางวัลลับเปิดผนึกแล้ว!</div>
+          <div class="banner-sub">ผู้โชคดี 1 คน • รางวัลทอง</div>
+          <div class="banner-close" onclick="closeBanner(5)">ดูผู้โชคดี ›</div>
+        </div>
+
+        <div class="winner-scroll" id="list5"></div>
+      </div>
+
+      <div class="panel-footer">
+        <button class="draw-btn btn-secret" id="btn5" disabled onclick="startSecretDraw()">🔒 รางวัลลับ (ล็อกอยู่)</button>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -493,7 +571,7 @@ const GRAND_HOLD_MS  = 99999;  // Grand Prize ไม่ auto-close (ต้อง
    STATE
 ════════════════════════════════════════════ */
 let allItems = [], pool = [];
-let round1Done = false, round2Done = false, round3Done = false, grandDone = false;
+let round1Done = false, round2Done = false, round3Done = false, grandDone = false, secretDone = false;
 
 /* ════════════════════════════════════════════
    PARTICLE CANVAS
@@ -840,8 +918,107 @@ function showGrandReveal(grand){
     const btn = document.getElementById('btn4');
     btn.className='draw-btn btn-done'; btn.textContent='★ ประกาศแล้ว';
     grandDone=true;
+    unlockSecret();
   };
   setTimeout(()=>overlay.addEventListener('click',close),1200);
+}
+
+/* ════════════════════════════════════════════
+   SECRET PRIZE — ROUND 5
+════════════════════════════════════════════ */
+function unlockSecret(){
+  const btn  = document.getElementById('btn5');
+  const lock = document.getElementById('secret-locked');
+  btn.disabled = false;
+  btn.className = 'draw-btn btn-secret btn-secret-ready';
+  btn.innerHTML = '🔓 ปลดล็อกรางวัลลับ';
+  if(lock){
+    lock.classList.add('ready');
+    lock.querySelector('.lock-icon').textContent = '🔓';
+    lock.querySelector('.secret-title').textContent = 'รางวัลลับปลดล็อกแล้ว!';
+    lock.querySelector('.secret-hint').innerHTML = 'กดปุ่มด้านล่าง<br>เพื่อเปิดผนึกรางวัลทอง';
+  }
+}
+
+function startSecretDraw(){
+  if(pool.length < 1){ alert('ผู้ลงทะเบียนไม่เพียงพอสำหรับรางวัลลับ'); return; }
+  const btn = document.getElementById('btn5');
+  btn.disabled = true;
+  btn.className = 'draw-btn btn-secret';
+  btn.innerHTML = '<span class="spin">⟳</span> กำลังเปิดผนึก...';
+  const lock = document.getElementById('secret-locked');
+  if(lock) lock.style.display = 'none';
+
+  const winner = [...pool].sort(()=>Math.random()-0.5)[0];
+  pool = pool.filter(x=>x.order!==winner.order);
+
+  spinSecret(winner, ()=>finishSecret());
+}
+
+function spinSecret(winner, onDone){
+  const slot    = document.getElementById('slot5');
+  const nameEl  = document.getElementById('roll5-name');
+  const deptEl  = document.getElementById('roll5-dept');
+  const countEl = document.getElementById('roll5-count');
+
+  nameEl.classList.add('flicker');
+  deptEl.textContent = '';
+  countEl.textContent = '0 / 1';
+  slot.classList.add('active');
+
+  const names = allItems.map(x=>x.name);
+  let spinInt = setInterval(()=>{ nameEl.textContent = names[Math.floor(Math.random()*names.length)]; }, 80);
+
+  setTimeout(()=>{
+    clearInterval(spinInt);
+    let ms = 140;
+    function decel(){
+      const lock = ms >= 750;
+      nameEl.textContent = lock ? winner.name : names[Math.floor(Math.random()*names.length)];
+      deptEl.textContent = lock ? winner.department : '';
+      if(ms < 950){ ms += 85; setTimeout(decel, ms); }
+      else {
+        nameEl.classList.remove('flicker');
+        nameEl.style.color = '#FFD700';
+        deptEl.style.color = 'var(--gold-dim)';
+        countEl.textContent = '1 / 1';
+
+        setTimeout(()=>{
+          slot.classList.remove('active');
+          nameEl.style.color = '';
+
+          showReveal(winner, '✦ SECRET GOLD PRIZE ✦', 'rv-secret', 'rv-name-secret', REVEAL_HOLD_MS, ()=>{
+            const list = document.getElementById('list5');
+            list.innerHTML = '';
+            const el = document.createElement('div');
+            el.className = 'winner-item anim-r1';
+            el.innerHTML = `
+              <div class="winner-rank" style="background:rgba(255,215,0,0.2);color:var(--gold-light);">★</div>
+              <div class="winner-info">
+                <div class="winner-name">${winner.name}</div>
+                <div class="winner-dept">${winner.department}</div>
+              </div>
+              <div class="winner-order">#${winner.order}</div>
+            `;
+            list.appendChild(el);
+            document.getElementById('hdr-r5').textContent = '1/1';
+            onDone();
+          });
+        }, 700);
+      }
+    }
+    decel();
+  }, SLOT_SPIN_MS * 0.68);
+}
+
+function finishSecret(){
+  const btn = document.getElementById('btn5');
+  btn.className = 'draw-btn btn-done';
+  btn.textContent = '✓ ประกาศรางวัลลับแล้ว';
+  btn.disabled = true;
+  document.getElementById('banner5').classList.add('show');
+  secretDone = true;
+  confetti([...GOLD_COLORS,'#FFFFFF'],80);
 }
 
 /* ════════════════════════════════════════════

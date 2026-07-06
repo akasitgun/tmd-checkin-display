@@ -164,6 +164,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .grand-trophy-zone::before { content:''; position:absolute; width:200px; height:200px; border-radius:50%; background:radial-gradient(circle,rgba(255,215,0,0.1),transparent 70%); top:50%; left:50%; transform:translate(-50%,-50%); }
 .grand-waiting { text-align:center; color:var(--text-sub); font-size:13px; line-height:1.8; }
 .grand-trophy-icon { font-size:42px; animation:float 3s ease-in-out infinite; position:relative; z-index:1; }
+.grand-trophy-icon svg { width:1.55em; height:auto; display:block; margin:0 auto; filter:drop-shadow(0 0 8px rgba(255,215,0,0.35)); }
 @keyframes float { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-7px);} }
 .grand-order-badge { font-family:'Prompt',sans-serif; font-size:11px; letter-spacing:2px; color:var(--gold-muted); text-transform:uppercase; position:relative; z-index:1; }
 .grand-name { font-family:'Prompt',sans-serif; font-size:22px; font-weight:700; color:var(--gold); text-align:center; line-height:1.25; position:relative; z-index:1; animation:name-glow 2s ease-in-out infinite alternate; }
@@ -515,7 +516,28 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
         <div id="status-r2" class="status-strip strip-pending">● รอบที่ 2 ยังไม่ได้สุ่ม</div>
         <div id="status-r3" class="status-strip strip-pending">● รอบที่ 3 ยังไม่ได้สุ่ม</div>
         <div class="grand-trophy-zone" id="grand-zone">
-          <div class="grand-trophy-icon">🏆</div>
+          <div class="grand-trophy-icon">
+            <svg viewBox="0 0 130 96" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="cashBackS" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#D9C36A"/><stop offset="100%" stop-color="#9C7A1E"/>
+                </linearGradient>
+                <linearGradient id="cashFrontS" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stop-color="#FFF6D6"/><stop offset="50%" stop-color="#FFE9A8"/><stop offset="100%" stop-color="#F2CB63"/>
+                </linearGradient>
+              </defs>
+              <g transform="rotate(-8 65 48)"><rect x="18" y="26" width="94" height="46" rx="5" fill="url(#cashBackS)" stroke="#6B4400" stroke-width="1.2"/></g>
+              <g transform="rotate(4 65 48)"><rect x="16" y="24" width="98" height="48" rx="5" fill="#E7C465" stroke="#6B4400" stroke-width="1.2"/></g>
+              <rect x="14" y="22" width="102" height="50" rx="5" fill="url(#cashFrontS)" stroke="#6B4400" stroke-width="1.3"/>
+              <path d="M22 30 Q 40 40 22 50" stroke="#B8860B" stroke-width="1" fill="none" opacity="0.5"/>
+              <path d="M108 30 Q 90 40 108 50" stroke="#B8860B" stroke-width="1" fill="none" opacity="0.5"/>
+              <circle cx="34" cy="47" r="13" fill="none" stroke="#8A5A00" stroke-width="1.4"/>
+              <text x="34" y="52" font-family="Georgia, serif" font-size="15" font-weight="700" fill="#8A5A00" text-anchor="middle">฿</text>
+              <text x="86" y="45" font-family="Prompt, sans-serif" font-size="15" font-weight="800" fill="#6B4400" text-anchor="middle">2,000</text>
+              <text x="86" y="60" font-family="Prompt, sans-serif" font-size="9" font-weight="600" fill="#8A5A00" text-anchor="middle" letter-spacing="1">บาท</text>
+              <g fill="#FFF8DC"><path d="M118 6 l2.6 6.4 6.4 2.6 -6.4 2.6 -2.6 6.4 -2.6-6.4 -6.4-2.6 6.4-2.6z" opacity="0.95"/><path d="M6 10 l1.8 4.4 4.4 1.8 -4.4 1.8 -1.8 4.4 -1.8-4.4 -4.4-1.8 4.4-1.8z" opacity="0.8"/></g>
+            </svg>
+          </div>
           <div class="grand-order-badge">รางวัล Grand Prize</div>
           <div class="grand-waiting">กดปุ่มด้านล่าง<br>เพื่อเปิดเผยผู้โชคดี Grand Prize</div>
         </div>
@@ -733,6 +755,39 @@ const GOLD_BAR_SVG = `
   <g fill="#FFF8DC">
     <path d="M104 4 l2.6 6.4 6.4 2.6 -6.4 2.6 -2.6 6.4 -2.6-6.4 -6.4-2.6 6.4-2.6z" opacity="0.95"/>
     <path d="M10 6 l1.8 4.4 4.4 1.8 -4.4 1.8 -1.8 4.4 -1.8-4.4 -4.4-1.8 4.4-1.8z" opacity="0.85"/>
+  </g>
+</svg>`;
+
+// Grand Prize icon — stack of ฿2,000 banknotes (self-contained, no external image needed)
+const CASH_ICON_SVG = `
+<svg viewBox="0 0 130 96" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="cashBack" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#D9C36A"/>
+      <stop offset="100%" stop-color="#9C7A1E"/>
+    </linearGradient>
+    <linearGradient id="cashFront" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#FFF6D6"/>
+      <stop offset="50%" stop-color="#FFE9A8"/>
+      <stop offset="100%" stop-color="#F2CB63"/>
+    </linearGradient>
+  </defs>
+  <g transform="rotate(-8 65 48)">
+    <rect x="18" y="26" width="94" height="46" rx="5" fill="url(#cashBack)" stroke="#6B4400" stroke-width="1.2"/>
+  </g>
+  <g transform="rotate(4 65 48)">
+    <rect x="16" y="24" width="98" height="48" rx="5" fill="#E7C465" stroke="#6B4400" stroke-width="1.2"/>
+  </g>
+  <rect x="14" y="22" width="102" height="50" rx="5" fill="url(#cashFront)" stroke="#6B4400" stroke-width="1.3"/>
+  <path d="M22 30 Q 40 40 22 50" stroke="#B8860B" stroke-width="1" fill="none" opacity="0.5"/>
+  <path d="M108 30 Q 90 40 108 50" stroke="#B8860B" stroke-width="1" fill="none" opacity="0.5"/>
+  <circle cx="34" cy="47" r="13" fill="none" stroke="#8A5A00" stroke-width="1.4"/>
+  <text x="34" y="52" font-family="Georgia, serif" font-size="15" font-weight="700" fill="#8A5A00" text-anchor="middle">฿</text>
+  <text x="86" y="45" font-family="Prompt, sans-serif" font-size="15" font-weight="800" fill="#6B4400" text-anchor="middle">2,000</text>
+  <text x="86" y="60" font-family="Prompt, sans-serif" font-size="9" font-weight="600" fill="#8A5A00" text-anchor="middle" letter-spacing="1">บาท</text>
+  <g fill="#FFF8DC">
+    <path d="M118 6 l2.6 6.4 6.4 2.6 -6.4 2.6 -2.6 6.4 -2.6-6.4 -6.4-2.6 6.4-2.6z" opacity="0.95"/>
+    <path d="M6 10 l1.8 4.4 4.4 1.8 -4.4 1.8 -1.8 4.4 -1.8-4.4 -4.4-1.8 4.4-1.8z" opacity="0.8"/>
   </g>
 </svg>`;
 const BLUE_COLORS = ['#5A9EFF','#A8C8FF','#C8E0FF','#2563EB','#FFFFFF'];
@@ -955,7 +1010,7 @@ function revealGrand(){
 
   // Show suspense spin in grand-zone sidebar
   zone.innerHTML=`
-    <div class="grand-trophy-icon" style="font-size:60px">🏆</div>
+    <div class="grand-trophy-icon" style="font-size:60px">${CASH_ICON_SVG}</div>
     <div class="grand-order-badge" style="animation:name-glow 0.4s infinite alternate">กำลังค้นหา...</div>
     <div class="grand-suspense-name flicker" id="grand-spin-name">—</div>
   `;
@@ -988,7 +1043,7 @@ function showGrandReveal(grand){
   card.style.animation='none'; card.offsetHeight; card.style.animation='';
   card.innerHTML=`
     <div class="rv-badge rv-grand">✦ &nbsp; GRAND PRIZE &nbsp; ✦</div>
-    <div style="font-size:60px;animation:float 2s ease-in-out infinite;margin:4px 0">🏆</div>
+    <div class="grand-trophy-icon" style="font-size:60px;margin:4px 0">${CASH_ICON_SVG}</div>
     <div style="font-family:'Prompt';font-size:12px;color:var(--text-dim);letter-spacing:3px;margin-bottom:4px;">ผู้โชคดีลำดับที่ ${GRAND_ORDER}</div>
     <div class="rv-name rv-name-grand">${grand ? grand.name : '—'}</div>
     <div class="rv-dept" style="color:var(--gold-dim);font-size:16px;">${grand ? grand.department : ''}</div>
@@ -1004,7 +1059,7 @@ function showGrandReveal(grand){
     // Update sidebar
     const zone = document.getElementById('grand-zone');
     zone.innerHTML = grand ? `
-      <div class="grand-trophy-icon">🏆</div>
+      <div class="grand-trophy-icon">${CASH_ICON_SVG}</div>
       <div class="grand-order-badge">ผู้โชคดี Grand Prize • ลำดับที่ ${GRAND_ORDER}</div>
       <div class="grand-name">${grand.name}</div>
       <div class="grand-dept">${grand.department}</div>

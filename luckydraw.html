@@ -789,14 +789,28 @@ function showReveal(winner, badge, badgeClass, nameClass, holdMs, onClose){
   burst(innerWidth/2, innerHeight/2-80, colors, 55);
   confetti(colors, 55);
 
+  // Tap-to-skip and the auto-close timer are two separate triggers for the
+  // same reveal — whichever fires first must cancel the other, and the
+  // close logic must be idempotent. Otherwise a manual tap can leave the
+  // original auto-close timer alive in the background; when it eventually
+  // fires it re-runs onClose() for the OLD winner on top of whatever is on
+  // screen by then, which is what caused names/counts to duplicate.
+  let closed = false;
+  let autoTimer = null;
+  let attachTimer = null;
+
   const close = ()=>{
+    if(closed) return;
+    closed = true;
+    if(autoTimer)   clearTimeout(autoTimer);
+    if(attachTimer) clearTimeout(attachTimer);
     overlay.classList.remove('active');
     overlay.removeEventListener('click', close);
     onClose && onClose();
   };
 
-  setTimeout(()=> overlay.addEventListener('click', close), 500);
-  if(holdMs < 99999) setTimeout(close, holdMs);
+  attachTimer = setTimeout(()=> overlay.addEventListener('click', close), 500);
+  if(holdMs < 99999) autoTimer = setTimeout(close, holdMs);
 }
 
 /* ════════════════════════════════════════════

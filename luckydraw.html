@@ -605,7 +605,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 /* ════════════════════════════════════════════
    CONFIG — แก้ได้ตรงนี้
 ════════════════════════════════════════════ */
-const DATA_URL = './data.json';
+const DATA_URL = 'https://raw.githubusercontent.com/akasitgun/tmd-checkin-display/main/data.json';
 const GRAND_ORDER    = 60;
 const DRAW_PER_ROUND = 10;
 
@@ -658,7 +658,7 @@ let drawnOrders = new Set();
 ════════════════════════════════════════════ */
 async function loadData(){
   try{
-    const res  = await fetch(DATA_URL+'?t='+Date.now());
+    const res  = await fetch(DATA_URL+'?t='+Date.now(), { cache: 'no-store' });
     const json = await res.json();
 
     // Sort by registration order, then de-duplicate rows that share the

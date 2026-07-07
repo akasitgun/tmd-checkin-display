@@ -112,6 +112,23 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .winner-dept { font-size:12px; color:var(--text-sub); margin-top:2px; }
 .winner-order { font-family:'Prompt',sans-serif; font-size:11px; color:var(--text-dim); flex-shrink:0; background:var(--bg3); padding:2px 8px; border-radius:10px; border:1px solid var(--border); }
 
+/* ── REDRAW / "ไม่อยู่ในงาน" CONTROLS ── */
+.redraw-btn {
+  flex-shrink:0; width:26px; height:26px; border-radius:7px; border:1px solid var(--border);
+  background:rgba(255,255,255,0.03); color:var(--text-dim); font-size:12.5px; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; transition:all 0.15s;
+}
+.redraw-btn:hover { background:rgba(239,68,68,0.15); border-color:rgba(239,68,68,0.4); color:#FCA5A5; transform:rotate(-20deg); }
+.replaced-tag { font-size:10px; color:var(--text-dim); margin-top:3px; font-style:italic; opacity:0.8; }
+@keyframes replaced-flash-kf { 0%{box-shadow:0 0 0 2px rgba(250,204,21,0.55);} 100%{box-shadow:0 0 0 0 rgba(250,204,21,0);} }
+.replaced-flash { animation:replaced-flash-kf 1.1s ease-out; }
+.zone-redraw-btn {
+  margin-top:6px; font-family:'Prompt',sans-serif; font-size:10.5px; color:var(--text-dim);
+  background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:14px;
+  padding:5px 14px; cursor:pointer; transition:all 0.15s; position:relative; z-index:1;
+}
+.zone-redraw-btn:hover { background:rgba(239,68,68,0.12); border-color:rgba(239,68,68,0.35); color:#FCA5A5; }
+
 /* ── ENTRANCE ANIMATIONS ── */
 @keyframes slide-in-l { from{opacity:0;transform:translateX(-20px) scale(0.95);} to{opacity:1;transform:translateX(0) scale(1);} }
 @keyframes slide-in-r { from{opacity:0;transform:translateX(20px) scale(0.95);} to{opacity:1;transform:translateX(0) scale(1);} }
@@ -922,6 +939,7 @@ function spinOne(round, winner, idx, total, onDone){
                 <div class="winner-dept">${winner.department}</div>
               </div>
               <div class="winner-order">#${winner.order}</div>
+              <button class="redraw-btn" title="ไม่อยู่ในงาน สุ่มใหม่แทน" onclick="replaceListWinner('${winner.order}', this)">🔄</button>
             `;
             list.appendChild(el);
             list.scrollTop = list.scrollHeight;
@@ -997,6 +1015,67 @@ function finishRound(round){
 function closeBanner(round){ document.getElementById('banner'+round).classList.remove('show'); }
 
 /* ════════════════════════════════════════════
+   "ไม่อยู่ในงาน" — สุ่มคนใหม่มาแทนคนที่ถูกสุ่มแล้ว
+   ใช้ได้ทั้งรายชื่อในลิสต์ (รอบ 1-3) และการ์ดถาวร (Grand/Secret)
+════════════════════════════════════════════ */
+function doReplace(oldOrder, updateFn){
+  if(pool.length < 1){ alert('ไม่มีผู้ลงทะเบียนคนอื่นเหลือให้สุ่มแทนแล้วครับ'); return; }
+  const winner = allItems.find(x=>String(x.order)===String(oldOrder));
+  const label  = winner ? winner.name : 'ผู้โชคดีคนนี้';
+  if(!confirm(`ยืนยันว่า "${label}" ไม่อยู่ในงาน และต้องการสุ่มคนใหม่มาแทนหรือไม่?`)) return;
+
+  const replacement = [...pool].sort(()=>Math.random()-0.5)[0];
+  drawnOrders.add(+replacement.order);
+  pool = pool.filter(x=>!drawnOrders.has(+x.order));
+
+  updateFn(replacement, label);
+}
+
+function replaceListWinner(oldOrder, btnEl){
+  const item = btnEl.closest('.winner-item');
+  if(!item) return;
+  doReplace(oldOrder, (replacement, label)=>{
+    item.style.transition = 'opacity 0.25s';
+    item.style.opacity = '0';
+    setTimeout(()=>{
+      item.querySelector('.winner-name').textContent  = replacement.name;
+      item.querySelector('.winner-dept').textContent  = replacement.department;
+      item.querySelector('.winner-order').textContent = '#'+replacement.order;
+      const rBtn = item.querySelector('.redraw-btn');
+      if(rBtn) rBtn.setAttribute('onclick', `replaceListWinner('${replacement.order}', this)`);
+      let tag = item.querySelector('.replaced-tag');
+      if(!tag){ tag = document.createElement('div'); tag.className='replaced-tag'; item.querySelector('.winner-info').appendChild(tag); }
+      tag.textContent = `↺ แทนที่ ${label} (ไม่อยู่ในงาน)`;
+      item.style.opacity = '1';
+      item.classList.add('replaced-flash');
+      setTimeout(()=>item.classList.remove('replaced-flash'), 1100);
+    }, 260);
+  });
+}
+
+function replaceZoneWinner(oldOrder, btnEl){
+  const zone = btnEl.closest('.grand-trophy-zone');
+  if(!zone) return;
+  doReplace(oldOrder, (replacement, label)=>{
+    zone.style.transition = 'opacity 0.25s';
+    zone.style.opacity = '0';
+    setTimeout(()=>{
+      zone.querySelector('.grand-name').textContent = replacement.name;
+      zone.querySelector('.grand-dept').textContent = replacement.department;
+      zone.querySelector('.grand-reg').textContent  = 'หมายเลขลงทะเบียน #'+replacement.order;
+      const rBtn = zone.querySelector('.zone-redraw-btn');
+      if(rBtn) rBtn.setAttribute('onclick', `replaceZoneWinner('${replacement.order}', this)`);
+      let tag = zone.querySelector('.replaced-tag');
+      if(!tag){ tag = document.createElement('div'); tag.className='replaced-tag'; zone.appendChild(tag); }
+      tag.textContent = `↺ แทนที่ ${label} (ไม่อยู่ในงาน)`;
+      zone.style.opacity = '1';
+      zone.classList.add('replaced-flash');
+      setTimeout(()=>zone.classList.remove('replaced-flash'), 1100);
+    }, 260);
+  });
+}
+
+/* ════════════════════════════════════════════
    GRAND PRIZE
 ════════════════════════════════════════════ */
 function revealGrand(){
@@ -1064,6 +1143,7 @@ function showGrandReveal(grand){
       <div class="grand-name">${grand.name}</div>
       <div class="grand-dept">${grand.department}</div>
       <div class="grand-reg">หมายเลขลงทะเบียน #${grand.order}</div>
+      <button class="zone-redraw-btn" onclick="replaceZoneWinner('${grand.order}', this)">🔄 ไม่อยู่ในงาน สุ่มใหม่แทน</button>
     ` : '<div class="grand-waiting">ไม่พบข้อมูล</div>';
     const btn = document.getElementById('btn4');
     btn.className='draw-btn btn-done'; btn.textContent='★ ประกาศแล้ว';
@@ -1149,6 +1229,7 @@ function spinSecret(winner, onDone){
               <div class="grand-name">${winner.name}</div>
               <div class="grand-dept">${winner.department}</div>
               <div class="grand-reg">หมายเลขลงทะเบียน #${winner.order}</div>
+              <button class="zone-redraw-btn" onclick="replaceZoneWinner('${winner.order}', this)">🔄 ไม่อยู่ในงาน สุ่มใหม่แทน</button>
             `;
             zone.style.display = 'flex';
             document.getElementById('hdr-r5').textContent = '1/1';

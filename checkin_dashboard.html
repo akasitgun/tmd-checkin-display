@@ -119,6 +119,20 @@ html, body {
 }
 .clock-date { font-size: 12px; color: var(--text-sub); font-weight: 500; margin-top: 1px; }
 .clock-upd  { font-size: 10px; color: var(--text-dim); margin-top: 2px; }
+.clock-age  { font-size: 10px; margin-top: 2px; font-weight: 600; }
+.age-fresh  { color: #6EE7A0; }
+.age-warn   { color: #FBBF24; }
+.age-stale  { color: #F87171; }
+.force-refresh-btn {
+  font-family: 'Prompt', sans-serif; font-size: 11px; font-weight: 600; color: var(--text-sub);
+  background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px;
+  padding: 6px 12px; cursor: pointer; transition: all 0.15s; margin-left: 8px; white-space: nowrap;
+}
+.force-refresh-btn:hover  { background: rgba(90,158,255,0.15); border-color: var(--border-bright); color: var(--text); }
+.force-refresh-btn:active { transform: scale(0.96); }
+.force-refresh-btn:disabled { opacity: 0.6; cursor: default; }
+@keyframes spin-a { to { transform: rotate(360deg); } }
+.force-refresh-btn.spinning .refresh-ico { display:inline-block; animation: spin-a 0.6s linear infinite; }
 
 /* ══════════════════════════════
    MAIN LAYOUT
@@ -465,6 +479,9 @@ html, body {
       <div style="display:flex;align-items:center;gap:6px;margin-right:4px;">
         <div class="live-dot"></div>
         <span style="font-size:11px;color:var(--text-sub);font-weight:600;">LIVE</span>
+        <button id="btn-force-refresh" class="force-refresh-btn" title="ดึงข้อมูลใหม่ทันที ไม่ต้องรอรอบ poll">
+          <span class="refresh-ico">⟳</span> รีเฟรชด่วน
+        </button>
       </div>
       <div class="kpi-chip total">
         <div class="kv" id="kpi-total">0</div>
@@ -484,6 +501,7 @@ html, body {
       <div class="clock-time" id="clock-time">--:--:--</div>
       <div class="clock-date" id="clock-date">—</div>
       <div class="clock-upd"  id="clock-upd">กำลังโหลด...</div>
+      <div class="clock-age"  id="clock-age">—</div>
     </div>
   </header>
 
@@ -615,10 +633,21 @@ function groupDept(list) {
 }
 
 /* ── Clock ── */
+let lastDataUpdatedAt = null; // Date object built from data.json's "updated" field
+
 function tickClock() {
   const now = new Date();
   $("#clock-time").textContent = now.toLocaleTimeString('th-TH', { hour12:false });
   $("#clock-date").textContent = fmtDate(now);
+
+  const ageEl = $("#clock-age");
+  if (!ageEl) return;
+  if (!lastDataUpdatedAt) { ageEl.textContent = '—'; ageEl.className = 'clock-age'; return; }
+
+  const sec = Math.max(0, Math.round((now - lastDataUpdatedAt) / 1000));
+  const label = sec < 60 ? `${sec} วินาที` : `${Math.floor(sec/60)} นาที ${sec%60} วินาที`;
+  ageEl.textContent = `ข้อมูลอายุ ${label}ที่แล้ว`;
+  ageEl.className = 'clock-age ' + (sec < 30 ? 'age-fresh' : sec < 120 ? 'age-warn' : 'age-stale');
 }
 setInterval(tickClock, 500); tickClock();
 
@@ -670,6 +699,7 @@ function renderHeader(data, updated) {
 
   const upd = updated || (items[0]?.timestamp || "");
   $("#clock-upd").textContent = upd ? `อัปเดต: ${fmtFull(upd)}` : "—";
+  lastDataUpdatedAt = upd ? new Date(upd) : null;
 }
 
 /* ══════════════════════════════
@@ -852,6 +882,15 @@ $("#list-scroll").addEventListener("mouseleave",   ()=> startScroll($("#list-scr
   }
   draw();
 })();
+
+$("#btn-force-refresh").addEventListener("click", async ()=>{
+  const btn = $("#btn-force-refresh");
+  btn.disabled = true;
+  btn.classList.add('spinning');
+  await load();
+  btn.classList.remove('spinning');
+  btn.disabled = false;
+});
 
 /* ── Logo ── */
 (function initLogo(){

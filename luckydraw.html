@@ -65,7 +65,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .last-updated { font-size:11px; color:var(--text-sub); text-align:right; line-height:1.6; font-weight:500; }
 
 /* ── MAIN ── */
-.main { display:grid; grid-template-columns:1fr 1fr 1fr 270px 250px; gap:0; overflow:hidden; height:100%; }
+.main { display:grid; grid-template-columns:1fr 1fr 1fr 250px 270px; gap:0; overflow:hidden; height:100%; }
 
 /* ── PANELS ── */
 .panel { display:flex; flex-direction:column; overflow:hidden; border-right:1px solid var(--border); position:relative; background:linear-gradient(180deg,var(--bg2),var(--bg)); }
@@ -150,7 +150,6 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .draw-btn:disabled { opacity:0.28; cursor:not-allowed; }
 .btn-r1 { background:linear-gradient(135deg,#0D3699,#2563EB 60%,#5A9EFF); color:#fff; box-shadow:0 2px 16px rgba(37,99,235,0.4); }
 .btn-r2 { background:linear-gradient(135deg,#1E3A6E,#2E5DAA 60%,#7EB3FF); color:#fff; box-shadow:0 2px 16px rgba(46,93,170,0.4); }
-.btn-grand { background:linear-gradient(135deg,#92600A,#D4900A 50%,#FFD700); color:#1A0800; font-weight:700; box-shadow:0 2px 20px rgba(212,144,10,0.45); }
 .btn-done { background:rgba(30,79,194,0.08)!important; color:var(--text-dim)!important; border:1px solid var(--border)!important; cursor:default!important; box-shadow:none!important; font-weight:500!important; }
 .btn-secret { background:linear-gradient(135deg,#3B2A5C,#5B3E8C 60%,#8B5FBF); color:#EDE3FF; box-shadow:0 2px 16px rgba(139,95,191,0.4); }
 .btn-secret-ready { background:linear-gradient(135deg,#92600A,#D4900A 50%,#FFD700)!important; color:#1A0800!important; font-weight:700!important; box-shadow:0 2px 22px rgba(255,215,0,0.5)!important; position:relative; overflow:hidden; }
@@ -168,7 +167,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 @keyframes lock-shake { 0%,100%{transform:rotate(0);} 25%{transform:rotate(-10deg);} 75%{transform:rotate(10deg);} }
 .secret-locked.ready .secret-title { color:var(--gold); animation:name-glow 1.6s ease-in-out infinite alternate; }
 
-/* ── GRAND PANEL ── */
+/* ── OVERVIEW PANEL (เดิมคือ Grand Prize panel — reuse styles) ── */
 .grand-body { flex:1; display:flex; flex-direction:column; padding:16px; gap:10px; overflow:hidden; }
 .stats-row { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
 .stat-card { background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 13px; }
@@ -179,7 +178,6 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .strip-pending { background:rgba(30,79,194,0.1); border:1px solid var(--border); color:var(--text-sub); }
 .grand-trophy-zone { display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; gap:10px; border-radius:14px; border:1px solid rgba(255,215,0,0.25); background:radial-gradient(ellipse at center,rgba(255,215,0,0.07),rgba(9,21,48,0.6) 70%); padding:20px 16px; position:relative; overflow:hidden; }
 .grand-trophy-zone::before { content:''; position:absolute; width:200px; height:200px; border-radius:50%; background:radial-gradient(circle,rgba(255,215,0,0.1),transparent 70%); top:50%; left:50%; transform:translate(-50%,-50%); }
-.grand-waiting { text-align:center; color:var(--text-sub); font-size:13px; line-height:1.8; }
 .grand-trophy-icon { font-size:42px; animation:float 3s ease-in-out infinite; position:relative; z-index:1; }
 .grand-trophy-icon svg { width:1.55em; height:auto; display:block; margin:0 auto; filter:drop-shadow(0 0 8px rgba(255,215,0,0.35)); }
 @keyframes float { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-7px);} }
@@ -317,7 +315,6 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .rv-b1    { background:rgba(90,158,255,0.15); color:#8BBEFF; border:1px solid rgba(90,158,255,0.4); }
 .rv-b2    { background:rgba(168,200,255,0.12); color:#C0D8FF; border:1px solid rgba(168,200,255,0.35); }
 .rv-b3    { background:rgba(123,224,200,0.12); color:#9EEEDD; border:1px solid rgba(123,224,200,0.35); }
-.rv-grand { background:rgba(255,215,0,0.12); color:var(--gold); border:1px solid rgba(255,215,0,0.4); letter-spacing:3px; }
 .rv-secret { background:rgba(255,215,0,0.12); color:var(--gold); border:1px solid rgba(201,168,255,0.55); letter-spacing:3px; }
 
 .rv-num { font-size:13px; color:var(--text-dim); letter-spacing:2px; margin-bottom:-4px; }
@@ -327,7 +324,6 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .rv-name-r1    { color:var(--text); text-shadow:0 0 30px rgba(90,158,255,0.6); }
 .rv-name-r2    { color:var(--text); text-shadow:0 0 30px rgba(168,200,255,0.6); }
 .rv-name-r3    { color:var(--text); text-shadow:0 0 30px rgba(123,224,200,0.6); }
-.rv-name-grand { color:var(--gold); font-size:52px; text-shadow:0 0 20px rgba(255,215,0,0.7),0 0 60px rgba(255,215,0,0.3); }
 .rv-name-secret { color:var(--gold); font-size:50px; text-shadow:0 0 20px rgba(255,215,0,0.7),0 0 55px rgba(201,168,255,0.4); }
 
 /* ── ULTIMATE SECRET REVEAL (Round 5 — biggest prize of the night) ── */
@@ -368,8 +364,6 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .spin { display:inline-block; animation:spin-a 0.6s linear infinite; }
 @keyframes spin-a { to{transform:rotate(360deg);} }
 
-/* ── GRAND SPIN SPECIAL ── */
-.grand-suspense-name { font-family:'Prompt',sans-serif; font-size:26px; font-weight:700; color:#fff; text-align:center; }
 @keyframes name-flicker { 0%{opacity:1;transform:none;} 50%{opacity:0.5;transform:translateY(-2px);} 100%{opacity:1;transform:none;} }
 .flicker { animation:name-flicker 0.09s linear infinite; }
 </style>
@@ -401,7 +395,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
       <div class="meta-chip"><span>รอบที่ 1</span><span class="val" id="hdr-r1">0/10</span></div>
       <div class="meta-chip"><span>รอบที่ 2</span><span class="val" id="hdr-r2">0/10</span></div>
       <div class="meta-chip"><span>รอบที่ 3</span><span class="val" id="hdr-r3">0/10</span></div>
-      <div class="meta-chip"><span>รอบที่ 5</span><span class="val" id="hdr-r5">🔒</span></div>
+      <div class="meta-chip"><span>รอบที่ 4</span><span class="val" id="hdr-r5">🔒</span></div>
       <div class="last-updated" id="last-updated">กำลังโหลด...</div>
     </div>
   </header>
@@ -515,63 +509,14 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
       </div>
     </div>
 
-    <!-- ══ GRAND PRIZE ══ -->
-    <div class="panel pg">
-      <div class="panel-top-bar"></div>
-      <div class="panel-header">
-        <div class="panel-label-group">
-          <div class="panel-icon">★</div>
-          <div><div class="panel-title">Grand Prize</div></div>
-        </div>
-      </div>
-      <div class="grand-body">
-        <div class="stats-row">
-          <div class="stat-card"><div class="stat-label">ผู้ลงทะเบียนทั้งหมด</div><div class="stat-value" id="stat-total">—</div></div>
-          <div class="stat-card"><div class="stat-label">รอบที่ผ่านมา</div><div class="stat-value" id="stat-rounds">0 / 3</div></div>
-        </div>
-        <div id="status-r1" class="status-strip strip-pending">● รอบที่ 1 ยังไม่ได้สุ่ม</div>
-        <div id="status-r2" class="status-strip strip-pending">● รอบที่ 2 ยังไม่ได้สุ่ม</div>
-        <div id="status-r3" class="status-strip strip-pending">● รอบที่ 3 ยังไม่ได้สุ่ม</div>
-        <div class="grand-trophy-zone" id="grand-zone">
-          <div class="grand-trophy-icon">
-            <svg viewBox="0 0 130 96" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <linearGradient id="cashBackS" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0%" stop-color="#D9C36A"/><stop offset="100%" stop-color="#9C7A1E"/>
-                </linearGradient>
-                <linearGradient id="cashFrontS" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stop-color="#FFF6D6"/><stop offset="50%" stop-color="#FFE9A8"/><stop offset="100%" stop-color="#F2CB63"/>
-                </linearGradient>
-              </defs>
-              <g transform="rotate(-8 65 48)"><rect x="18" y="26" width="94" height="46" rx="5" fill="url(#cashBackS)" stroke="#6B4400" stroke-width="1.2"/></g>
-              <g transform="rotate(4 65 48)"><rect x="16" y="24" width="98" height="48" rx="5" fill="#E7C465" stroke="#6B4400" stroke-width="1.2"/></g>
-              <rect x="14" y="22" width="102" height="50" rx="5" fill="url(#cashFrontS)" stroke="#6B4400" stroke-width="1.3"/>
-              <path d="M22 30 Q 40 40 22 50" stroke="#B8860B" stroke-width="1" fill="none" opacity="0.5"/>
-              <path d="M108 30 Q 90 40 108 50" stroke="#B8860B" stroke-width="1" fill="none" opacity="0.5"/>
-              <circle cx="34" cy="47" r="13" fill="none" stroke="#8A5A00" stroke-width="1.4"/>
-              <text x="34" y="52" font-family="Georgia, serif" font-size="15" font-weight="700" fill="#8A5A00" text-anchor="middle">฿</text>
-              <text x="86" y="45" font-family="Prompt, sans-serif" font-size="15" font-weight="800" fill="#6B4400" text-anchor="middle">1,000</text>
-              <text x="86" y="60" font-family="Prompt, sans-serif" font-size="9" font-weight="600" fill="#8A5A00" text-anchor="middle" letter-spacing="1">บาท</text>
-              <g fill="#FFF8DC"><path d="M118 6 l2.6 6.4 6.4 2.6 -6.4 2.6 -2.6 6.4 -2.6-6.4 -6.4-2.6 6.4-2.6z" opacity="0.95"/><path d="M6 10 l1.8 4.4 4.4 1.8 -4.4 1.8 -1.8 4.4 -1.8-4.4 -4.4-1.8 4.4-1.8z" opacity="0.8"/></g>
-            </svg>
-          </div>
-          <div class="grand-order-badge">รางวัล Grand Prize</div>
-          <div class="grand-waiting">กดปุ่มด้านล่าง<br>เพื่อเปิดเผยผู้โชคดี Grand Prize</div>
-        </div>
-      </div>
-      <div class="panel-footer">
-        <button class="draw-btn btn-grand" id="btn4" disabled onclick="revealGrand()">★ เปิดเผย Grand Prize</button>
-      </div>
-    </div>
-
-    <!-- ══ ROUND 5 — SECRET PRIZE ══ -->
+    <!-- ══ ROUND 4 — SECRET PRIZE ══ -->
     <div class="panel ps" id="panel5">
       <div class="panel-top-bar"></div>
       <div class="panel-header">
         <div class="panel-label-group">
           <div class="panel-icon">🔒</div>
           <div>
-            <div class="panel-title">รอบที่ 5</div>
+            <div class="panel-title">รอบที่ 4</div>
             <div style="font-size:9.5px;color:var(--text-dim);letter-spacing:2px;margin-top:1px;">รางวัลลับ</div>
           </div>
         </div>
@@ -582,7 +527,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
         <div class="secret-locked" id="secret-locked">
           <div class="lock-icon">🔒</div>
           <div class="secret-title">รางวัลลับ</div>
-          <div class="secret-hint">จะปลดล็อกอัตโนมัติ<br>หลังประกาศ Grand Prize</div>
+          <div class="secret-hint">จะปลดล็อกอัตโนมัติ<br>หลังสุ่มครบทั้ง 3 รอบ</div>
         </div>
 
         <!-- Slot overlay (reused pattern) -->
@@ -606,12 +551,35 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
           <div class="banner-close" onclick="closeBanner(5)">ดูผู้โชคดี ›</div>
         </div>
 
-        <!-- Persistent resting card, shown after the reveal (like Grand Prize's sidebar) -->
+        <!-- Persistent resting card, shown after the reveal -->
         <div class="grand-trophy-zone" id="secret-zone" style="display:none;"></div>
       </div>
 
       <div class="panel-footer">
         <button class="draw-btn btn-secret" id="btn5" disabled onclick="startSecretDraw()">🔒 รางวัลลับ (ล็อกอยู่)</button>
+      </div>
+    </div>
+
+    <!-- ══ ภาพรวมงาน ══ -->
+    <div class="panel pg">
+      <div class="panel-top-bar"></div>
+      <div class="panel-header">
+        <div class="panel-label-group">
+          <div class="panel-icon">📊</div>
+          <div><div class="panel-title">ภาพรวมงาน</div></div>
+        </div>
+      </div>
+      <div class="grand-body">
+        <div class="stats-row">
+          <div class="stat-card"><div class="stat-label">ผู้ลงทะเบียนทั้งหมด</div><div class="stat-value" id="stat-total">—</div></div>
+          <div class="stat-card"><div class="stat-label">รอบที่ผ่านมา</div><div class="stat-value" id="stat-rounds">0 / 3</div></div>
+        </div>
+        <div id="status-r1" class="status-strip strip-pending">● รอบที่ 1 ยังไม่ได้สุ่ม</div>
+        <div id="status-r2" class="status-strip strip-pending">● รอบที่ 2 ยังไม่ได้สุ่ม</div>
+        <div id="status-r3" class="status-strip strip-pending">● รอบที่ 3 ยังไม่ได้สุ่ม</div>
+        <div style="flex:1;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--text-dim);font-size:12.5px;line-height:1.9;padding:10px;">
+          เมื่อสุ่มครบทั้ง 3 รอบแล้ว<br>รางวัลลับ (รอบที่ 4) จะปลดล็อกอัตโนมัติ
+        </div>
       </div>
     </div>
 
@@ -623,21 +591,18 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
    CONFIG — แก้ได้ตรงนี้
 ════════════════════════════════════════════ */
 const DATA_URL = 'https://raw.githubusercontent.com/akasitgun/tmd-checkin-display/main/data.json';
-const GRAND_ORDER    = 60;
 const DRAW_PER_ROUND = 10;
 
 // ← ปรับตรงนี้เพื่อความเร็ว/ช้า
 const SLOT_SPIN_MS   = 3200;   // นานแค่ไหนที่ชื่อ "วิ่ง" ก่อนล็อค (ms) ต่อ 1 คน
 const REVEAL_HOLD_MS = 2800;   // overlay แสดงค้างนานแค่ไหน (ms) ก่อน auto-close
-const GRAND_SPIN_MS  = 5500;   // Grand Prize spin
-const GRAND_HOLD_MS  = 99999;  // Grand Prize ไม่ auto-close (ต้องแตะเอง)
-const SLOT_SPIN_MS_SECRET = 4200; // รอบที่ 5 (รางวัลลับ) หมุนนานกว่ารอบอื่น เพื่อความอลังการ
+const SLOT_SPIN_MS_SECRET = 4200; // รอบที่ 4 (รางวัลลับ) หมุนนานกว่ารอบอื่น เพื่อความอลังการ
 
 /* ════════════════════════════════════════════
    STATE
 ════════════════════════════════════════════ */
 let allItems = [], pool = [];
-let round1Done = false, round2Done = false, round3Done = false, grandDone = false, secretDone = false;
+let round1Done = false, round2Done = false, round3Done = false, secretDone = false;
 // Orders already drawn as winners — persists across auto-refreshes so nobody can win twice
 let drawnOrders = new Set();
 
@@ -693,10 +658,10 @@ async function loadData(){
       console.warn(`⚠️ พบข้อมูลลงทะเบียนซ้ำหมายเลขเดียวกัน ${dupCount} แถวใน data.json (ตัดรายการซ้ำออกอัตโนมัติแล้ว)`);
     }
 
-    // Pool = everyone who is NOT the fixed Grand Prize winner AND has not
-    // already won a previous round. This is re-applied on every refresh so
-    // the 30-second auto-poll can never "un-draw" someone who already won.
-    pool = allItems.filter(x=> +x.order!==GRAND_ORDER && !drawnOrders.has(+x.order));
+    // Pool = everyone who has not already won a previous round. This is
+    // re-applied on every refresh so the 30-second auto-poll can never
+    // "un-draw" someone who already won.
+    pool = allItems.filter(x=> !drawnOrders.has(+x.order));
 
     const n    = allItems.length;
     document.getElementById('total-count').textContent = n;
@@ -774,66 +739,7 @@ const GOLD_BAR_SVG = `
     <path d="M10 6 l1.8 4.4 4.4 1.8 -4.4 1.8 -1.8 4.4 -1.8-4.4 -4.4-1.8 4.4-1.8z" opacity="0.85"/>
   </g>
 </svg>`;
-
-// Grand Prize icon — stack of ฿1,000 banknotes (self-contained, no external image needed)
-const CASH_ICON_SVG = `
-<svg viewBox="0 0 130 96" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="cashBack" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#D9C36A"/>
-      <stop offset="100%" stop-color="#9C7A1E"/>
-    </linearGradient>
-    <linearGradient id="cashFront" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%" stop-color="#FFF6D6"/>
-      <stop offset="50%" stop-color="#FFE9A8"/>
-      <stop offset="100%" stop-color="#F2CB63"/>
-    </linearGradient>
-  </defs>
-  <g transform="rotate(-8 65 48)">
-    <rect x="18" y="26" width="94" height="46" rx="5" fill="url(#cashBack)" stroke="#6B4400" stroke-width="1.2"/>
-  </g>
-  <g transform="rotate(4 65 48)">
-    <rect x="16" y="24" width="98" height="48" rx="5" fill="#E7C465" stroke="#6B4400" stroke-width="1.2"/>
-  </g>
-  <rect x="14" y="22" width="102" height="50" rx="5" fill="url(#cashFront)" stroke="#6B4400" stroke-width="1.3"/>
-  <path d="M22 30 Q 40 40 22 50" stroke="#B8860B" stroke-width="1" fill="none" opacity="0.5"/>
-  <path d="M108 30 Q 90 40 108 50" stroke="#B8860B" stroke-width="1" fill="none" opacity="0.5"/>
-  <circle cx="34" cy="47" r="13" fill="none" stroke="#8A5A00" stroke-width="1.4"/>
-  <text x="34" y="52" font-family="Georgia, serif" font-size="15" font-weight="700" fill="#8A5A00" text-anchor="middle">฿</text>
-  <text x="86" y="45" font-family="Prompt, sans-serif" font-size="15" font-weight="800" fill="#6B4400" text-anchor="middle">1,000</text>
-  <text x="86" y="60" font-family="Prompt, sans-serif" font-size="9" font-weight="600" fill="#8A5A00" text-anchor="middle" letter-spacing="1">บาท</text>
-  <g fill="#FFF8DC">
-    <path d="M118 6 l2.6 6.4 6.4 2.6 -6.4 2.6 -2.6 6.4 -2.6-6.4 -6.4-2.6 6.4-2.6z" opacity="0.95"/>
-    <path d="M6 10 l1.8 4.4 4.4 1.8 -4.4 1.8 -1.8 4.4 -1.8-4.4 -4.4-1.8 4.4-1.8z" opacity="0.8"/>
-  </g>
-</svg>`;
 const BLUE_COLORS = ['#5A9EFF','#A8C8FF','#C8E0FF','#2563EB','#FFFFFF'];
-
-function grandFireworks(){
-  const positions = [
-    [innerWidth*0.15,innerHeight*0.2],[innerWidth*0.85,innerHeight*0.2],
-    [innerWidth*0.5, innerHeight*0.1],[innerWidth*0.3, innerHeight*0.45],
-    [innerWidth*0.7, innerHeight*0.4],
-  ];
-  positions.forEach(([cx,cy],i)=>{
-    setTimeout(()=>{
-      burst(cx,cy,i%2===0?GOLD_COLORS:BLUE_COLORS,60);
-      confetti([...GOLD_COLORS,...BLUE_COLORS,'#FFFFFF'],35);
-    },i*350);
-  });
-  // second wave
-  setTimeout(()=>{
-    positions.forEach(([cx,cy],i)=>{
-      setTimeout(()=>burst(cx,cy,i%2===0?BLUE_COLORS:GOLD_COLORS,50),i*280);
-    });
-    confetti([...GOLD_COLORS,'#FFFFFF','#C0D8FF'],90);
-  },2200);
-  // third wave
-  setTimeout(()=>{
-    burst(innerWidth/2,innerHeight/2,[...GOLD_COLORS,'#FFFFFF'],80);
-    confetti([...GOLD_COLORS,...BLUE_COLORS],60);
-  },4000);
-}
 
 /* ════════════════════════════════════════════
    FULL-SCREEN REVEAL
@@ -855,9 +761,7 @@ function showReveal(winner, badge, badgeClass, nameClass, holdMs, onClose){
   overlay.classList.add('active');
 
   // Fireworks
-  const colors = nameClass==='rv-name-grand'
-    ? [...GOLD_COLORS,'#FFFFFF',...BLUE_COLORS]
-    : nameClass==='rv-name-r1' ? [...BLUE_COLORS,'#FFFFFF'] : [...BLUE_COLORS,'#C0D8FF','#FFFFFF'];
+  const colors = nameClass==='rv-name-r1' ? [...BLUE_COLORS,'#FFFFFF'] : [...BLUE_COLORS,'#C0D8FF','#FFFFFF'];
   burst(innerWidth/2, innerHeight/2-80, colors, 55);
   confetti(colors, 55);
 
@@ -1004,11 +908,11 @@ function finishRound(round){
     confetti([...BLUE_COLORS,'#C0D8FF','#FFFFFF'],70);
   } else {
     round3Done=true;
-    document.getElementById('btn4').disabled=false;
     document.getElementById('status-r3').className='status-strip strip-done';
     document.getElementById('status-r3').textContent='✓ รอบที่ 3 เสร็จสิ้น — ผู้โชคดี 10 คน';
     document.getElementById('stat-rounds').textContent='3 / 3';
     confetti([...BLUE_COLORS,'#9EEEDD','#FFFFFF'],70);
+    unlockSecret();
   }
 }
 
@@ -1016,7 +920,7 @@ function closeBanner(round){ document.getElementById('banner'+round).classList.r
 
 /* ════════════════════════════════════════════
    "ไม่อยู่ในงาน" — สุ่มคนใหม่มาแทนคนที่ถูกสุ่มแล้ว
-   ใช้ได้ทั้งรายชื่อในลิสต์ (รอบ 1-3) และการ์ดถาวร (Grand/Secret)
+   ใช้ได้ทั้งรายชื่อในลิสต์ (รอบ 1-3) และการ์ดถาวร (รางวัลลับ)
 ════════════════════════════════════════════ */
 function doReplace(oldOrder, updateFn){
   if(pool.length < 1){ alert('ไม่มีผู้ลงทะเบียนคนอื่นเหลือให้สุ่มแทนแล้วครับ'); return; }
@@ -1073,84 +977,6 @@ function replaceZoneWinner(oldOrder, btnEl){
       setTimeout(()=>zone.classList.remove('replaced-flash'), 1100);
     }, 260);
   });
-}
-
-/* ════════════════════════════════════════════
-   GRAND PRIZE
-════════════════════════════════════════════ */
-function revealGrand(){
-  const btn  = document.getElementById('btn4');
-  const zone = document.getElementById('grand-zone');
-  btn.disabled=true;
-  btn.innerHTML='<span class="spin">⟳</span> กำลังค้นหา...';
-
-  const grand = allItems.find(x=>+x.order===GRAND_ORDER);
-  const names = allItems.map(x=>x.name);
-
-  // Show suspense spin in grand-zone sidebar
-  zone.innerHTML=`
-    <div class="grand-trophy-icon" style="font-size:60px">${CASH_ICON_SVG}</div>
-    <div class="grand-order-badge" style="animation:name-glow 0.4s infinite alternate">กำลังค้นหา...</div>
-    <div class="grand-suspense-name flicker" id="grand-spin-name">—</div>
-  `;
-  const spinEl = document.getElementById('grand-spin-name');
-  let si = setInterval(()=>{ if(spinEl) spinEl.textContent=names[Math.floor(Math.random()*names.length)]; },85);
-
-  setTimeout(()=>{
-    clearInterval(si);
-    let ms=140;
-    function decel(){
-      if(!spinEl) return;
-      spinEl.textContent = ms>=700 && grand ? grand.name : names[Math.floor(Math.random()*names.length)];
-      if(ms<900){ ms+=85; setTimeout(decel,ms); }
-      else {
-        if(spinEl) spinEl.classList.remove('flicker');
-        // Full-screen grand reveal
-        setTimeout(()=>{
-          showGrandReveal(grand);
-        }, 600);
-      }
-    }
-    decel();
-  }, GRAND_SPIN_MS*0.65);
-}
-
-function showGrandReveal(grand){
-  const overlay = document.getElementById('reveal-overlay');
-  const card    = document.getElementById('reveal-card');
-
-  card.style.animation='none'; card.offsetHeight; card.style.animation='';
-  card.innerHTML=`
-    <div class="rv-badge rv-grand">✦ &nbsp; GRAND PRIZE &nbsp; ✦</div>
-    <div class="grand-trophy-icon" style="font-size:60px;margin:4px 0">${CASH_ICON_SVG}</div>
-    <div style="font-family:'Prompt';font-size:12px;color:var(--text-dim);letter-spacing:3px;margin-bottom:4px;">ผู้โชคดีลำดับที่ ${GRAND_ORDER}</div>
-    <div class="rv-name rv-name-grand">${grand ? grand.name : '—'}</div>
-    <div class="rv-dept" style="color:var(--gold-dim);font-size:16px;">${grand ? grand.department : ''}</div>
-    <div class="rv-reg">หมายเลขลงทะเบียน #${grand ? grand.order : '—'}</div>
-    <div class="rv-hint" style="color:var(--gold-muted);margin-top:14px;">— แตะที่ใดก็ได้เพื่อปิด —</div>
-  `;
-  overlay.classList.add('active');
-  grandFireworks();
-
-  const close=()=>{
-    overlay.classList.remove('active');
-    overlay.removeEventListener('click',close);
-    // Update sidebar
-    const zone = document.getElementById('grand-zone');
-    zone.innerHTML = grand ? `
-      <div class="grand-trophy-icon">${CASH_ICON_SVG}</div>
-      <div class="grand-order-badge">ผู้โชคดี Grand Prize • ลำดับที่ ${GRAND_ORDER}</div>
-      <div class="grand-name">${grand.name}</div>
-      <div class="grand-dept">${grand.department}</div>
-      <div class="grand-reg">หมายเลขลงทะเบียน #${grand.order}</div>
-      <button class="zone-redraw-btn" onclick="replaceZoneWinner('${grand.order}', this)">🔄 ไม่อยู่ในงาน สุ่มใหม่แทน</button>
-    ` : '<div class="grand-waiting">ไม่พบข้อมูล</div>';
-    const btn = document.getElementById('btn4');
-    btn.className='draw-btn btn-done'; btn.textContent='★ ประกาศแล้ว';
-    grandDone=true;
-    unlockSecret();
-  };
-  setTimeout(()=>overlay.addEventListener('click',close),1200);
 }
 
 /* ════════════════════════════════════════════

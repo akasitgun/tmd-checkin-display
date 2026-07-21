@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TMD 60th Staff Check-in</title>
+  <style>
+    :root{--blue:#0078d4;--navy:#003b73;--green:#107c10;--red:#d13438;--yellow:#ffb900;--bg:#f4f7fb;--card:#fff;--text:#1f2937;--muted:#6b7280;--border:#d1d5db;--shadow:0 8px 24px rgba(15,23,42,.10);--radius:18px}
+    *{box-sizing:border-box}body{margin:0;font-family:"Segoe UI",Tahoma,Arial,sans-serif;background:var(--bg);color:var(--text);padding:18px}.app{max-width:900px;margin:0 auto}.hero{background:linear-gradient(135deg,var(--navy),var(--blue));color:white;border-radius:22px;padding:22px 24px;box-shadow:var(--shadow);margin-bottom:14px}.hero h1{margin:0 0 6px;font-size:27px}.hero p{margin:0;opacity:.92;font-size:14px}.notice{background:#fff;border-left:6px solid var(--blue);border-radius:var(--radius);padding:13px 15px;margin-bottom:14px;box-shadow:var(--shadow);font-weight:650;white-space:pre-line}.notice.success{border-left-color:var(--green);background:#f4fff4;color:#0b5a0b}.notice.warn{border-left-color:var(--yellow);background:#fffaf0;color:#7a4b00}.notice.error{border-left-color:var(--red);background:#fff5f5;color:#8a1f22}.searchBox{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin-bottom:14px;position:sticky;top:10px;z-index:5}input{width:100%;padding:18px 18px;border:2px solid var(--border);border-radius:16px;font-size:22px;background:white;outline:none}input:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(0,120,212,.15)}.hint{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;color:var(--muted);font-size:13px;margin-top:10px}.results{display:grid;gap:10px}.person{background:white;border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;border-left:7px solid var(--blue);display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center}.person.checked{border-left-color:var(--green);background:#f6fff6}.name{font-size:21px;font-weight:900;margin-bottom:6px}.meta{font-size:14px;color:#374151;line-height:1.6}.badge{display:inline-block;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:900;margin:0 6px 6px 0}.b-blue{background:#dbeafe;color:#1d4ed8}.b-green{background:#dcfce7;color:#166534}.b-red{background:#fee2e2;color:#991b1b}.b-gray{background:#e5e7eb;color:#374151}button{border:0;border-radius:15px;padding:16px 22px;font-size:17px;font-weight:900;cursor:pointer;min-width:150px}.btn-green{background:var(--green);color:white}.btn-gray{background:#9ca3af;color:white}.btn-blue{background:var(--blue);color:white}.btn-red{background:var(--red);color:white}.empty{text-align:center;padding:34px 20px;color:var(--muted);background:white;border-radius:var(--radius);box-shadow:var(--shadow)}.admin{display:none;background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:14px;margin:14px 0;border:1px dashed #93c5fd}.admin.show{display:block}.adminRow{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.small{font-size:12px;color:var(--muted);margin-top:8px}.footer{text-align:center;color:var(--muted);font-size:12px;padding:14px 0 6px}@media(max-width:760px){body{padding:10px}.person{grid-template-columns:1fr}.person button{width:100%}.adminRow{grid-template-columns:1fr}input{font-size:19px}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <div class="hero">
+    <h1>🎉 TMD 60th Staff Check-in</h1>
+    <p>ค้นหารายชื่อ แล้วกด Check-in เท่านั้น</p>
+  </div>
+
+  <div id="message" class="notice warn">กำลังโหลดรายชื่อ...</div>
+
+  <div class="searchBox">
+    <input id="searchInput" type="search" autocomplete="off" placeholder="พิมพ์ชื่อ / เบอร์โทร / แผนก / Token / ลำดับ" autofocus />
+    <div class="hint">
+      <span id="statusLine">Loading...</span>
+      <span id="countLine">Checked-in: 0</span>
+    </div>
+  </div>
+
+  <div id="adminPanel" class="admin">
+    <strong>Admin Panel</strong>
+    <div class="small">ส่วนนี้จะแสดงเมื่อเปิด URL ต่อท้ายด้วย <b>?admin=1</b> เท่านั้น</div>
+    <div class="adminRow" style="margin-top:10px">
+      <button class="btn-blue" onclick="exportCheckedInCsv()">Export Check-in CSV</button>
+      <button class="btn-blue" onclick="backupLocalJson()">Backup Local JSON</button>
+      <button class="btn-red" onclick="clearCheckIns()">Clear Check-ins</button>
+    </div>
+  </div>
+
+  <div id="resultList" class="results"></div>
+  <div class="footer">Data is saved in this browser only</div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  // ===== CONFIG =====
+  // Recommended for GitHub Pages: put participants.json in the same repository/folder.
+  // JSON format: [{"RegistrationOrder":"1","Name":"Example","Email":"","Department":"IT","PhoneNumber":"","Token":"TMD60-0001"}]
+  const PARTICIPANTS_URL = "participants.json";
+  const STORAGE_KEY = "TMD60_MINIMAL_STAFF_CHECKIN_V1";
+  const RESULT_LIMIT = 20;
+
+  // Optional fallback: Akasit can paste participant rows here if not using participants.json.
+  const EMBEDDED_PARTICIPANTS = [];
+
+  let participants = [];
+  let searchRows = [];
+  let checkins = {};
+  let lastKeyword = "";
+  let debounceTimer = null;
+
+  const D = {
+    msg: el("message"), search: el("searchInput"), list: el("resultList"), status: el("statusLine"), count: el("countLine"), admin: el("adminPanel")
+  };
+
+  document.addEventListener("DOMContentLoaded", init);
+  D.search.addEventListener("input", () => {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(render, 45);
+  });
+
+  async function init(){
+    try{
+      loadCheckins();
+      if(new URLSearchParams(location.search).get("admin") === "1") D.admin.classList.add("show");
+      participants = await loadParticipants();
+      normalizeParticipants();
+      buildSearchIndex();
+      updateCount();
+      show("success", `โหลดรายชื่อแล้ว ${participants.length} รายการ พร้อมค้นหา`);
+      D.search.focus();
+      render();
+    }catch(err){
+      console.error(err);
+      show("error", "โหลดรายชื่อไม่สำเร็จ: " + err.message + "\nกรุณาตรวจสอบไฟล์ participants.json");
+      D.list.innerHTML = '<div class="empty">ไม่พบไฟล์ participants.json หรือรูปแบบข้อมูลไม่ถูกต้อง</div>';
+    }
+  }
+
+  async function loadParticipants(){
+    if(Array.isArray(EMBEDDED_PARTICIPANTS) && EMBEDDED_PARTICIPANTS.length) return EMBEDDED_PARTICIPANTS;
+    const response = await fetch(PARTICIPANTS_URL + "?t=" + Date.now(), {cache:"no-store"});
+    if(!response.ok) throw new Error(`participants.json HTTP ${response.status}`);
+    const data = await response.json();
+    if(!Array.isArray(data)) throw new Error("participants.json ต้องเป็น Array");
+    return data;
+  }
+
+  function normalizeParticipants(){
+    const map = new Map();
+    participants.forEach((p, idx) => {
+      const row = {
+        Id: str(p.Id),
+        RegistrationOrder: str(p.RegistrationOrder || p.Order || p.No || idx + 1),
+        Name: str(p.Name || p.Title || p.FullName),
+        Email: str(p.Email || p.Mail),
+        Department: str(p.Department || p.Dept),
+        PhoneNumber: str(p.PhoneNumber || p.Phone || p.Mobile),
+        Token: str(p.Token || p.QR || p.Code),
+        Status: str(p.Status)
+      };
+      row.Key = makeKey(row);
+      if(row.Key && !map.has(row.Key)) map.set(row.Key, row);
+    });
+    participants = Array.from(map.values());
+  }
+
+  function buildSearchIndex(){
+    searchRows = participants.map(p => ({
+      p,
+      text: norm([p.Name,p.Email,p.Department,p.PhoneNumber,p.Token,p.RegistrationOrder].join(" "))
+    }));
+  }
+
+  window.checkIn = function(key){
+    const p = participants.find(x => x.Key === key);
+    if(!p) return;
+    if(checkins[key]) return alert("รายการนี้ Check-in แล้ว");
+    checkins[key] = {
+      key,
+      token: p.Token,
+      registrationOrder: p.RegistrationOrder,
+      name: p.Name,
+      email: p.Email,
+      department: p.Department,
+      phoneNumber: p.PhoneNumber,
+      checkInTime: new Date().toISOString(),
+      source: "Staff Check-in"
+    };
+    saveCheckins();
+    updateCount();
+    show("success", `Check-in สำเร็จ: ${p.Name || p.Token || p.RegistrationOrder}`);
+    render();
+  };
+
+  window.undoCheckIn = function(key){
+    const p = participants.find(x => x.Key === key);
+    if(!p || !checkins[key]) return;
+    if(!confirm(`ยกเลิก Check-in: ${p.Name || p.Token || p.RegistrationOrder}?`)) return;
+    delete checkins[key];
+    saveCheckins();
+    updateCount();
+    show("warn", "ยกเลิก Check-in แล้ว");
+    render();
+  };
+
+  function render(){
+    const keyword = norm(D.search.value);
+    lastKeyword = keyword;
+
+    if(!participants.length){
+      D.status.textContent = "No participant data";
+      D.list.innerHTML = '<div class="empty">ไม่พบข้อมูลรายชื่อ</div>';
+      return;
+    }
+
+    if(!keyword){
+      D.status.textContent = `พร้อมค้นหา ${participants.length} รายการ`;
+      D.list.innerHTML = '<div class="empty">พิมพ์ชื่อ / เบอร์โทร / Token / ลำดับ เพื่อค้นหา</div>';
+      return;
+    }
+
+    const tokens = keyword.split(" ").filter(Boolean);
+    const results = [];
+
+    for(const row of searchRows){
+      let ok = true;
+      for(const t of tokens){
+        if(!row.text.includes(t)){ ok = false; break; }
+      }
+      if(ok) results.push(row.p);
+      if(results.length >= RESULT_LIMIT) break;
+    }
+
+    D.status.textContent = `พบ ${results.length} รายการ${results.length >= RESULT_LIMIT ? " แรก" : ""}`;
+    if(!results.length){
+      D.list.innerHTML = '<div class="empty">ไม่พบรายชื่อตามคำค้นหา</div>';
+      return;
+    }
+
+    const frag = document.createDocumentFragment();
+    results.forEach(p => frag.appendChild(personCard(p)));
+    D.list.innerHTML = "";
+    D.list.appendChild(frag);
+  }
+
+  function personCard(p){
+    const checked = !!checkins[p.Key];
+    const log = checkins[p.Key] || {};
+    const div = document.createElement("div");
+    div.className = "person" + (checked ? " checked" : "");
+    const badge = checked ? '<span class="badge b-green">Checked-in</span>' : '<span class="badge b-red">Not checked-in</span>';
+    const time = checked ? `<div><strong>Time:</strong> ${esc(formatDate(log.checkInTime))}</div>` : "";
+    const button = checked ? `<button class="btn-gray" onclick="undoCheckIn('${jsEsc(p.Key)}')">Checked-in</button>` : `<button class="btn-green" onclick="checkIn('${jsEsc(p.Key)}')">Check-in</button>`;
+    div.innerHTML = `
+      <div>
+        <div class="name">${esc(p.Name || "-")}</div>
+        <div class="meta">
+          ${badge}
+          <span class="badge b-blue">Order: ${esc(p.RegistrationOrder || "-")}</span>
+          <span class="badge b-gray">Token: ${esc(p.Token || "-")}</span>
+          <div><strong>Department:</strong> ${esc(p.Department || "-")}</div>
+          <div><strong>Phone:</strong> ${esc(p.PhoneNumber || "-")}</div>
+          ${time}
+        </div>
+      </div>
+      <div>${button}</div>
+    `;
+    return div;
+  }
+
+  function updateCount(){
+    D.count.textContent = `Checked-in: ${Object.keys(checkins).length} / ${participants.length}`;
+  }
+
+  function loadCheckins(){
+    try{ checkins = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"); }
+    catch{ checkins = {}; }
+  }
+
+  function saveCheckins(){
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(checkins));
+  }
+
+  window.exportCheckedInCsv = function(){
+    const rows = Object.values(checkins).sort((a,b)=>String(a.checkInTime).localeCompare(String(b.checkInTime)));
+    if(!rows.length) return alert("ยังไม่มีข้อมูล Check-in");
+    const csvRows = [["Token","RegistrationOrder","Name","Email","Department","PhoneNumber","CheckInTime","Source"]]
+      .concat(rows.map(r=>[r.token,r.registrationOrder,r.name,r.email,r.department,r.phoneNumber,r.checkInTime,r.source]));
+    downloadText(toCsv(csvRows), fileName("TMD60_checked_in", "csv"), "text/csv;charset=utf-8");
+  };
+
+  window.backupLocalJson = function(){
+    downloadText(JSON.stringify({exportedAt:new Date().toISOString(),checkins}, null, 2), fileName("TMD60_checkin_local_backup", "json"), "application/json;charset=utf-8");
+  };
+
+  window.clearCheckIns = function(){
+    if(!confirm("ล้าง Check-in ทั้งหมดใน Browser นี้?")) return;
+    checkins = {};
+    saveCheckins();
+    updateCount();
+    render();
+    show("warn", "ล้าง Check-in แล้ว");
+  };
+
+  function makeKey(p){ return str(p.Token || p.RegistrationOrder || p.Email || p.Id || p.Name).toLowerCase(); }
+  function str(v){ return String(v ?? "").trim(); }
+  function norm(v){ return String(v||"").toLowerCase().trim().replace(/\s+/g," "); }
+  function esc(v){ return String(v||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;"); }
+  function jsEsc(v){ return String(v||"").replace(/\\/g,"\\\\").replace(/'/g,"\\'"); }
+  function formatDate(v){ if(!v) return "-"; const d = new Date(v); return Number.isNaN(d.getTime()) ? v : d.toLocaleString("th-TH", {dateStyle:"short", timeStyle:"medium"}); }
+  function show(type,msg){ D.msg.className = "notice " + (type||""); D.msg.textContent = msg; }
+  function el(id){ return document.getElementById(id); }
+  function toCsv(rows){ return rows.map(r => r.map(csvCell).join(",")).join("\n"); }
+  function csvCell(v){ const s = String(v ?? ""); return /[",\n\r]/.test(s) ? '"' + s.replace(/"/g,'""') + '"' : s; }
+  function downloadText(text, filename, type){ const blob = new Blob([text], {type}); const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url); }
+  function fileName(prefix, ext){ const d = new Date(); const pad = n => String(n).padStart(2,"0"); return `${prefix}_${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}_${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}.${ext}`; }
+})();
+</script>
+</body>
+</html>

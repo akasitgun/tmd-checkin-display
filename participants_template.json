@@ -1,0 +1,11 @@
+[
+  {
+    "RegistrationOrder": "1",
+    "Name": "Example Name",
+    "Email": "example@tmd.co.th",
+    "Department": "IT",
+    "PhoneNumber": "0800000000",
+    "Token": "TMD60-0001",
+    "Status": "Registered"
+  }
+]

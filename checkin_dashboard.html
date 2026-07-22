@@ -296,15 +296,37 @@ html, body {
    PANEL 2 – DEPARTMENT SUMMARY
 ══════════════════════════════ */
 .dept-scroll {
-  flex: 1; overflow-y: auto; padding: 10px 14px;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(34,211,238,0.2) transparent;
+  flex: 1; overflow: hidden; padding: 12px 14px 8px;
+  display: flex; flex-direction: column;
 }
-.dept-scroll::-webkit-scrollbar { width: 4px; }
-.dept-scroll::-webkit-scrollbar-thumb { background: rgba(34,211,238,0.25); border-radius: 2px; }
+
+.dept-page {
+  flex: 1;
+  transition: opacity 0.35s ease;
+}
+.dept-page.fading { opacity: 0; }
+
+/* page dots */
+.dept-dots {
+  display: flex; align-items: center; justify-content: center;
+  gap: 6px; padding-top: 8px; flex-shrink: 0;
+}
+.dept-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: rgba(103,232,249,0.25);
+  border: 1px solid rgba(34,211,238,0.3);
+  cursor: pointer; transition: all 0.2s;
+  padding: 0;
+}
+.dept-dot:hover { background: rgba(103,232,249,0.5); }
+.dept-dot.active {
+  width: 18px; border-radius: 4px;
+  background: var(--accent-teal);
+  border-color: var(--accent-teal);
+}
 
 .dept-item {
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 .dept-row-top {
   display: flex; align-items: center; justify-content: space-between;
@@ -593,6 +615,8 @@ const SPOT_STEP  = 1.0;
 const SPOT_TICK  = 20;
 const LIST_STEP  = 1.2;
 const LIST_TICK  = 16;
+const DEPT_PAGE_SIZE = 6;     // จำนวนแผนกต่อหน้า
+const DEPT_PAGE_MS   = 4500;  // เปลี่ยนหน้าอัตโนมัติทุกกี่ ms
 
 /* ── State ── */
 let items = [];
@@ -600,6 +624,7 @@ let lastKey = "";
 let lastTotal = 0;
 let listScrollState = { dir: 1, timer: null };
 let spotScrollState = { dir: 1, timer: null };
+let deptState = { pages: [], current: 0, timer: null };
 
 /* ── Utils ── */
 const $ = s => document.querySelector(s);
@@ -751,19 +776,46 @@ function renderDept() {
   const vp = $("#dept-scroll");
   const pairs = groupDept(items);
 
+  stopDeptAutoplay();
+
   if (!pairs.length) {
     vp.innerHTML = `<div class="empty-state"><div class="empty-ring">📊</div><div class="empty-text">ยังไม่มีข้อมูล</div></div>`;
     return;
   }
 
-  const max = Math.max(1, ...pairs.map(p=>p[1]));
+  // แบ่งแผนกออกเป็นหน้า ๆ แทนการเลื่อนสกอลล์รัว ๆ
+  const pages = [];
+  for (let i = 0; i < pairs.length; i += DEPT_PAGE_SIZE) pages.push(pairs.slice(i, i + DEPT_PAGE_SIZE));
+  deptState.pages = pages;
+  deptState.max = Math.max(1, ...pairs.map(p => p[1]));
+  deptState.current = Math.min(deptState.current, pages.length - 1);
+
+  vp.innerHTML = `
+    <div class="dept-page" id="dept-page"></div>
+    ${pages.length > 1 ? `<div class="dept-dots" id="dept-dots"></div>` : ''}
+  `;
+
+  $("#badge-dept").textContent = `${pairs.length} แผนก`;
+
+  renderDeptPage(deptState.current, false);
+  if (pages.length > 1) {
+    renderDeptDots();
+    startDeptAutoplay();
+  }
+}
+
+function renderDeptPage(idx, animate = true) {
+  const pageEl = $("#dept-page");
+  if (!pageEl) return;
+  const pairs = deptState.pages[idx] || [];
+  const max = deptState.max || 1;
   const total = items.length;
 
-  vp.innerHTML = pairs.map(([name, count], i) => {
-    const pct = Math.round(count/max*100);
-    const pctOfTotal = total ? Math.round(count/total*100) : 0;
+  const html = pairs.map(([name, count], i) => {
+    const pct = Math.round(count / max * 100);
+    const pctOfTotal = total ? Math.round(count / total * 100) : 0;
     return `
-      <div class="dept-item" style="animation-delay:${i*20}ms">
+      <div class="dept-item" style="animation-delay:${i*30}ms">
         <div class="dept-row-top">
           <div class="dept-name">${name||"Other"}</div>
           <div class="dept-count-badge">${count} <span style="font-size:10px;color:var(--text-dim)">(${pctOfTotal}%)</span></div>
@@ -773,12 +825,50 @@ function renderDept() {
     `;
   }).join('');
 
-  $("#badge-dept").textContent = `${pairs.length} แผนก`;
+  const paint = () => {
+    pageEl.innerHTML = html;
+    requestAnimationFrame(() => {
+      pageEl.classList.remove('fading');
+      pageEl.querySelectorAll('.dept-bar-fill').forEach(el => { el.style.width = el.dataset.w; });
+    });
+  };
 
-  requestAnimationFrame(() => {
-    vp.querySelectorAll('.dept-bar-fill').forEach(el => { el.style.width = el.dataset.w; });
-    startScroll(vp, { dir:1, timer:null }, 0.8, 18);
+  if (animate) {
+    pageEl.classList.add('fading');
+    setTimeout(paint, 220);
+  } else {
+    paint();
+  }
+
+  const dots = $("#dept-dots");
+  if (dots) dots.querySelectorAll('.dept-dot').forEach((d, i) => d.classList.toggle('active', i === idx));
+}
+
+function renderDeptDots() {
+  const dots = $("#dept-dots");
+  if (!dots) return;
+  dots.innerHTML = deptState.pages.map((_, i) =>
+    `<button class="dept-dot${i===deptState.current?' active':''}" data-i="${i}" aria-label="หน้า ${i+1}"></button>`
+  ).join('');
+  dots.querySelectorAll('.dept-dot').forEach(d => {
+    d.addEventListener('click', () => {
+      deptState.current = Number(d.dataset.i);
+      renderDeptPage(deptState.current);
+      startDeptAutoplay(); // reset timer on manual navigation
+    });
   });
+}
+
+function startDeptAutoplay() {
+  stopDeptAutoplay();
+  if (deptState.pages.length <= 1) return;
+  deptState.timer = setInterval(() => {
+    deptState.current = (deptState.current + 1) % deptState.pages.length;
+    renderDeptPage(deptState.current);
+  }, DEPT_PAGE_MS);
+}
+function stopDeptAutoplay() {
+  if (deptState.timer) { clearInterval(deptState.timer); deptState.timer = null; }
 }
 
 /* ══════════════════════════════
@@ -858,6 +948,8 @@ $("#recent-scroll").addEventListener("mouseenter", ()=> stopScroll(spotScrollSta
 $("#recent-scroll").addEventListener("mouseleave", ()=> startScroll($("#recent-scroll"),spotScrollState,SPOT_STEP,SPOT_TICK));
 $("#list-scroll").addEventListener("mouseenter",   ()=> stopScroll(listScrollState));
 $("#list-scroll").addEventListener("mouseleave",   ()=> startScroll($("#list-scroll"),listScrollState,LIST_STEP,LIST_TICK));
+$("#dept-scroll").addEventListener("mouseenter", stopDeptAutoplay);
+$("#dept-scroll").addEventListener("mouseleave", startDeptAutoplay);
 
 /* ── Canvas star field (same as luckydraw) ── */
 (function initCanvas(){

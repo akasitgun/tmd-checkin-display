@@ -42,7 +42,7 @@ html, body {
   position: relative; z-index: 1;
   height: 100vh;
   display: grid;
-  grid-template-rows: auto 1fr;
+  grid-template-rows: auto auto 1fr;
   overflow: hidden;
 }
 
@@ -135,8 +135,50 @@ html, body {
 .force-refresh-btn.spinning .refresh-ico { display:inline-block; animation: spin-a 0.6s linear infinite; }
 
 /* ══════════════════════════════
-   MAIN LAYOUT
+   SCHEDULE TICKER (PR strip — ไม่กระทบ dashboard เดิม)
 ══════════════════════════════ */
+.ticker-bar {
+  display: flex; align-items: stretch;
+  height: 32px; flex-shrink: 0;
+  overflow: hidden;
+  background: linear-gradient(180deg, rgba(8,18,42,0.97), rgba(5,12,31,0.97));
+  border-bottom: 1px solid var(--border-bright);
+}
+.ticker-label {
+  flex-shrink: 0;
+  display: flex; align-items: center; gap: 6px;
+  padding: 0 16px;
+  font-family: 'Prompt', sans-serif;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.3px;
+  color: var(--bg);
+  background: linear-gradient(120deg, var(--gold-light), var(--gold-dim));
+  box-shadow: 5px 0 14px rgba(0,0,0,0.35);
+  z-index: 2; white-space: nowrap;
+}
+.ticker-viewport { flex: 1; overflow: hidden; position: relative; }
+.ticker-track {
+  display: flex; align-items: center;
+  width: max-content;
+  animation: ticker-scroll 38s linear infinite;
+}
+.ticker-bar:hover .ticker-track { animation-play-state: paused; }
+.ticker-set { display: flex; align-items: center; }
+.ticker-item {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 0 22px; white-space: nowrap;
+  font-size: 12px; color: var(--text-sub);
+}
+.ticker-time {
+  font-family: 'Prompt', sans-serif; font-weight: 700;
+  color: var(--accent-teal); font-size: 11.5px;
+}
+.ticker-dot { color: var(--gold-dim); font-size: 10px; }
+@keyframes ticker-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+
 .main {
   display: grid;
   grid-template-columns: 1.15fr 0.85fr 1.1fr;
@@ -526,6 +568,55 @@ html, body {
       <div class="clock-age"  id="clock-age">—</div>
     </div>
   </header>
+
+  <!-- ══ SCHEDULE TICKER (PR) ══ -->
+  <div class="ticker-bar">
+    <div class="ticker-label">🎉 กำหนดการคืนนี้</div>
+    <div class="ticker-viewport">
+      <div class="ticker-track">
+        <div class="ticker-set">
+          <span class="ticker-item"><span class="ticker-time">17:00</span> ลงทะเบียน QR + Welcome Drink + แซกโซโฟนบรรเลง</span>
+          <span class="ticker-dot">✦</span>
+          <span class="ticker-item"><span class="ticker-time">18:30</span> พิธีกรกล่าวต้อนรับ + เริ่มรับประทานอาหาร</span>
+          <span class="ticker-dot">✦</span>
+          <span class="ticker-item"><span class="ticker-time">19:00</span> MD กล่าวเปิดงาน + เปิดแชมเปญ</span>
+          <span class="ticker-dot">✦</span>
+          <span class="ticker-item"><span class="ticker-time">19:15</span> การแสดงพิธีเปิด</span>
+          <span class="ticker-dot">✦</span>
+          <span class="ticker-item"><span class="ticker-time">19:40</span> Presentation 60 ปี + วิดีโอศิษย์เก่า</span>
+          <span class="ticker-dot">✦</span>
+          <span class="ticker-item"><span class="ticker-time">20:10</span> ถ่ายทอดประสบการณ์โดยศิษย์เก่า + มอบของที่ระลึก</span>
+          <span class="ticker-dot">✦</span>
+          <span class="ticker-item"><span class="ticker-time">20:30</span> Kahoot + Lucky Draw รางวัลใหญ่</span>
+          <span class="ticker-dot">✦</span>
+          <span class="ticker-item"><span class="ticker-time">21:00</span> กล่าวปิดงาน + ถ่ายรูปหมู่</span>
+          <span class="ticker-dot">✦</span>
+          <span class="ticker-item"><span class="ticker-time">21:10</span> After Party Concert 🎸</span>
+          <span class="ticker-dot">✦</span>
+        </div>
+        <div class="ticker-set" aria-hidden="true">
+          <span class="ticker-item"><span class="ticker-time">17:00</span> ลงทะเบียน QR + Welcome Drink + แซกโซโฟนบรรเลง</span>
+          <span class="ticker-dot">✦</span>
+          <span class="ticker-item"><span class="ticker-time">18:30</span> พิธีกรกล่าวต้อนรับ + เริ่มรับประทานอาหาร</span>
+          <span class="ticker-dot">✦</span>
+          <span class="ticker-item"><span class="ticker-time">19:00</span> MD กล่าวเปิดงาน + เปิดแชมเปญ</span>
+          <span class="ticker-dot">✦</span>
+          <span class="ticker-item"><span class="ticker-time">19:15</span> การแสดงพิธีเปิด</span>
+          <span class="ticker-dot">✦</span>
+          <span class="ticker-item"><span class="ticker-time">19:40</span> Presentation 60 ปี + วิดีโอศิษย์เก่า</span>
+          <span class="ticker-dot">✦</span>
+          <span class="ticker-item"><span class="ticker-time">20:10</span> ถ่ายทอดประสบการณ์โดยศิษย์เก่า + มอบของที่ระลึก</span>
+          <span class="ticker-dot">✦</span>
+          <span class="ticker-item"><span class="ticker-time">20:30</span> Kahoot + Lucky Draw รางวัลใหญ่</span>
+          <span class="ticker-dot">✦</span>
+          <span class="ticker-item"><span class="ticker-time">21:00</span> กล่าวปิดงาน + ถ่ายรูปหมู่</span>
+          <span class="ticker-dot">✦</span>
+          <span class="ticker-item"><span class="ticker-time">21:10</span> After Party Concert 🎸</span>
+          <span class="ticker-dot">✦</span>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- ══ MAIN ══ -->
   <div class="main">

@@ -729,25 +729,64 @@ function playRumble(dur=1.4){
   osc.start(t); osc.stop(t+dur+0.05);
 }
 
-/* เพลงคลอเบา ๆ วนตลอดงาน (ระดับเสียงต่ำมาก ไม่กลบไมค์พิธีกร) */
+/* เพลงคลอเบา ๆ วนตลอดงาน — อาร์เปโจนุ่ม ๆ ไล่คอร์ด (ระดับเสียงต่ำมาก ไม่กลบไมค์พิธีกร) */
+const AMBIENT_CHORDS = [
+  [220.00, 261.63, 329.63, 392.00], // Am7
+  [174.61, 220.00, 261.63, 329.63], // Fmaj7
+  [261.63, 329.63, 392.00, 493.88], // Cmaj7
+  [196.00, 246.94, 293.66, 392.00], // Gsus/Gmaj
+];
+const AMBIENT_NOTE_DUR = 620; // ms ระหว่างโน้ต — ยิ่งน้อยยิ่งเร็ว
+let ambientChordIdx = 0, ambientNoteIdx = 0;
+
+/* โน้ตดีดเบา ๆ แบบระนาด/พิณ ใช้ประกอบทำนอง */
+function playPluck(freq, vol=0.08, dur=1.3, type='sine'){
+  if(!audioCtx || !ambient) return;
+  const t = audioCtx.currentTime;
+  const osc = audioCtx.createOscillator(), g = audioCtx.createGain();
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, t);
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(vol, t+0.015);
+  g.gain.exponentialRampToValueAtTime(0.0001, t+dur);
+  const filt = audioCtx.createBiquadFilter();
+  filt.type = 'lowpass'; filt.frequency.value = 2600;
+  osc.connect(filt); filt.connect(g); g.connect(ambient.padGain);
+  osc.start(t); osc.stop(t+dur+0.05);
+}
+
+function ambientStep(){
+  if(!audioCtx || !ambient) return;
+  const chord = AMBIENT_CHORDS[ambientChordIdx];
+  const note  = chord[ambientNoteIdx];
+  const isPhraseEnd = ambientNoteIdx === chord.length-1;
+  playPluck(note, isPhraseEnd?0.10:0.075, isPhraseEnd?2.0:1.1, 'sine');
+  if(isPhraseEnd && ambientChordIdx===2) playPluck(note*2, 0.045, 2.4, 'triangle'); // ประกายเสียงสูงจุดไคลแมกซ์ของวน
+
+  ambientNoteIdx++;
+  if(ambientNoteIdx >= chord.length){
+    ambientNoteIdx = 0;
+    ambientChordIdx = (ambientChordIdx+1) % AMBIENT_CHORDS.length;
+  }
+  ambient.timer = setTimeout(ambientStep, AMBIENT_NOTE_DUR);
+}
+
 function startAmbient(){
   if(!audioCtx) return;
   const padGain = audioCtx.createGain();
-  padGain.gain.value = 0.045;
+  padGain.gain.value = 0.5;
   padGain.connect(masterGain);
-  const freqs = [130.81, 164.81, 196.00]; // C3 E3 G3
-  const oscs = freqs.map(f=>{
-    const o = audioCtx.createOscillator();
-    o.type = 'sine'; o.frequency.value = f;
-    const lfo = audioCtx.createOscillator();
-    lfo.frequency.value = 0.06 + Math.random()*0.05;
-    const lfoGain = audioCtx.createGain();
-    lfoGain.gain.value = 3;
-    lfo.connect(lfoGain); lfoGain.connect(o.frequency);
-    lfo.start(); o.connect(padGain); o.start();
-    return o;
-  });
-  ambient = { padGain, oscs };
+
+  // เสียงลากยาวเบามาก ๆ รองพื้นให้ความอบอุ่น
+  const drone = audioCtx.createOscillator(), droneGain = audioCtx.createGain();
+  drone.type = 'sine'; drone.frequency.value = 110; // A2
+  droneGain.gain.value = 0.05;
+  drone.connect(droneGain); droneGain.connect(padGain);
+  drone.start();
+
+  ambient = { padGain, drone, timer:null };
+  ambientChordIdx = 0; ambientNoteIdx = 0;
+  ambientStep();
 }
 
 /* ════════════════════════════════════════════

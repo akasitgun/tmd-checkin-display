@@ -59,6 +59,14 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .header-sub { font-size:12px; color:var(--text-sub); margin-top:3px; }
 .header-meta { display:flex; gap:10px; align-items:center; flex-shrink:0; flex-wrap:wrap; justify-content:flex-end; }
 .meta-chip { display:flex; align-items:center; gap:7px; padding:5px 13px; border-radius:20px; background:rgba(30,79,194,0.25); border:1px solid var(--border-bright); font-size:12px; font-weight:500; color:var(--text-sub); }
+.sound-toggle {
+  flex-shrink:0; width:34px; height:34px; border-radius:50%; cursor:pointer;
+  border:1px solid var(--border-bright); background:rgba(30,79,194,0.25);
+  color:var(--text-sub); font-size:15px; display:flex; align-items:center; justify-content:center;
+  transition:all 0.15s;
+}
+.sound-toggle:hover { background:rgba(90,158,255,0.25); border-color:var(--r1); }
+.sound-toggle.muted { color:var(--text-dim); opacity:0.6; }
 .meta-chip .val { font-family:'Prompt',sans-serif; font-weight:600; color:var(--gold-light); font-size:14px; }
 .live-dot { width:7px; height:7px; border-radius:50%; background:#4ADE80; box-shadow:0 0 6px #4ADE80; animation:pulse-dot 2s infinite; }
 @keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:0.5;transform:scale(0.75);} }
@@ -391,6 +399,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
       </div>
     </div>
     <div class="header-meta">
+      <button class="sound-toggle" id="sound-toggle" onclick="toggleSound()" title="เปิด/ปิดเสียงประกอบ">🔊</button>
       <div class="meta-chip"><div class="live-dot"></div><span>ผู้ลงทะเบียน</span><span class="val" id="total-count">—</span></div>
       <div class="meta-chip"><span>รอบที่ 1</span><span class="val" id="hdr-r1">0/10</span></div>
       <div class="meta-chip"><span>รอบที่ 2</span><span class="val" id="hdr-r2">0/10</span></div>
@@ -607,6 +616,141 @@ let round1Done = false, round2Done = false, round3Done = false, secretDone = fal
 let drawnOrders = new Set();
 
 /* ════════════════════════════════════════════
+   SOUND ENGINE — เสียงสร้างสดด้วย Web Audio API
+   (ไม่ต้องพึ่งไฟล์เสียงภายนอก ทำงานได้แน่นอนแม้เน็ตหลุดหน้างาน)
+════════════════════════════════════════════ */
+let audioCtx = null, masterGain = null, ambient = null;
+let soundOn = true;
+
+function ensureAudio(){
+  if(!audioCtx){
+    try{
+      audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+      masterGain = audioCtx.createGain();
+      masterGain.gain.value = soundOn ? 0.55 : 0;
+      masterGain.connect(audioCtx.destination);
+      startAmbient();
+    }catch(e){ console.warn('Web Audio ไม่พร้อมใช้งาน', e); return; }
+  }
+  if(audioCtx.state === 'suspended') audioCtx.resume();
+}
+document.addEventListener('pointerdown', ensureAudio, { once:true });
+
+function toggleSound(){
+  soundOn = !soundOn;
+  ensureAudio();
+  if(masterGain && audioCtx) masterGain.gain.setTargetAtTime(soundOn?0.55:0, audioCtx.currentTime, 0.05);
+  const btn = document.getElementById('sound-toggle');
+  if(btn){ btn.textContent = soundOn ? '🔊' : '🔇'; btn.classList.toggle('muted', !soundOn); }
+}
+
+/* สั้น กระชับ — ใช้เป็นเสียง "ติ๊ก" ระหว่างชื่อวิ่ง */
+function playTick(freq=760, vol=0.09){
+  if(!audioCtx || !soundOn) return;
+  const t = audioCtx.currentTime;
+  const osc = audioCtx.createOscillator(), g = audioCtx.createGain();
+  osc.type = 'square';
+  osc.frequency.setValueAtTime(freq, t);
+  g.gain.setValueAtTime(vol, t);
+  g.gain.exponentialRampToValueAtTime(0.001, t+0.045);
+  osc.connect(g); g.connect(masterGain);
+  osc.start(t); osc.stop(t+0.06);
+}
+
+/* เสียง whoosh สั้น ๆ ตอนเริ่มหมุน */
+function playWhoosh(dur=0.7){
+  if(!audioCtx || !soundOn) return;
+  const t = audioCtx.currentTime;
+  const buf = audioCtx.createBuffer(1, audioCtx.sampleRate*dur, audioCtx.sampleRate);
+  const data = buf.getChannelData(0);
+  for(let i=0;i<data.length;i++) data[i] = (Math.random()*2-1) * (1-i/data.length);
+  const noise = audioCtx.createBufferSource(); noise.buffer = buf;
+  const filt = audioCtx.createBiquadFilter();
+  filt.type = 'bandpass'; filt.Q.value = 0.7;
+  filt.frequency.setValueAtTime(300, t);
+  filt.frequency.exponentialRampToValueAtTime(2200, t+dur);
+  const g = audioCtx.createGain();
+  g.gain.setValueAtTime(0.22, t); g.gain.linearRampToValueAtTime(0, t+dur);
+  noise.connect(filt); filt.connect(g); g.connect(masterGain);
+  noise.start(t); noise.stop(t+dur);
+}
+
+/* เสียงแฟนแฟร์ฉลอง — ใช้ตอนเปิดเผยผู้โชคดี (big = รางวัลใหญ่กว่า) */
+function playFanfare(big=false){
+  if(!audioCtx || !soundOn) return;
+  const t0 = audioCtx.currentTime;
+  const notes = big ? [523.25,659.25,783.99,1046.5,1318.5] : [523.25,659.25,783.99,1046.5];
+  notes.forEach((f,i)=>{
+    const t = t0 + i*0.09;
+    const osc = audioCtx.createOscillator(), g = audioCtx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(f, t);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(big?0.32:0.24, t+0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t+(big?0.9:0.6));
+    osc.connect(g); g.connect(masterGain);
+    osc.start(t); osc.stop(t+(big?1.0:0.7));
+  });
+  const sub = audioCtx.createOscillator(), sg = audioCtx.createGain();
+  sub.type = 'sine'; sub.frequency.setValueAtTime(big?110:130, t0);
+  sg.gain.setValueAtTime(big?0.3:0.2, t0);
+  sg.gain.exponentialRampToValueAtTime(0.001, t0+0.5);
+  sub.connect(sg); sg.connect(masterGain);
+  sub.start(t0); sub.stop(t0+0.55);
+}
+
+/* เสียงไล่ระดับขึ้น — ใช้ตอนปลดล็อกรางวัลลับ */
+function playUnlock(){
+  if(!audioCtx || !soundOn) return;
+  const t = audioCtx.currentTime;
+  const osc = audioCtx.createOscillator(), g = audioCtx.createGain();
+  osc.type = 'sawtooth';
+  osc.frequency.setValueAtTime(180, t);
+  osc.frequency.exponentialRampToValueAtTime(900, t+0.9);
+  g.gain.setValueAtTime(0.001, t);
+  g.gain.exponentialRampToValueAtTime(0.2, t+0.15);
+  g.gain.exponentialRampToValueAtTime(0.001, t+1.0);
+  const filt = audioCtx.createBiquadFilter();
+  filt.type = 'lowpass'; filt.frequency.value = 2200;
+  osc.connect(filt); filt.connect(g); g.connect(masterGain);
+  osc.start(t); osc.stop(t+1.05);
+}
+
+/* เสียงเบสสั่น — ใช้ตอนจอสั่นสำหรับรางวัลลับ */
+function playRumble(dur=1.4){
+  if(!audioCtx || !soundOn) return;
+  const t = audioCtx.currentTime;
+  const osc = audioCtx.createOscillator(), g = audioCtx.createGain();
+  osc.type = 'sine'; osc.frequency.setValueAtTime(55, t);
+  g.gain.setValueAtTime(0.001, t);
+  g.gain.exponentialRampToValueAtTime(0.28, t+0.1);
+  g.gain.exponentialRampToValueAtTime(0.001, t+dur);
+  osc.connect(g); g.connect(masterGain);
+  osc.start(t); osc.stop(t+dur+0.05);
+}
+
+/* เพลงคลอเบา ๆ วนตลอดงาน (ระดับเสียงต่ำมาก ไม่กลบไมค์พิธีกร) */
+function startAmbient(){
+  if(!audioCtx) return;
+  const padGain = audioCtx.createGain();
+  padGain.gain.value = 0.045;
+  padGain.connect(masterGain);
+  const freqs = [130.81, 164.81, 196.00]; // C3 E3 G3
+  const oscs = freqs.map(f=>{
+    const o = audioCtx.createOscillator();
+    o.type = 'sine'; o.frequency.value = f;
+    const lfo = audioCtx.createOscillator();
+    lfo.frequency.value = 0.06 + Math.random()*0.05;
+    const lfoGain = audioCtx.createGain();
+    lfoGain.gain.value = 3;
+    lfo.connect(lfoGain); lfoGain.connect(o.frequency);
+    lfo.start(); o.connect(padGain); o.start();
+    return o;
+  });
+  ambient = { padGain, oscs };
+}
+
+/* ════════════════════════════════════════════
    PARTICLE CANVAS
 ════════════════════════════════════════════ */
 (function(){
@@ -759,6 +903,7 @@ function showReveal(winner, badge, badgeClass, nameClass, holdMs, onClose){
     <div class="rv-hint">— แตะที่ใดก็ได้เพื่อดำเนินการต่อ —</div>
   `;
   overlay.classList.add('active');
+  playFanfare(false);
 
   // Fireworks
   const colors = nameClass==='rv-name-r1' ? [...BLUE_COLORS,'#FFFFFF'] : [...BLUE_COLORS,'#C0D8FF','#FFFFFF'];
@@ -804,7 +949,7 @@ function spinOne(round, winner, idx, total, onDone){
   slot.classList.add('active');
 
   const names = allItems.map(x=>x.name);
-  let spinInt = setInterval(()=>{ nameEl.textContent = names[Math.floor(Math.random()*names.length)]; }, 80);
+  let spinInt = setInterval(()=>{ nameEl.textContent = names[Math.floor(Math.random()*names.length)]; playTick(700+Math.random()*160, 0.08); }, 80);
 
   // Decelerate
   setTimeout(()=>{
@@ -815,6 +960,7 @@ function spinOne(round, winner, idx, total, onDone){
       const lock = ms >= 600;
       nameEl.textContent = lock ? winner.name : names[Math.floor(Math.random()*names.length)];
       deptEl.textContent = lock ? winner.department : '';
+      playTick(Math.max(140, 620 - ms*0.55), lock?0.15:0.09);
       if(ms < 800){ ms += 75; setTimeout(decel, ms); }
       else {
         nameEl.classList.remove('flicker');
@@ -866,6 +1012,7 @@ function spinOne(round, winner, idx, total, onDone){
 ════════════════════════════════════════════ */
 function startDraw(round){
   if(pool.length < DRAW_PER_ROUND){ alert('ผู้ลงทะเบียนไม่เพียงพอ'); return; }
+  ensureAudio(); playWhoosh();
   const btn = document.getElementById('btn'+round);
   btn.disabled = true;
   btn.innerHTML = '<span class="spin">⟳</span> กำลังสุ่ม...';
@@ -891,6 +1038,7 @@ function finishRound(round){
   btn.textContent = '✓ สุ่มเสร็จแล้ว';
   btn.disabled = true;
   document.getElementById('banner'+round).classList.add('show');
+  playFanfare(round===3);
 
   if(round===1){
     round1Done=true;
@@ -983,6 +1131,7 @@ function replaceZoneWinner(oldOrder, btnEl){
    SECRET PRIZE — ROUND 5
 ════════════════════════════════════════════ */
 function unlockSecret(){
+  playUnlock();
   const btn   = document.getElementById('btn5');
   const lock  = document.getElementById('secret-locked');
   const panel = document.getElementById('panel5');
@@ -1000,6 +1149,7 @@ function unlockSecret(){
 
 function startSecretDraw(){
   if(pool.length < 1){ alert('ผู้ลงทะเบียนไม่เพียงพอสำหรับรางวัลลับ'); return; }
+  ensureAudio(); playWhoosh(1.0);
   const btn = document.getElementById('btn5');
   btn.disabled = true;
   btn.className = 'draw-btn btn-secret';
@@ -1026,7 +1176,7 @@ function spinSecret(winner, onDone){
   slot.classList.add('active');
 
   const names = allItems.map(x=>x.name);
-  let spinInt = setInterval(()=>{ nameEl.textContent = names[Math.floor(Math.random()*names.length)]; }, 70);
+  let spinInt = setInterval(()=>{ nameEl.textContent = names[Math.floor(Math.random()*names.length)]; playTick(500+Math.random()*140, 0.09); }, 70);
 
   // Longer, escalating suspense — this is the biggest prize of the night
   setTimeout(()=>{
@@ -1036,6 +1186,7 @@ function spinSecret(winner, onDone){
       const lock = ms >= 1300;
       nameEl.textContent = lock ? winner.name : names[Math.floor(Math.random()*names.length)];
       deptEl.textContent = lock ? winner.department : '';
+      playTick(Math.max(120, 480 - ms*0.28), lock?0.18:0.1);
       if(ms < 1550){ ms += 70; setTimeout(decel, ms); }
       else {
         nameEl.classList.remove('flicker');
@@ -1107,6 +1258,8 @@ function showSecretReveal(winner, onDone){
     <div class="rv-hint" style="color:var(--gold-muted);margin-top:16px;">— แตะที่ใดก็ได้เพื่อปิด —</div>
   `;
   overlay.classList.add('active');
+  playFanfare(true);
+  playRumble(1.3);
 
   shell.classList.add('shake-active');
   setTimeout(()=>shell.classList.remove('shake-active'), 900);

@@ -1,6 +1,162 @@
 {
   "items": [
     {
+      "name": "สามารถ สุวรรณปรดี",
+      "order": "96",
+      "department": "SEO 2",
+      "timestamp": "2026-08-28T09:23:50.865Z"
+    },
+    {
+      "name": "Atichart Uearatchanon",
+      "order": "94",
+      "department": "SEO 2",
+      "timestamp": "2026-08-28T09:23:47.604Z"
+    },
+    {
+      "name": "เสฎฐกรณ์ หิรัญปรีชาพงศ์",
+      "order": "102",
+      "department": "HR",
+      "timestamp": "2026-08-28T09:23:44.050Z"
+    },
+    {
+      "name": "Yuichi MATSUMURA",
+      "order": "103",
+      "department": "BS",
+      "timestamp": "2026-08-28T09:23:41.994Z"
+    },
+    {
+      "name": "นนทกร ทวีเกตุ",
+      "order": "104",
+      "department": "SEO 4",
+      "timestamp": "2026-08-28T09:23:39.118Z"
+    },
+    {
+      "name": "โสภณ แร่อ่อน",
+      "order": "101",
+      "department": "POWER PLANT",
+      "timestamp": "2026-08-28T09:23:37.501Z"
+    },
+    {
+      "name": "จิตตกร จิรปกรณ์สกุล",
+      "order": "90",
+      "department": "SEO 2",
+      "timestamp": "2026-08-28T09:23:34.810Z"
+    },
+    {
+      "name": "เทวินทร์ ศิริวรรณ",
+      "order": "91",
+      "department": "SEO 2",
+      "timestamp": "2026-08-28T09:23:32.484Z"
+    },
+    {
+      "name": "ถาปัตย์ คำงาม",
+      "order": "89",
+      "department": "CAD",
+      "timestamp": "2026-08-28T09:23:30.600Z"
+    },
+    {
+      "name": "ธิชานัน ศรีสวัสดิ์",
+      "order": "61",
+      "department": "SEO 1",
+      "timestamp": "2026-08-28T09:23:26.822Z"
+    },
+    {
+      "name": "เศรษฐพงศ์ บุญศรี",
+      "order": "64",
+      "department": "SEO 3",
+      "timestamp": "2026-08-28T09:23:24.962Z"
+    },
+    {
+      "name": "Winyu Pairoj",
+      "order": "63",
+      "department": "SEO 3",
+      "timestamp": "2026-08-28T09:23:15.897Z"
+    },
+    {
+      "name": "มงคล ชูศิริรักษ์",
+      "order": "62",
+      "department": "HR",
+      "timestamp": "2026-08-28T09:23:13.591Z"
+    },
+    {
+      "name": "ชัยพร เสรีตระกูล",
+      "order": "58",
+      "department": "SEO 3",
+      "timestamp": "2026-08-28T09:23:11.748Z"
+    },
+    {
+      "name": "ธนาคาร พรรณนิกร",
+      "order": "59",
+      "department": "QC/QA",
+      "timestamp": "2026-08-28T09:23:09.585Z"
+    },
+    {
+      "name": "ณภูภณ พูลพิมมะ",
+      "order": "60",
+      "department": "SEO 1",
+      "timestamp": "2026-08-28T09:23:07.725Z"
+    },
+    {
+      "name": "สาโรจน์ พึ่งเทียน",
+      "order": "56",
+      "department": "SQT",
+      "timestamp": "2026-08-28T09:23:05.991Z"
+    },
+    {
+      "name": "ธีรวัฒน์ แม้นพวก",
+      "order": "57",
+      "department": "SEO 4",
+      "timestamp": "2026-08-28T09:23:04.153Z"
+    },
+    {
+      "name": "ธนณัฐ ลาเสือ",
+      "order": "16",
+      "department": "SEO 3",
+      "timestamp": "2026-08-28T09:22:59.830Z"
+    },
+    {
+      "name": "ขนิษฐา บุญยืน",
+      "order": "9",
+      "department": "SEO 3",
+      "timestamp": "2026-08-28T09:22:57.629Z"
+    },
+    {
+      "name": "ณฐพร อมรสิทธิเจริญ",
+      "order": "15",
+      "department": "SEO 5",
+      "timestamp": "2026-08-28T09:22:55.803Z"
+    },
+    {
+      "name": "ดนัยฤทธิ์ สมประสงค์",
+      "order": "14",
+      "department": "SEO 3",
+      "timestamp": "2026-08-28T09:22:53.941Z"
+    },
+    {
+      "name": "อภิชิต ศรีมูล",
+      "order": "13",
+      "department": "SEO 5",
+      "timestamp": "2026-08-28T09:22:52.115Z"
+    },
+    {
+      "name": "วิเศษ เสนาพันธ์",
+      "order": "12",
+      "department": "SEO 2",
+      "timestamp": "2026-08-28T09:22:50.290Z"
+    },
+    {
+      "name": "ขวัญลดา  แก้วพิลึก",
+      "order": "10",
+      "department": "AC",
+      "timestamp": "2026-08-28T09:22:48.284Z"
+    },
+    {
+      "name": "อานนท์ ภูหนองโอง",
+      "order": "2",
+      "department": "SEO 5",
+      "timestamp": "2026-08-28T09:22:46.027Z"
+    },
+    {
       "name": "ธันว์ อนันตพืช",
       "order": "198",
       "department": "POWER PLANT",
@@ -103,5 +259,5 @@
       "timestamp": "2026-08-25T09:15:23.824Z"
     }
   ],
-  "updated": "2026-08-28T07:04:12.261Z"
+  "updated": "2026-08-28T09:23:55.204Z"
 }

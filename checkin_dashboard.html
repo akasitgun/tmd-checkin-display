@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TMD 60ᵗʰ Anniversary : Check-in Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;900&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.15/hls.min.js"></script>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -1209,35 +1210,57 @@ $("#btn-force-refresh").addEventListener("click", async ()=>{
 })();
 
 /* ── Start ── *//* ══════════════════════════════
-   LIVE CAMERA FEED (Logitech webcam via getUserMedia)
-   หมายเหตุ: ต้องเปิดหน้านี้ผ่าน HTTPS หรือ localhost เท่านั้น
-   กล้องถึงจะทำงานได้ (เบราว์เซอร์บล็อกกล้องบน file://)
+   LIVE CAMERA FEED — ดึงภาพจาก MediaMTX (HLS) ที่ OBS ส่งเข้ามา
+   แก้ HLS_URL ด้านล่างให้ตรงกับ IP เครื่อง MediaMTX ในวง LAN ของงาน
 ══════════════════════════════ */
+const HLS_URL = "http://192.168.17.41:8888/live/index.m3u8";
 let camMirrored = false;
+let hlsInstance = null;
 
-async function initLiveCam() {
-  const video = $("#live-cam-video");
+function setCamMessage(html) {
   const placeholder = $("#live-cam-placeholder");
+  if (placeholder) { placeholder.style.display = "flex"; placeholder.innerHTML = html; }
+}
+function hideCamMessage() {
+  const placeholder = $("#live-cam-placeholder");
+  if (placeholder) placeholder.style.display = "none";
+}
+
+function initLiveCam() {
+  const video = $("#live-cam-video");
   if (!video) return;
+  video.muted = true; // จำเป็นสำหรับ autoplay อัตโนมัติบนจอแสดงผลไม่มีคนคอยกด
 
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    if (placeholder) placeholder.innerHTML = `<div class="cam-icon">🚫</div><div class="cam-text">เบราว์เซอร์นี้ไม่รองรับกล้อง หรือหน้านี้ไม่ได้เปิดผ่าน HTTPS/localhost</div>`;
-    return;
-  }
-
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({
-      video: { width: { ideal: 1280 }, height: { ideal: 720 } },
-      audio: false
+  if (window.Hls && Hls.isSupported()) {
+    setCamMessage(`<div class="cam-icon">📷</div><div class="cam-text">กำลังเชื่อมต่อสัญญาณ Live...</div>`);
+    const hls = new Hls({ liveSyncDuration: 3, liveMaxLatencyDuration: 8, manifestLoadingMaxRetry: Infinity });
+    hlsInstance = hls;
+    hls.loadSource(HLS_URL);
+    hls.attachMedia(video);
+    hls.on(Hls.Events.MANIFEST_PARSED, () => { video.play().catch(()=>{}); hideCamMessage(); });
+    hls.on(Hls.Events.ERROR, (_evt, data) => {
+      if (!data.fatal) return;
+      switch (data.type) {
+        case Hls.ErrorTypes.NETWORK_ERROR:
+          setCamMessage(`<div class="cam-icon">📡</div><div class="cam-text">ขาดการเชื่อมต่อสัญญาณ กำลังลองใหม่...</div>`);
+          setTimeout(() => hls.startLoad(), 2000);
+          break;
+        case Hls.ErrorTypes.MEDIA_ERROR:
+          hls.recoverMediaError();
+          break;
+        default:
+          setTimeout(initLiveCam, 3000);
+          break;
+      }
     });
-    video.srcObject = stream;
-    video.onloadedmetadata = () => {
-      video.play();
-      if (placeholder) placeholder.style.display = "none";
-    };
-  } catch (err) {
-    console.warn("เปิดกล้องไม่สำเร็จ:", err);
-    if (placeholder) placeholder.innerHTML = `<div class="cam-icon">🚫</div><div class="cam-text">ไม่พบกล้อง หรือถูกปฏิเสธสิทธิ์เข้าถึงกล้อง</div>`;
+  } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+    // Safari รองรับ HLS โดยตรงอยู่แล้ว ไม่ต้องใช้ hls.js
+    setCamMessage(`<div class="cam-icon">📷</div><div class="cam-text">กำลังเชื่อมต่อสัญญาณ Live...</div>`);
+    video.src = HLS_URL;
+    video.addEventListener("loadedmetadata", () => { video.play().catch(()=>{}); hideCamMessage(); });
+    video.addEventListener("error", () => setTimeout(initLiveCam, 3000));
+  } else {
+    setCamMessage(`<div class="cam-icon">🚫</div><div class="cam-text">เบราว์เซอร์นี้ไม่รองรับการเล่นสัญญาณ Live</div>`);
   }
 }
 

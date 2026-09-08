@@ -387,21 +387,17 @@ html, body {
 .live-cam-wrap {
   flex-shrink: 0;
   border-top: 1px solid var(--border);
-  padding: 10px 14px 12px;
-  display: flex; flex-direction: column; gap: 7px;
+  padding: 12px 14px 14px;
+  display: flex; flex-direction: column;
 }
-.live-cam-header {
-  display: flex; align-items: center; gap: 8px;
-}
-.live-cam-title {
-  font-size: 11.5px; font-weight: 600; color: var(--text-sub);
-  flex: 1;
-}
+
 .live-badge {
   display: inline-flex; align-items: center; gap: 5px;
-  padding: 2px 8px; border-radius: 10px;
-  background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.4);
-  font-size: 10px; font-weight: 700; color: #FF6B6B; letter-spacing: 0.5px;
+  padding: 3px 9px; border-radius: 10px;
+  background: rgba(239,68,68,0.22); border: 1px solid rgba(239,68,68,0.5);
+  backdrop-filter: blur(4px);
+  font-size: 10px; font-weight: 700; color: #FF8080; letter-spacing: 0.6px;
+  box-shadow: 0 2px 8px rgba(239,68,68,0.25);
 }
 .cam-live-dot {
   width: 6px; height: 6px; border-radius: 50%;
@@ -413,31 +409,87 @@ html, body {
   50% { opacity: 0.5; box-shadow: 0 0 0 4px rgba(255,59,59,0); }
 }
 .live-cam-btn {
-  width: 22px; height: 22px; border-radius: 6px;
-  border: 1px solid var(--border-bright); background: rgba(30,79,194,0.2);
+  width: 24px; height: 24px; border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.25); background: rgba(3,8,18,0.5);
+  backdrop-filter: blur(4px);
   color: var(--text-sub); font-size: 12px; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   transition: all 0.15s;
 }
-.live-cam-btn:hover { background: rgba(90,158,255,0.25); color: var(--text); }
+.live-cam-btn:hover { background: rgba(90,158,255,0.35); color: var(--text); }
 
+/* ── Frame: layered shadows + subtle breathing glow for a "premium broadcast" feel ── */
 .live-cam-box {
   position: relative;
-  flex: 1; min-height: 140px;
-  border-radius: 10px; overflow: hidden;
-  background: #030812;
-  border: 1px solid var(--border-bright);
-  box-shadow: 0 0 0 1px rgba(255,215,0,0.08), 0 8px 20px rgba(0,0,0,0.35);
+  flex: 1; min-height: 160px;
+  border-radius: 12px; overflow: hidden;
+  background: #020610;
+  border: 1px solid rgba(255,215,0,0.28);
+  animation: cam-glow-pulse 3.6s ease-in-out infinite;
+}
+@keyframes cam-glow-pulse {
+  0%,100% {
+    box-shadow:
+      0 0 0 1px rgba(255,215,0,0.10),
+      0 0 22px rgba(34,211,238,0.14),
+      0 14px 32px rgba(0,0,0,0.55),
+      inset 0 0 36px rgba(0,0,0,0.45);
+  }
+  50% {
+    box-shadow:
+      0 0 0 1px rgba(255,215,0,0.22),
+      0 0 34px rgba(34,211,238,0.26),
+      0 14px 32px rgba(0,0,0,0.55),
+      inset 0 0 36px rgba(0,0,0,0.45);
+  }
 }
 .live-cam-box video {
   width: 100%; height: 100%; object-fit: cover;
   display: block;
 }
+
+/* Vignette for cinematic depth */
+.cam-vignette {
+  position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 42%, rgba(0,0,0,0.5) 100%);
+}
+
+/* Viewfinder-style corner brackets — makes it read as a live camera monitor, not a flat photo */
+.cam-corner {
+  position: absolute; width: 18px; height: 18px; z-index: 3;
+  pointer-events: none; opacity: 0.9;
+}
+.cam-corner-tl { top: 9px; left: 9px; border-top: 2px solid var(--gold); border-left: 2px solid var(--gold); border-top-left-radius: 4px; }
+.cam-corner-tr { top: 9px; right: 9px; border-top: 2px solid var(--gold); border-right: 2px solid var(--gold); border-top-right-radius: 4px; }
+.cam-corner-bl { bottom: 9px; left: 9px; border-bottom: 2px solid var(--gold); border-left: 2px solid var(--gold); border-bottom-left-radius: 4px; }
+.cam-corner-br { bottom: 9px; right: 9px; border-bottom: 2px solid var(--gold); border-right: 2px solid var(--gold); border-bottom-right-radius: 4px; }
+
+/* Floating overlay chrome directly on the video, like a broadcast lower/upper third */
+.cam-overlay-top, .cam-overlay-bottom {
+  position: absolute; left: 0; right: 0; z-index: 4;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 12px;
+  opacity: 0; transition: opacity 0.3s;
+}
+.live-cam-box.cam-ready .cam-overlay-top,
+.live-cam-box.cam-ready .cam-overlay-bottom { opacity: 1; }
+.cam-overlay-top { top: 0; background: linear-gradient(180deg, rgba(2,6,16,0.7), transparent); }
+.cam-overlay-bottom { bottom: 0; background: linear-gradient(0deg, rgba(2,6,16,0.8), transparent); }
+.cam-overlay-title {
+  font-size: 11.5px; font-weight: 600; color: var(--text);
+  text-shadow: 0 1px 4px rgba(0,0,0,0.7);
+}
+.cam-overlay-clock {
+  font-family: 'Prompt', sans-serif; font-size: 11px; font-weight: 600;
+  color: var(--accent-teal); letter-spacing: 0.5px;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.7);
+}
+
 .live-cam-placeholder {
-  position: absolute; inset: 0;
+  position: absolute; inset: 0; z-index: 5;
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
   color: var(--text-dim);
-  background: linear-gradient(180deg, rgba(9,21,48,0.9), rgba(5,12,31,0.95));
+  background: linear-gradient(180deg, rgba(9,21,48,0.92), rgba(2,6,16,0.97));
 }
 .cam-icon { font-size: 26px; opacity: 0.7; }
 .cam-text { font-size: 11.5px; text-align: center; padding: 0 16px; }
@@ -768,15 +820,23 @@ html, body {
         </div>
       </div>
 
-      <!-- ══ LIVE CAMERA (Logitech webcam via getUserMedia) ══ -->
+      <!-- ══ LIVE CAMERA (สัญญาณจากงานเลี้ยง ผ่าน MediaMTX/HLS) ══ -->
       <div class="live-cam-wrap">
-        <div class="live-cam-header">
-          <span class="live-badge"><span class="cam-live-dot"></span> LIVE</span>
-          <span class="live-cam-title">📷 บรรยากาศงาน</span>
-          <button class="live-cam-btn" id="cam-mirror-btn" title="พลิกภาพกระจก">⇋</button>
-        </div>
         <div class="live-cam-box" id="live-cam-box">
           <video id="live-cam-video" autoplay playsinline muted></video>
+          <div class="cam-vignette"></div>
+          <div class="cam-corner cam-corner-tl"></div>
+          <div class="cam-corner cam-corner-tr"></div>
+          <div class="cam-corner cam-corner-bl"></div>
+          <div class="cam-corner cam-corner-br"></div>
+          <div class="cam-overlay-top">
+            <span class="live-badge"><span class="cam-live-dot"></span> LIVE</span>
+            <button class="live-cam-btn" id="cam-mirror-btn" title="พลิกภาพกระจก">⇋</button>
+          </div>
+          <div class="cam-overlay-bottom">
+            <span class="cam-overlay-title">📷 บรรยากาศงาน</span>
+            <span class="cam-overlay-clock" id="cam-clock">--:--:--</span>
+          </div>
           <div class="live-cam-placeholder" id="live-cam-placeholder">
             <div class="cam-icon">📷</div>
             <div class="cam-text">กำลังเชื่อมต่อกล้อง...</div>
@@ -1219,12 +1279,26 @@ let hlsInstance = null;
 
 function setCamMessage(html) {
   const placeholder = $("#live-cam-placeholder");
+  const box = $("#live-cam-box");
   if (placeholder) { placeholder.style.display = "flex"; placeholder.innerHTML = html; }
+  if (box) box.classList.remove("cam-ready");
 }
 function hideCamMessage() {
   const placeholder = $("#live-cam-placeholder");
+  const box = $("#live-cam-box");
   if (placeholder) placeholder.style.display = "none";
+  if (box) box.classList.add("cam-ready");
 }
+
+function startCamClock() {
+  const clockEl = $("#cam-clock");
+  if (!clockEl) return;
+  const tick = () => { clockEl.textContent = new Date().toLocaleTimeString("th-TH", { hour12: false }); };
+  tick();
+  setInterval(tick, 1000);
+}
+startCamClock();
+
 
 function initLiveCam() {
   const video = $("#live-cam-video");

@@ -191,7 +191,7 @@ html, body {
 
 .main {
   display: grid;
-  grid-template-columns: 1.15fr 0.85fr 1.1fr;
+  grid-template-columns: 0.75fr 1.35fr 1.0fr;
   gap: 0;
   overflow: hidden;
   height: 100%;
@@ -421,7 +421,7 @@ html, body {
 /* ── Frame: layered shadows + subtle breathing glow for a "premium broadcast" feel ── */
 .live-cam-box {
   position: relative;
-  flex: 1; min-height: 160px;
+  flex: 1; min-height: 230px;
   border-radius: 12px; overflow: hidden;
   background: #020610;
   border: 1px solid rgba(255,215,0,0.28);
@@ -889,7 +889,7 @@ html, body {
 const DATA_URL   = "https://raw.githubusercontent.com/akasitgun/tmd-checkin-display/main/data.json";
 const LOGO_URL   = "https://raw.githubusercontent.com/akasitgun/tmd-checkin-display/main/MEIDEN.png";
 const POLL_MS    = 1200;
-const RECENT_N   = 20;   // แสดงใน panel spotlight
+const RECENT_N   = 5;    // แสดงใน panel spotlight
 const SPOT_STEP  = 1.0;
 const SPOT_TICK  = 20;
 const LIST_STEP  = 1.2;

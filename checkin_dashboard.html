@@ -1277,6 +1277,12 @@ const HLS_URL = "http://192.168.59.114:8888/live/index.m3u8";
 let camMirrored = false;
 let hlsInstance = null;
 
+// ── กันข้อความ error กระพริบถี่ๆ เวลาเน็ตแกว่งสั้นๆ ──
+// จะโชว์ข้อความ "ขาดการเชื่อมต่อ" ก็ต่อเมื่อ error ติดกันเกิน threshold
+// หรือหลุดต่อเนื่องนานเกิน delay ที่กำหนด ถ้ากลับมาเชื่อมได้ก่อนหน้านั้น จะไม่ขึ้นข้อความเลย
+const CAM_ERROR_SHOW_DELAY_MS = 4000;
+let camErrorPendingTimer = null;
+
 function setCamMessage(html) {
   const placeholder = $("#live-cam-placeholder");
   const box = $("#live-cam-box");
@@ -1284,10 +1290,19 @@ function setCamMessage(html) {
   if (box) box.classList.remove("cam-ready");
 }
 function hideCamMessage() {
+  if (camErrorPendingTimer) { clearTimeout(camErrorPendingTimer); camErrorPendingTimer = null; }
   const placeholder = $("#live-cam-placeholder");
   const box = $("#live-cam-box");
   if (placeholder) placeholder.style.display = "none";
   if (box) box.classList.add("cam-ready");
+}
+function setCamMessageDebounced(html) {
+  // ถ้ามี timer รออยู่แล้ว ปล่อยให้รอต่อ ไม่ต้องรีเซ็ต (กันเน็ตแกว่งรัวๆ ยืดเวลาไม่จบ)
+  if (camErrorPendingTimer) return;
+  camErrorPendingTimer = setTimeout(() => {
+    camErrorPendingTimer = null;
+    setCamMessage(html);
+  }, CAM_ERROR_SHOW_DELAY_MS);
 }
 
 function startCamClock() {
@@ -1307,16 +1322,27 @@ function initLiveCam() {
 
   if (window.Hls && Hls.isSupported()) {
     setCamMessage(`<div class="cam-icon">📷</div><div class="cam-text">กำลังเชื่อมต่อสัญญาณ Live...</div>`);
-    const hls = new Hls({ liveSyncDuration: 3, liveMaxLatencyDuration: 8, manifestLoadingMaxRetry: Infinity });
+    const hls = new Hls({
+      liveSyncDuration: 6,
+      liveMaxLatencyDuration: 15,
+      manifestLoadingMaxRetry: Infinity,
+      manifestLoadingRetryDelay: 1000,
+      manifestLoadingMaxRetryTimeout: 4000,
+      levelLoadingMaxRetry: 8,
+      levelLoadingRetryDelay: 1000,
+      fragLoadingMaxRetry: 8,
+      fragLoadingRetryDelay: 1000,
+      fragLoadingMaxRetryTimeout: 8000
+    });
     hlsInstance = hls;
     hls.loadSource(HLS_URL);
     hls.attachMedia(video);
     hls.on(Hls.Events.MANIFEST_PARSED, () => { video.play().catch(()=>{}); hideCamMessage(); });
     hls.on(Hls.Events.ERROR, (_evt, data) => {
-      if (!data.fatal) return;
+      if (!data.fatal) return; // error เล็กๆ ที่ไม่ fatal ปล่อยให้ hls.js จัดการ retry เองข้างในอยู่แล้ว
       switch (data.type) {
         case Hls.ErrorTypes.NETWORK_ERROR:
-          setCamMessage(`<div class="cam-icon">📡</div><div class="cam-text">ขาดการเชื่อมต่อสัญญาณ กำลังลองใหม่...</div>`);
+          setCamMessageDebounced(`<div class="cam-icon">📡</div><div class="cam-text">ขาดการเชื่อมต่อสัญญาณ กำลังลองใหม่...</div>`);
           setTimeout(() => hls.startLoad(), 2000);
           break;
         case Hls.ErrorTypes.MEDIA_ERROR:

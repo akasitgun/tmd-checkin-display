@@ -1,3 +1,23 @@
 {
-  "checkins": []
+  "items": [
+    {
+      "name": "ชนกานต์ เอื้อวิบูลย์ศรี",
+      "order": "3",
+      "department": "SQT",
+      "timestamp": "2026-09-08T03:41:49.715Z"
+    },
+    {
+      "name": "Atsushi NAKANO",
+      "order": "199",
+      "department": "MGT",
+      "timestamp": "2026-09-08T03:41:45.645Z"
+    },
+    {
+      "name": "เอกสิทธิ์ อู่ขุน",
+      "order": "99",
+      "department": "IT",
+      "timestamp": "2026-09-08T03:41:41.554Z"
+    }
+  ],
+  "updated": "2026-09-08T03:42:04.590Z"
 }

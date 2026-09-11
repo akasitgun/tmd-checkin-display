@@ -1,6 +1,126 @@
 {
   "items": [
     {
+      "name": "Yuichi MATSUMURA",
+      "order": "103",
+      "department": "BS",
+      "timestamp": "2026-09-11T10:43:02.488Z"
+    },
+    {
+      "name": "Kontachat Supa",
+      "order": "189",
+      "department": "SEO 5",
+      "timestamp": "2026-09-11T10:42:44.736Z"
+    },
+    {
+      "name": "เฉลิมพล เกิดมณี",
+      "order": "646",
+      "department": "⭐ VIP",
+      "timestamp": "2026-09-11T10:42:07.606Z"
+    },
+    {
+      "name": "คทาวุธ สิงชอบ",
+      "order": "141",
+      "department": "SQT",
+      "timestamp": "2026-09-11T10:41:59.190Z"
+    },
+    {
+      "name": "ธนาคาร พรรณนิกร",
+      "order": "59",
+      "department": "QC/QA",
+      "timestamp": "2026-09-11T10:41:42.103Z"
+    },
+    {
+      "name": "พงศธร บุญมา",
+      "order": "202",
+      "department": "QC/QA",
+      "timestamp": "2026-09-11T10:41:39.503Z"
+    },
+    {
+      "name": "ธวัชชัย เอี่ยมประเสริฐ",
+      "order": "22",
+      "department": "AGV",
+      "timestamp": "2026-09-11T10:41:34.481Z"
+    },
+    {
+      "name": "นิธิกร เตี่ยวสกุล",
+      "order": "8",
+      "department": "SEO 3",
+      "timestamp": "2026-09-11T10:41:28.286Z"
+    },
+    {
+      "name": "Atsushi NAKANO",
+      "order": "199",
+      "department": "MGT",
+      "timestamp": "2026-09-11T10:41:03.282Z"
+    },
+    {
+      "name": "มงคล ชูศิริรักษ์",
+      "order": "62",
+      "department": "HR",
+      "timestamp": "2026-09-11T10:41:00.671Z"
+    },
+    {
+      "name": "Koki Nagashima",
+      "order": "133",
+      "department": "POWER PLANT",
+      "timestamp": "2026-09-11T10:40:44.112Z"
+    },
+    {
+      "name": "Toshiki Hiranabe",
+      "order": "83",
+      "department": "SPO",
+      "timestamp": "2026-09-11T10:40:40.797Z"
+    },
+    {
+      "name": "ดวงฤดี จรไธสง",
+      "order": "126",
+      "department": "SEO 3",
+      "timestamp": "2026-09-11T10:40:37.301Z"
+    },
+    {
+      "name": "ณรงค์ศักดิ์ วงค์พานิช",
+      "order": "173",
+      "department": "SEO 2",
+      "timestamp": "2026-09-11T10:40:21.150Z"
+    },
+    {
+      "name": "เสฎฐกรณ์ หิรัญปรีชาพงศ์",
+      "order": "102",
+      "department": "HR",
+      "timestamp": "2026-09-11T10:39:48.638Z"
+    },
+    {
+      "name": "ชิโนรส เณรเอี่ยม",
+      "order": "134",
+      "department": "SQT",
+      "timestamp": "2026-09-11T10:39:43.323Z"
+    },
+    {
+      "name": "ปภาวรินทร์ ใสแสง",
+      "order": "26",
+      "department": "SEO 3",
+      "timestamp": "2026-09-11T10:39:40.692Z"
+    },
+    {
+      "name": "กรองแก้ว สุภะ",
+      "order": "625",
+      "department": "⭐ VIP",
+      "timestamp": "2026-09-11T10:38:52.180Z"
+    },
+    {
+      "name": "พรเทวา วนขจรไกร",
+      "order": "169",
+      "department": "MGT",
+      "timestamp": "2026-09-11T10:38:35.364Z"
+    },
+    {
+      "name": "ชัชวาล สุภะ",
+      "order": "644",
+      "department": "⭐ VIP",
+      "timestamp": "2026-09-11T10:38:29.517Z"
+    },
+    {
       "name": "เสกสรรค์ ปานสีทอง",
       "order": "43",
       "department": "SEO 3",
@@ -871,5 +991,5 @@
       "timestamp": "2026-09-11T07:30:02.073Z"
     }
   ],
-  "updated": "2026-09-11T10:37:26.015Z"
+  "updated": "2026-09-11T10:43:12.311Z"
 }

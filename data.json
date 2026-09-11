@@ -1,6 +1,54 @@
 {
   "items": [
     {
+      "name": "ศริทธิ์ แวสาและ",
+      "order": "242",
+      "department": "HR",
+      "timestamp": "2026-09-11T08:23:32.914Z"
+    },
+    {
+      "name": "ธันว์ อนันตพืช",
+      "order": "198",
+      "department": "POWER PLANT",
+      "timestamp": "2026-09-11T08:23:29.265Z"
+    },
+    {
+      "name": "กษิดิศ พิมพ์กลัด",
+      "order": "27",
+      "department": "PC",
+      "timestamp": "2026-09-11T08:23:15.863Z"
+    },
+    {
+      "name": "พิมพ์ณิภา พวงอินทร์",
+      "order": "20",
+      "department": "SQT",
+      "timestamp": "2026-09-11T08:22:50.156Z"
+    },
+    {
+      "name": "คมคิด ศรีมันตะ",
+      "order": "156",
+      "department": "POWER PLANT",
+      "timestamp": "2026-09-11T08:03:32.563Z"
+    },
+    {
+      "name": "นิตยา รัชไชยบุญ",
+      "order": "21",
+      "department": "PC",
+      "timestamp": "2026-09-11T08:03:21.894Z"
+    },
+    {
+      "name": "อรรถพล ใยบัว",
+      "order": "28",
+      "department": "AGV",
+      "timestamp": "2026-09-11T07:56:24.079Z"
+    },
+    {
+      "name": "สุธิรา ภควลีธร",
+      "order": "98",
+      "department": "SPO",
+      "timestamp": "2026-09-11T07:54:48.444Z"
+    },
+    {
       "name": "สมเกียรติ  ศรีทอง",
       "order": "166",
       "department": "SEO 2",
@@ -103,5 +151,5 @@
       "timestamp": "2026-09-11T07:30:02.073Z"
     }
   ],
-  "updated": "2026-09-11T07:51:15.691Z"
+  "updated": "2026-09-11T08:35:11.039Z"
 }

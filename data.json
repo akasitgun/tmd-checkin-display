@@ -1,3 +1,89 @@
 {
-  "checkins":[]
+  "items": [
+    {
+      "name": "เอกสิทธิ์ อู่ขุน",
+      "order": "99",
+      "department": "IT",
+      "timestamp": "2026-09-11T07:40:43.115Z"
+    },
+    {
+      "name": "ณัฐภควัต อรัญ",
+      "order": "32",
+      "department": "SEO 3",
+      "timestamp": "2026-09-11T07:37:56.225Z"
+    },
+    {
+      "name": "สมชาติ ฝากาบล",
+      "order": "52",
+      "department": "SEO 1",
+      "timestamp": "2026-09-11T07:37:47.936Z"
+    },
+    {
+      "name": "ณัฐชานันท์ เชื้อทองจุรัยกุล",
+      "order": "5",
+      "department": "PC",
+      "timestamp": "2026-09-11T07:37:46.632Z"
+    },
+    {
+      "name": "ศศิธร พูลผล",
+      "order": "120",
+      "department": "AC",
+      "timestamp": "2026-09-11T07:37:39.150Z"
+    },
+    {
+      "name": "กาญจนาพร  วงศ์วิริยะสกุล",
+      "order": "241",
+      "department": "HR",
+      "timestamp": "2026-09-11T07:37:30.521Z"
+    },
+    {
+      "name": "ธฤษตา สุขอร่าม",
+      "order": "44",
+      "department": "BP",
+      "timestamp": "2026-09-11T07:35:01.843Z"
+    },
+    {
+      "name": "ชูเกียรติ์ บัวแก้ว",
+      "order": "148",
+      "department": "SEO 5",
+      "timestamp": "2026-09-11T07:34:30.473Z"
+    },
+    {
+      "name": "โกเมศ  ศรีปัด",
+      "order": "66",
+      "department": "POWER PLANT",
+      "timestamp": "2026-09-11T07:34:18.846Z"
+    },
+    {
+      "name": "ถาปัตย์ คำงาม",
+      "order": "89",
+      "department": "CAD",
+      "timestamp": "2026-09-11T07:32:53.880Z"
+    },
+    {
+      "name": "อาภาพร บุญรอด",
+      "order": "31",
+      "department": "HR",
+      "timestamp": "2026-09-11T07:31:26.876Z"
+    },
+    {
+      "name": "โชติรส ธรรมเกษตรศรี",
+      "order": "33",
+      "department": "HR",
+      "timestamp": "2026-09-11T07:31:13.142Z"
+    },
+    {
+      "name": "เพ็ญพินิจ ชูนิน",
+      "order": "51",
+      "department": "SEO 4",
+      "timestamp": "2026-09-11T07:30:56.961Z"
+    },
+    {
+      "name": "อลิสา ธีรธราธร",
+      "order": "72",
+      "department": "LG",
+      "timestamp": "2026-09-11T07:30:02.073Z"
+    }
+  ],
+  "updated": "2026-09-11T07:44:48.659Z"
 }

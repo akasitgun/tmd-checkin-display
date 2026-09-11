@@ -1,6 +1,24 @@
 {
   "items": [
     {
+      "name": "Yasunori Takezawa",
+      "order": "143",
+      "department": "BS",
+      "timestamp": "2026-09-11T11:08:59.269Z"
+    },
+    {
+      "name": "Ginji Ito",
+      "order": "159",
+      "department": "MAP",
+      "timestamp": "2026-09-11T11:08:56.504Z"
+    },
+    {
+      "name": "Masahiko Misumi",
+      "order": "203",
+      "department": "POWER PLANT",
+      "timestamp": "2026-09-11T11:08:44.838Z"
+    },
+    {
       "name": "พัฒนะ วรรณกุล",
       "order": "218",
       "department": "SEO 4",
@@ -1213,5 +1231,5 @@
       "timestamp": "2026-09-11T07:30:02.073Z"
     }
   ],
-  "updated": "2026-09-11T11:08:24.074Z"
+  "updated": "2026-09-11T11:09:09.272Z"
 }

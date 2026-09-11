@@ -1,6 +1,78 @@
 {
   "items": [
     {
+      "name": "ณภูภณ พูลพิมมะ",
+      "order": "60",
+      "department": "SEO 1",
+      "timestamp": "2026-09-11T09:59:26.923Z"
+    },
+    {
+      "name": "บรรพต ดุริยะรักษ์",
+      "order": "71",
+      "department": "SEO 1",
+      "timestamp": "2026-09-11T09:58:18.711Z"
+    },
+    {
+      "name": "ณฏฐพล ศิริสำราญ",
+      "order": "229",
+      "department": "SEO 1",
+      "timestamp": "2026-09-11T09:58:14.298Z"
+    },
+    {
+      "name": "เมธาวิน โกบึงกาฬ",
+      "order": "128",
+      "department": "SEO 1",
+      "timestamp": "2026-09-11T09:57:25.454Z"
+    },
+    {
+      "name": "วรวิทย์ เอื้อวัฒนกุล",
+      "order": "75",
+      "department": "SEO 1",
+      "timestamp": "2026-09-11T09:57:25.430Z"
+    },
+    {
+      "name": "ลัดดา จุฑา",
+      "order": "647",
+      "department": "⭐ VIP",
+      "timestamp": "2026-09-11T09:56:47.198Z"
+    },
+    {
+      "name": "เกษราภรณ์  เชาว์วันกลาง",
+      "order": "46",
+      "department": "QC/QA",
+      "timestamp": "2026-09-11T09:56:31.706Z"
+    },
+    {
+      "name": "ณเรศ กันทุกข์",
+      "order": "95",
+      "department": "AGV",
+      "timestamp": "2026-09-11T09:56:08.754Z"
+    },
+    {
+      "name": "NAOYA OGAWA",
+      "order": "54",
+      "department": "AGV",
+      "timestamp": "2026-09-11T09:55:59.324Z"
+    },
+    {
+      "name": "ชญานิษฐ์ คนึงเพียร",
+      "order": "179",
+      "department": "SQT",
+      "timestamp": "2026-09-11T09:55:47.251Z"
+    },
+    {
+      "name": "วุฒิชัย พัดเย็น",
+      "order": "80",
+      "department": "SEO 4",
+      "timestamp": "2026-09-11T09:55:31.750Z"
+    },
+    {
+      "name": "พิทักษ์. เสนคะ",
+      "order": "172",
+      "department": "SEO 4",
+      "timestamp": "2026-09-11T09:55:31.166Z"
+    },
+    {
       "name": "ถาวร บุญราศรี",
       "order": "107",
       "department": "SEO 1",
@@ -325,5 +397,5 @@
       "timestamp": "2026-09-11T07:30:02.073Z"
     }
   ],
-  "updated": "2026-09-11T09:52:26.271Z"
+  "updated": "2026-09-11T10:00:06.701Z"
 }
